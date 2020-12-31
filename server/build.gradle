@@ -1,0 +1,8 @@
+apply plugin: 'war'
+
+version '0.1'
+
+dependencies {
+    implementation project(':objects')
+    implementation project(':service')
+}
