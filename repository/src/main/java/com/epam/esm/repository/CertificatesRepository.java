@@ -1,6 +1,8 @@
 package com.epam.esm.repository;
 
-import com.epam.esm.object.CertificateDTO;
+import com.epam.esm.common.CertificateDTO;
+import com.epam.esm.common.exception.EntityNotFoundException;
+import com.epam.esm.common.exception.UpdateException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -30,13 +32,18 @@ public class CertificatesRepository {
     }
 
     public CertificateDTO getCertificateById(int id) {
-        return jdbcTemplate
+        CertificateDTO certificate = jdbcTemplate
                 .query(RETRIEVE_CERTIFICATE_BY_ID, new BeanPropertyRowMapper<>(CertificateDTO.class), id)
                 .stream().findAny().orElse(null);
+        if (certificate == null) {
+            throw new EntityNotFoundException(id);
+        }
+
+        return certificate;
     }
 
-    public void saveNewCertificate(CertificateDTO certificate) {
-        jdbcTemplate.update(SAVE_NEW_CERTIFICATE,
+    public int saveNewCertificate(CertificateDTO certificate) {
+        return jdbcTemplate.update(SAVE_NEW_CERTIFICATE,
                 certificate.getName(),
                 certificate.getDescription(),
                 certificate.getPrice(),
@@ -44,16 +51,21 @@ public class CertificatesRepository {
     }
 
     public void updateCertificateById(int id, CertificateDTO certificate) {
-        jdbcTemplate.update(UPDATE_CERTIFICATE,
+        int updated = jdbcTemplate.update(UPDATE_CERTIFICATE,
                 certificate.getName(),
                 certificate.getDescription(),
                 certificate.getPrice(),
                 certificate.getDuration(),
                 LocalDateTime.now(),
                 id);
+        if (updated < 1) {
+            throw new UpdateException(id);
+        }
     }
 
     public void deleteCertificateById(int id) {
-        jdbcTemplate.update(DELETE_CERTIFICATE, id);
+        if (jdbcTemplate.update(DELETE_CERTIFICATE, id) < 1) {
+            throw new UpdateException(id);
+        }
     }
 }

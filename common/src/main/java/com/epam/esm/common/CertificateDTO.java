@@ -1,17 +1,13 @@
-package com.epam.esm.object;
+package com.epam.esm.common;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class CertificateDTO implements Serializable {
-
-    @Serial
-    private static final long serialVersionUID = -6531961550283877234L;
 
     private Integer id;
     private String name;

@@ -3,6 +3,6 @@ apply plugin: 'war'
 version '1.0'
 
 dependencies {
-    implementation project(':objects')
+    implementation project(':common')
     implementation project(':service')
 }
