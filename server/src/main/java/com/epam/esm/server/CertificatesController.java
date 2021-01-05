@@ -1,7 +1,10 @@
 package com.epam.esm.server;
 
-import com.epam.esm.object.CertificateDTO;
+import com.epam.esm.common.CertificateDTO;
+import com.epam.esm.common.ErrorDefinition;
 import com.epam.esm.service.CertificatesService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -10,7 +13,7 @@ import java.util.List;
 @RequestMapping("certificates")
 public class CertificatesController {
 
-    private CertificatesService certificatesService;
+    private final CertificatesService certificatesService;
 
     public CertificatesController(CertificatesService certificatesService) {
         this.certificatesService = certificatesService;
@@ -27,20 +30,24 @@ public class CertificatesController {
     }
 
     @PostMapping
-    public List<CertificateDTO> createNewCertificate(@RequestBody CertificateDTO certificate) {
-        certificatesService.createNewCertificate(certificate);
-        return certificatesService.allCertificates();
+    public ResponseEntity<ErrorDefinition> createNewCertificate(@RequestBody CertificateDTO certificate) {
+        if (certificatesService.createNewCertificate(certificate)) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity<>(ErrorDefinition.BAD_REQUEST, HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PutMapping(value = "/{id}")
-    public List<CertificateDTO> updateCertificateById(@PathVariable int id, @RequestBody CertificateDTO certificate) {
+    public ResponseEntity<?> updateCertificateById(
+            @PathVariable int id, @RequestBody CertificateDTO certificate) {
         certificatesService.updateCertificateById(id, certificate);
-        return certificatesService.allCertificates();
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @DeleteMapping(value = "/{id}")
-    public List<CertificateDTO> deleteCertificateById(@PathVariable int id) {
+    public ResponseEntity<ErrorDefinition> deleteCertificateById(@PathVariable int id) {
         certificatesService.deleteCertificateById(id);
-        return certificatesService.allCertificates();
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
