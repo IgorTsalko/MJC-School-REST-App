@@ -1,24 +1,30 @@
-package com.epam.esm.common;
+package com.epam.esm.server;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class CertificateDTO {
+public class CertificateResponse {
 
     private Integer id;
     private String name;
     private String description;
     private BigDecimal price;
     private Integer duration;
-    private LocalDateTime createDate;
-    private LocalDateTime lastUpdateDate;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime createDate = LocalDateTime.now();
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime lastUpdateDate = LocalDateTime.now();
 
     public Integer getId() {
         return id;
     }
 
-    public CertificateDTO setId(Integer id) {
+    public CertificateResponse setId(Integer id) {
         this.id = id;
         return this;
     }
@@ -27,7 +33,7 @@ public class CertificateDTO {
         return name;
     }
 
-    public CertificateDTO setName(String name) {
+    public CertificateResponse setName(String name) {
         this.name = name;
         return this;
     }
@@ -36,7 +42,7 @@ public class CertificateDTO {
         return description;
     }
 
-    public CertificateDTO setDescription(String description) {
+    public CertificateResponse setDescription(String description) {
         this.description = description;
         return this;
     }
@@ -45,7 +51,7 @@ public class CertificateDTO {
         return price;
     }
 
-    public CertificateDTO setPrice(BigDecimal price) {
+    public CertificateResponse setPrice(BigDecimal price) {
         this.price = price;
         return this;
     }
@@ -54,7 +60,7 @@ public class CertificateDTO {
         return duration;
     }
 
-    public CertificateDTO setDuration(Integer duration) {
+    public CertificateResponse setDuration(Integer duration) {
         this.duration = duration;
         return this;
     }
@@ -63,7 +69,7 @@ public class CertificateDTO {
         return createDate;
     }
 
-    public CertificateDTO setCreateDate(LocalDateTime createDate) {
+    public CertificateResponse setCreateDate(LocalDateTime createDate) {
         this.createDate = createDate;
         return this;
     }
@@ -72,7 +78,7 @@ public class CertificateDTO {
         return lastUpdateDate;
     }
 
-    public CertificateDTO setLastUpdateDate(LocalDateTime lastUpdateDate) {
+    public CertificateResponse setLastUpdateDate(LocalDateTime lastUpdateDate) {
         this.lastUpdateDate = lastUpdateDate;
         return this;
     }
@@ -81,7 +87,7 @@ public class CertificateDTO {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        CertificateDTO that = (CertificateDTO) o;
+        CertificateResponse that = (CertificateResponse) o;
         return Objects.equals(id, that.id)
                 && Objects.equals(name, that.name)
                 && Objects.equals(description, that.description)

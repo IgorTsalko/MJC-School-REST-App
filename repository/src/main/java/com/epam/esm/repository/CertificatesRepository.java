@@ -32,40 +32,35 @@ public class CertificatesRepository {
     }
 
     public CertificateDTO getCertificateById(int id) {
-        CertificateDTO certificate = jdbcTemplate
-                .query(RETRIEVE_CERTIFICATE_BY_ID, new BeanPropertyRowMapper<>(CertificateDTO.class), id)
-                .stream().findAny().orElse(null);
-        if (certificate == null) {
-            throw new EntityNotFoundException(id);
-        }
-
-        return certificate;
+        return jdbcTemplate.query(RETRIEVE_CERTIFICATE_BY_ID, new BeanPropertyRowMapper<>(CertificateDTO.class), id)
+                .stream().findAny().orElseThrow(() -> new EntityNotFoundException(id));
     }
 
-    public int saveNewCertificate(CertificateDTO certificate) {
-        return jdbcTemplate.update(SAVE_NEW_CERTIFICATE,
+    public void saveNewCertificate(CertificateDTO certificate) {
+        if (jdbcTemplate.update(SAVE_NEW_CERTIFICATE,
                 certificate.getName(),
                 certificate.getDescription(),
                 certificate.getPrice(),
-                certificate.getDuration());
+                certificate.getDuration()) == 0) {
+            throw new UpdateException(certificate.getName());
+        }
     }
 
-    public void updateCertificateById(int id, CertificateDTO certificate) {
-        int updated = jdbcTemplate.update(UPDATE_CERTIFICATE,
+    public void updateCertificateById(CertificateDTO certificate) {
+        if (jdbcTemplate.update(UPDATE_CERTIFICATE,
                 certificate.getName(),
                 certificate.getDescription(),
                 certificate.getPrice(),
                 certificate.getDuration(),
                 LocalDateTime.now(),
-                id);
-        if (updated < 1) {
-            throw new UpdateException(id);
+                certificate.getId()) == 0) {
+            throw new EntityNotFoundException(certificate.getId());
         }
     }
 
     public void deleteCertificateById(int id) {
         if (jdbcTemplate.update(DELETE_CERTIFICATE, id) < 1) {
-            throw new UpdateException(id);
+            throw new EntityNotFoundException(id);
         }
     }
 }

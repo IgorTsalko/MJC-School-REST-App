@@ -5,6 +5,6 @@
 /server/build
 /service/build
 /repository/build
-/objects/build
+/common/build
 gradlew.bat
 gradlew*

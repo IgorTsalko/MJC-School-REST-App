@@ -23,12 +23,12 @@ public class CertificatesService {
         return certificatesRepository.getCertificateById(id);
     }
 
-    public boolean createNewCertificate(CertificateDTO certificate) {
-        return certificatesRepository.saveNewCertificate(certificate) == 1;
+    public void createNewCertificate(CertificateDTO certificate) {
+        certificatesRepository.saveNewCertificate(certificate);
     }
 
-    public void updateCertificateById(int id, CertificateDTO certificate) {
-        certificatesRepository.updateCertificateById(id, certificate);
+    public void updateCertificateById(CertificateDTO certificate) {
+        certificatesRepository.updateCertificateById(certificate);
     }
 
     public void deleteCertificateById(int id) {

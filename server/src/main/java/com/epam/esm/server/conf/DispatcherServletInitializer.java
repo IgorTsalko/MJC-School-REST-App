@@ -1,4 +1,4 @@
-package com.epam.esm.server;
+package com.epam.esm.server.conf;
 
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
