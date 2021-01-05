@@ -15,7 +15,7 @@ public class CertificatesService {
         this.certificatesRepository = certificatesRepository;
     }
 
-    public List<CertificateDTO> allCertificates() {
+    public List<CertificateDTO> getAllCertificates() {
         return certificatesRepository.getAllCertificates();
     }
 
@@ -23,12 +23,12 @@ public class CertificatesService {
         return certificatesRepository.getCertificateById(id);
     }
 
-    public void createNewCertificate(CertificateDTO certificate) {
-        certificatesRepository.saveNewCertificate(certificate);
+    public CertificateDTO createNewCertificate(CertificateDTO certificate) {
+        return certificatesRepository.saveNewCertificate(certificate);
     }
 
-    public void updateCertificateById(CertificateDTO certificate) {
-        certificatesRepository.updateCertificateById(certificate);
+    public CertificateDTO updateCertificate(CertificateDTO certificate) {
+        return certificatesRepository.updateCertificateById(certificate);
     }
 
     public void deleteCertificateById(int id) {

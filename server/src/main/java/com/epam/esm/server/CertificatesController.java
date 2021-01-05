@@ -1,13 +1,11 @@
 package com.epam.esm.server;
 
-import com.epam.esm.common.CertificateDTO;
 import com.epam.esm.service.CertificatesService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("certificates")
@@ -21,60 +19,32 @@ public class CertificatesController {
 
     @GetMapping
     public List<CertificateResponse> retrieveAllCertificates() {
-        List<CertificateResponse> certificateResponseList = new ArrayList<>();
-
-        for (CertificateDTO certificateDTO: certificatesService.allCertificates()) {
-            CertificateResponse certificateResponse = new CertificateResponse()
-                    .setId(certificateDTO.getId())
-                    .setName(certificateDTO.getName())
-                    .setDescription(certificateDTO.getDescription())
-                    .setPrice(certificateDTO.getPrice())
-                    .setDuration(certificateDTO.getDuration())
-                    .setCreateDate(certificateDTO.getCreateDate())
-                    .setLastUpdateDate(certificateDTO.getLastUpdateDate());
-            certificateResponseList.add(certificateResponse);
-        }
-
-        return certificateResponseList;
+        return certificatesService.getAllCertificates()
+                .stream().map(CertificateMapper::dtoToResponse).collect(Collectors.toList());
     }
 
     @GetMapping(value = "/{id}")
     public CertificateResponse retrieveCertificateById(@PathVariable int id) {
-        CertificateDTO certificateDTO = certificatesService.getCertificate(id);
-        return new CertificateResponse()
-                .setId(certificateDTO.getId())
-                .setName(certificateDTO.getName())
-                .setDescription(certificateDTO.getDescription())
-                .setPrice(certificateDTO.getPrice())
-                .setDuration(certificateDTO.getDuration())
-                .setCreateDate(certificateDTO.getCreateDate())
-                .setLastUpdateDate(certificateDTO.getLastUpdateDate());
-
+        return CertificateMapper.dtoToResponse(certificatesService.getCertificate(id));
     }
 
     @PostMapping
-    public ResponseEntity<Object> createNewCertificate(@RequestBody CertificateRequest certificate) {
-        CertificateDTO certificateDTO = new CertificateDTO()
-                .setName(certificate.getName())
-                .setDescription(certificate.getDescription())
-                .setPrice(certificate.getPrice())
-                .setDuration(certificate.getDuration());
-        certificatesService.createNewCertificate(certificateDTO);
-
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<CertificateResponse> createNewCertificate(@RequestBody CertificateRequest request) {
+        return ResponseEntity.ok(CertificateMapper.dtoToResponse(
+                certificatesService.createNewCertificate(CertificateMapper.requestToDto(request))));
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<Object> updateCertificateById(
-            @PathVariable int id, @RequestBody CertificateDTO certificate) {
-        certificate.setId(id);
-        certificatesService.updateCertificateById(certificate);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<CertificateResponse> updateCertificateById(
+            @PathVariable int id, @RequestBody CertificateRequest request) {
+        request.setId(id);
+        return ResponseEntity.ok(CertificateMapper.dtoToResponse(
+                certificatesService.updateCertificate(CertificateMapper.requestToDto(request))));
     }
 
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Object> deleteCertificateById(@PathVariable int id) {
         certificatesService.deleteCertificateById(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -5,10 +5,19 @@ import java.util.Objects;
 
 public class CertificateRequest {
 
+    private Integer id;
     private String name;
     private String description;
     private BigDecimal price;
     private Integer duration;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -47,7 +56,8 @@ public class CertificateRequest {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CertificateRequest that = (CertificateRequest) o;
-        return Objects.equals(name, that.name)
+        return Objects.equals(id, that.id)
+                && Objects.equals(name, that.name)
                 && Objects.equals(description, that.description)
                 && Objects.equals(price, that.price)
                 && Objects.equals(duration, that.duration);
@@ -55,13 +65,14 @@ public class CertificateRequest {
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, description, price, duration);
+        return Objects.hash(id, name, description, price, duration);
     }
 
     @Override
     public String toString() {
         return this.getClass().getSimpleName() + "{" +
-                "name='" + name + '\'' +
+                "id=" + id +
+                ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", price=" + price +
                 ", duration=" + duration +
