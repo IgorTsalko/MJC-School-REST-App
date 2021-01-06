@@ -2,4 +2,5 @@ version '1.0'
 
 dependencies {
     implementation project(':common')
+    implementation "org.postgresql:postgresql:${postgresqlVersion}"
 }

@@ -12,7 +12,8 @@ public class CertificateMapper {
                 .setPrice(certificateDTO.getPrice())
                 .setDuration(certificateDTO.getDuration())
                 .setCreateDate(certificateDTO.getCreateDate())
-                .setLastUpdateDate(certificateDTO.getLastUpdateDate());
+                .setLastUpdateDate(certificateDTO.getLastUpdateDate())
+                .setTags(certificateDTO.getTags());
     }
 
     public static CertificateDTO requestToDto(CertificateRequest certificateRequest) {
@@ -21,6 +22,7 @@ public class CertificateMapper {
                 .setName(certificateRequest.getName())
                 .setDescription(certificateRequest.getDescription())
                 .setPrice(certificateRequest.getPrice())
-                .setDuration(certificateRequest.getDuration());
+                .setDuration(certificateRequest.getDuration())
+                .setTags(certificateRequest.getTags());
     }
 }

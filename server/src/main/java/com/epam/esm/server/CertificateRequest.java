@@ -1,6 +1,9 @@
 package com.epam.esm.server;
 
+import com.epam.esm.common.Tag;
+
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Objects;
 
 public class CertificateRequest {
@@ -10,6 +13,8 @@ public class CertificateRequest {
     private String description;
     private BigDecimal price;
     private Integer duration;
+
+    private List<Tag> tags;
 
     public Integer getId() {
         return id;
@@ -51,6 +56,14 @@ public class CertificateRequest {
         this.duration = duration;
     }
 
+    public List<Tag> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<Tag> tags) {
+        this.tags = tags;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -60,12 +73,13 @@ public class CertificateRequest {
                 && Objects.equals(name, that.name)
                 && Objects.equals(description, that.description)
                 && Objects.equals(price, that.price)
-                && Objects.equals(duration, that.duration);
+                && Objects.equals(duration, that.duration)
+                && Objects.equals(tags, that.tags);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, price, duration);
+        return Objects.hash(id, name, description, price, duration, tags);
     }
 
     @Override
@@ -76,6 +90,7 @@ public class CertificateRequest {
                 ", description='" + description + '\'' +
                 ", price=" + price +
                 ", duration=" + duration +
+                ", tag=" + tags +
                 '}';
     }
 }
