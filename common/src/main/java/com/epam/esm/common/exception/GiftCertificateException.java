@@ -4,10 +4,11 @@ import com.epam.esm.common.ErrorDefinition;
 
 public class GiftCertificateException extends RuntimeException {
 
-    private ErrorDefinition errorDefinition;
-    private Object[] params;
+    private final ErrorDefinition errorDefinition;
+    private final Object[] params;
 
-    public GiftCertificateException(Object... params) {
+    public GiftCertificateException(ErrorDefinition errorDefinition, Object[] params) {
+        this.errorDefinition = errorDefinition;
         this.params = params;
     }
 

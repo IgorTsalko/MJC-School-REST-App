@@ -1,99 +1,71 @@
-package com.epam.esm.common;
+package com.epam.esm.server;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class CertificateDTO {
+public class CertificateRequest {
 
     private Integer id;
     private String name;
     private String description;
     private BigDecimal price;
     private Integer duration;
-    private LocalDateTime createDate;
-    private LocalDateTime lastUpdateDate;
 
     public Integer getId() {
         return id;
     }
 
-    public CertificateDTO setId(Integer id) {
+    public void setId(Integer id) {
         this.id = id;
-        return this;
     }
 
     public String getName() {
         return name;
     }
 
-    public CertificateDTO setName(String name) {
+    public void setName(String name) {
         this.name = name;
-        return this;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public CertificateDTO setDescription(String description) {
+    public void setDescription(String description) {
         this.description = description;
-        return this;
     }
 
     public BigDecimal getPrice() {
         return price;
     }
 
-    public CertificateDTO setPrice(BigDecimal price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
-        return this;
     }
 
     public Integer getDuration() {
         return duration;
     }
 
-    public CertificateDTO setDuration(Integer duration) {
+    public void setDuration(Integer duration) {
         this.duration = duration;
-        return this;
-    }
-
-    public LocalDateTime getCreateDate() {
-        return createDate;
-    }
-
-    public CertificateDTO setCreateDate(LocalDateTime createDate) {
-        this.createDate = createDate;
-        return this;
-    }
-
-    public LocalDateTime getLastUpdateDate() {
-        return lastUpdateDate;
-    }
-
-    public CertificateDTO setLastUpdateDate(LocalDateTime lastUpdateDate) {
-        this.lastUpdateDate = lastUpdateDate;
-        return this;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        CertificateDTO that = (CertificateDTO) o;
+        CertificateRequest that = (CertificateRequest) o;
         return Objects.equals(id, that.id)
                 && Objects.equals(name, that.name)
                 && Objects.equals(description, that.description)
                 && Objects.equals(price, that.price)
-                && Objects.equals(duration, that.duration)
-                && Objects.equals(createDate, that.createDate)
-                && Objects.equals(lastUpdateDate, that.lastUpdateDate);
+                && Objects.equals(duration, that.duration);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, price, duration, createDate, lastUpdateDate);
+        return Objects.hash(id, name, description, price, duration);
     }
 
     @Override
@@ -104,8 +76,6 @@ public class CertificateDTO {
                 ", description='" + description + '\'' +
                 ", price=" + price +
                 ", duration=" + duration +
-                ", createDate=" + createDate +
-                ", lastUpdateDate=" + lastUpdateDate +
                 '}';
     }
 }

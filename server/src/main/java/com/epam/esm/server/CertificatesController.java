@@ -1,13 +1,11 @@
 package com.epam.esm.server;
 
-import com.epam.esm.common.CertificateDTO;
-import com.epam.esm.common.ErrorDefinition;
 import com.epam.esm.service.CertificatesService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("certificates")
@@ -20,34 +18,33 @@ public class CertificatesController {
     }
 
     @GetMapping
-    public List<CertificateDTO> retrieveAllCertificates() {
-        return certificatesService.allCertificates();
+    public List<CertificateResponse> retrieveAllCertificates() {
+        return certificatesService.getAllCertificates()
+                .stream().map(CertificateMapper::dtoToResponse).collect(Collectors.toList());
     }
 
     @GetMapping(value = "/{id}")
-    public CertificateDTO retrieveCertificateById(@PathVariable int id) {
-        return certificatesService.getCertificate(id);
+    public CertificateResponse retrieveCertificateById(@PathVariable int id) {
+        return CertificateMapper.dtoToResponse(certificatesService.getCertificate(id));
     }
 
     @PostMapping
-    public ResponseEntity<ErrorDefinition> createNewCertificate(@RequestBody CertificateDTO certificate) {
-        if (certificatesService.createNewCertificate(certificate)) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } else {
-            return new ResponseEntity<>(ErrorDefinition.BAD_REQUEST, HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<CertificateResponse> createNewCertificate(@RequestBody CertificateRequest request) {
+        return ResponseEntity.ok(CertificateMapper.dtoToResponse(
+                certificatesService.createNewCertificate(CertificateMapper.requestToDto(request))));
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<?> updateCertificateById(
-            @PathVariable int id, @RequestBody CertificateDTO certificate) {
-        certificatesService.updateCertificateById(id, certificate);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<CertificateResponse> updateCertificateById(
+            @PathVariable int id, @RequestBody CertificateRequest request) {
+        request.setId(id);
+        return ResponseEntity.ok(CertificateMapper.dtoToResponse(
+                certificatesService.updateCertificate(CertificateMapper.requestToDto(request))));
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<ErrorDefinition> deleteCertificateById(@PathVariable int id) {
+    public ResponseEntity<Object> deleteCertificateById(@PathVariable int id) {
         certificatesService.deleteCertificateById(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
 }

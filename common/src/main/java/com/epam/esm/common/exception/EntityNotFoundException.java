@@ -4,7 +4,7 @@ import com.epam.esm.common.ErrorDefinition;
 
 public class EntityNotFoundException extends GiftCertificateException {
 
-    public EntityNotFoundException(int id) {
-        super(ErrorDefinition.NOT_FOUND, id);
+    public EntityNotFoundException(Object... params) {
+        super(ErrorDefinition.NOT_FOUND, params);
     }
 }
