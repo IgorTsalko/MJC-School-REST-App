@@ -18,11 +18,13 @@ public class CertificateMapper {
                 .setCreateDate(certificateDTO.getCreateDate())
                 .setLastUpdateDate(certificateDTO.getLastUpdateDate());
 
-        List<TagResponse> tagResponses = new ArrayList<>();
-        for (TagDTO tagDTO : certificateDTO.getTags()) {
-            tagResponses.add(new TagResponse().setId(tagDTO.getId()).setName(tagDTO.getName()));
+        if (certificateDTO.getTags() != null) {
+            List<TagResponse> tagResponses = new ArrayList<>();
+            for (TagDTO tagDTO : certificateDTO.getTags()) {
+                tagResponses.add(new TagResponse().setId(tagDTO.getId()).setName(tagDTO.getName()));
+            }
+            certificateResponse.setTags(tagResponses);
         }
-        certificateResponse.setTags(tagResponses);
 
         return certificateResponse;
     }
@@ -35,11 +37,14 @@ public class CertificateMapper {
                 .setPrice(certificateRequest.getPrice())
                 .setDuration(certificateRequest.getDuration());
 
-        List<TagDTO> tagDTOList = new ArrayList<>();
-        for (TagRequest tagRequest : certificateRequest.getTags()) {
-            tagDTOList.add(new TagDTO().setId(tagRequest.getId()).setName(tagRequest.getName()));
+
+        if (certificateRequest.getTags() != null) {
+            List<TagDTO> tagDTOList = new ArrayList<>();
+            for (TagRequest tagRequest : certificateRequest.getTags()) {
+                tagDTOList.add(new TagDTO().setId(tagRequest.getId()).setName(tagRequest.getName()));
+            }
+            certificateDTO.setTags(tagDTOList);
         }
-        certificateDTO.setTags(tagDTOList);
 
         return certificateDTO;
     }

@@ -12,6 +12,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -31,8 +32,7 @@ public class CertificateRepository {
     private static final String SAVE_NEW_CERTIFICATE =
             "INSERT INTO gift_certificate(name, description, price, duration, create_date, last_update_date) " +
             "VALUES(:name, :description, :price, :duration, :create_date, :last_update_date)";
-    private static final String UPDATE_CERTIFICATE = "UPDATE gift_certificate " +
-            "SET name=:name, description=:description, price=:price, duration=:duration, last_update_date=:now WHERE id=:id";
+    private static final String UPDATE_CERTIFICATE = "UPDATE gift_certificate SET";
     private static final String DELETE_CERTIFICATE = "DELETE FROM gift_certificate WHERE id=?";
     private static final String DELETE_CERTIFICATE_TAG_CONNECTIONS =
             "DELETE FROM gift_certificate_tag WHERE gift_certificate_id=?";
@@ -72,7 +72,7 @@ public class CertificateRepository {
     public CertificateDTO getCertificateById(int id) {
         return jdbcTemplate.query(RETRIEVE_CERTIFICATE_BY_ID, BeanPropertyRowMapper.newInstance(CertificateDTO.class), id)
                 .stream().findAny().orElseThrow(() -> new EntityNotFoundException(id))
-                .setTags(jdbcTemplate.query(RETRIEVE_TAGS_BY_CERTIFICATE_ID, BeanPropertyRowMapper.newInstance(TagDTO.class), id));
+                .setTags(getCertificateTagConnections(id));
     }
 
     public CertificateDTO saveNewCertificate(CertificateDTO certificate) {
@@ -95,21 +95,40 @@ public class CertificateRepository {
     }
 
     public CertificateDTO updateCertificateById(CertificateDTO certificate) {
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-        certificate.setLastUpdateDate(LocalDateTime.now());
-        MapSqlParameterSource params = new MapSqlParameterSource()
-                .addValue("name", certificate.getName())
-                .addValue("description", certificate.getDescription())
-                .addValue("price", certificate.getPrice())
-                .addValue("duration", certificate.getDuration())
-                .addValue("now", certificate.getLastUpdateDate())
-                .addValue("id", certificate.getId());
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        StringBuilder updateCertificateSql = new StringBuilder(UPDATE_CERTIFICATE);
+        if (certificate.getName() != null) {
+            updateCertificateSql.append(" name=:name,");
+            params.addValue("name", certificate.getName());
+        }
+        if (certificate.getDescription() != null) {
+            updateCertificateSql.append(" description=:description,");
+            params.addValue("description", certificate.getDescription());
+        }
+        if (certificate.getPrice() != null) {
+            updateCertificateSql.append(" price=:price,");
+            params.addValue("price", certificate.getPrice());
+        }
+        if (certificate.getDuration() != null) {
+            updateCertificateSql.append(" duration=:duration,");
+            params.addValue("duration", certificate.getDuration());
+        }
+        updateCertificateSql.append(" last_update_date=:now WHERE id=:id");
+        LocalDateTime now = LocalDateTime.now();
+        certificate.setLastUpdateDate(now);
+        params.addValue("now", now).addValue("id", certificate.getId());
 
-        if (namedParameterJdbcTemplate.update(UPDATE_CERTIFICATE, params, keyHolder) == 0) {
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        if (namedParameterJdbcTemplate.update(updateCertificateSql.toString(), params, keyHolder) == 0) {
             throw new EntityNotFoundException(certificate.getId());
         }
 
-        return certificate.setCreateDate(((Timestamp) keyHolder.getKeys().get("create_date")).toLocalDateTime());
+        return certificate
+                .setName((String) keyHolder.getKeys().get("name"))
+                .setDescription((String) keyHolder.getKeys().get("description"))
+                .setPrice((BigDecimal) keyHolder.getKeys().get("price"))
+                .setDuration((Integer) keyHolder.getKeys().get("duration"))
+                .setCreateDate(((Timestamp) keyHolder.getKeys().get("create_date")).toLocalDateTime());
     }
 
     public void deleteCertificateById(int id) {
@@ -132,6 +151,11 @@ public class CertificateRepository {
         }
 
         return certificateDTO;
+    }
+
+    public List<TagDTO> getCertificateTagConnections(int certificateId) {
+        return jdbcTemplate
+                .query(RETRIEVE_TAGS_BY_CERTIFICATE_ID, BeanPropertyRowMapper.newInstance(TagDTO.class), certificateId);
     }
 
     public void deleteCertificateTagConnections(int certificateId) {
