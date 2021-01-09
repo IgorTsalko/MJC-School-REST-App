@@ -1,6 +1,5 @@
 package com.epam.esm.server;
 
-import com.epam.esm.common.Tag;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.math.BigDecimal;
@@ -16,7 +15,7 @@ public class CertificateResponse {
     private BigDecimal price;
     private Integer duration;
 
-    private List<Tag> tags;
+    private List<TagResponse> tags;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createDate = LocalDateTime.now();
@@ -87,11 +86,11 @@ public class CertificateResponse {
         return this;
     }
 
-    public List<Tag> getTags() {
+    public List<TagResponse> getTags() {
         return tags;
     }
 
-    public CertificateResponse setTags(List<Tag> tags) {
+    public CertificateResponse setTags(List<TagResponse> tags) {
         this.tags = tags;
         return this;
     }

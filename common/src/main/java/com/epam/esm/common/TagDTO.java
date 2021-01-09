@@ -2,7 +2,7 @@ package com.epam.esm.common;
 
 import java.util.Objects;
 
-public class Tag {
+public class TagDTO {
 
     private int id;
     private String name;
@@ -11,7 +11,7 @@ public class Tag {
         return id;
     }
 
-    public Tag setId(int id) {
+    public TagDTO setId(int id) {
         this.id = id;
         return this;
     }
@@ -20,7 +20,7 @@ public class Tag {
         return name;
     }
 
-    public Tag setName(String name) {
+    public TagDTO setName(String name) {
         this.name = name;
         return this;
     }
@@ -29,8 +29,8 @@ public class Tag {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Tag tag = (Tag) o;
-        return id == tag.id && Objects.equals(name, tag.name);
+        TagDTO tagDTO = (TagDTO) o;
+        return id == tagDTO.id && Objects.equals(name, tagDTO.name);
     }
 
     @Override

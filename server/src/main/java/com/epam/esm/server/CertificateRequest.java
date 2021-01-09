@@ -1,7 +1,5 @@
 package com.epam.esm.server;
 
-import com.epam.esm.common.Tag;
-
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
@@ -14,7 +12,7 @@ public class CertificateRequest {
     private BigDecimal price;
     private Integer duration;
 
-    private List<Tag> tags;
+    private List<TagRequest> tags;
 
     public Integer getId() {
         return id;
@@ -56,11 +54,11 @@ public class CertificateRequest {
         this.duration = duration;
     }
 
-    public List<Tag> getTags() {
+    public List<TagRequest> getTags() {
         return tags;
     }
 
-    public void setTags(List<Tag> tags) {
+    public void setTags(List<TagRequest> tags) {
         this.tags = tags;
     }
 
