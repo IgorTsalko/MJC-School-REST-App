@@ -2,6 +2,8 @@ package com.epam.esm.common;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class CertificateDTO {
@@ -13,6 +15,8 @@ public class CertificateDTO {
     private Integer duration;
     private LocalDateTime createDate;
     private LocalDateTime lastUpdateDate;
+
+    private List<Tag> tags = new ArrayList<>();
 
     public Integer getId() {
         return id;
@@ -77,6 +81,15 @@ public class CertificateDTO {
         return this;
     }
 
+    public List<Tag> getTags() {
+        return tags;
+    }
+
+    public CertificateDTO setTags(List<Tag> tags) {
+        this.tags = tags;
+        return this;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -88,12 +101,13 @@ public class CertificateDTO {
                 && Objects.equals(price, that.price)
                 && Objects.equals(duration, that.duration)
                 && Objects.equals(createDate, that.createDate)
-                && Objects.equals(lastUpdateDate, that.lastUpdateDate);
+                && Objects.equals(lastUpdateDate, that.lastUpdateDate)
+                && Objects.equals(tags, that.tags);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, price, duration, createDate, lastUpdateDate);
+        return Objects.hash(id, name, description, price, duration, createDate, lastUpdateDate, tags);
     }
 
     @Override
@@ -106,6 +120,7 @@ public class CertificateDTO {
                 ", duration=" + duration +
                 ", createDate=" + createDate +
                 ", lastUpdateDate=" + lastUpdateDate +
+                ", tags=" + tags +
                 '}';
     }
 }

@@ -1,9 +1,11 @@
 package com.epam.esm.server;
 
+import com.epam.esm.common.Tag;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 public class CertificateResponse {
@@ -13,6 +15,8 @@ public class CertificateResponse {
     private String description;
     private BigDecimal price;
     private Integer duration;
+
+    private List<Tag> tags;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createDate = LocalDateTime.now();
@@ -83,6 +87,15 @@ public class CertificateResponse {
         return this;
     }
 
+    public List<Tag> getTags() {
+        return tags;
+    }
+
+    public CertificateResponse setTags(List<Tag> tags) {
+        this.tags = tags;
+        return this;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -93,13 +106,14 @@ public class CertificateResponse {
                 && Objects.equals(description, that.description)
                 && Objects.equals(price, that.price)
                 && Objects.equals(duration, that.duration)
+                && Objects.equals(tags, that.tags)
                 && Objects.equals(createDate, that.createDate)
                 && Objects.equals(lastUpdateDate, that.lastUpdateDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, price, duration, createDate, lastUpdateDate);
+        return Objects.hash(id, name, description, price, duration, tags, createDate, lastUpdateDate);
     }
 
     @Override
@@ -110,6 +124,7 @@ public class CertificateResponse {
                 ", description='" + description + '\'' +
                 ", price=" + price +
                 ", duration=" + duration +
+                ", tag=" + tags +
                 ", createDate=" + createDate +
                 ", lastUpdateDate=" + lastUpdateDate +
                 '}';

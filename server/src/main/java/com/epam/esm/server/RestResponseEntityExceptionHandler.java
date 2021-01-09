@@ -7,14 +7,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @ControllerAdvice
 public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = {GiftCertificateException.class})
-    protected ResponseEntity<Object> handle(GiftCertificateException ex, WebRequest request) {
+    protected ResponseEntity<Object> handle(GiftCertificateException ex) {
         ErrorDefinition errorDefinition = ex.getErrorDefinition();
         ExceptionResponse exceptionResponse = new ExceptionResponse()
                 .setErrorCode(errorDefinition.getErrorCode())
@@ -23,10 +22,10 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     }
 
     @ExceptionHandler(value = {DataAccessException.class})
-    protected ResponseEntity<Object> handle(DataAccessException ex, WebRequest request) {
+    protected ResponseEntity<Object> handle(DataAccessException ex) {
         ExceptionResponse exceptionResponse = new ExceptionResponse()
-                .setErrorCode(50001)
+                .setErrorCode(40901)
                 .setErrorMessage(ex.getMessage());
-        return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_GATEWAY);
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.CONFLICT);
     }
 }

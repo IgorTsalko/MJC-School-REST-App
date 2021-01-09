@@ -1,5 +1,6 @@
 package com.epam.esm.server;
 
+import com.epam.esm.common.CertificateDTO;
 import com.epam.esm.service.CertificatesService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,16 +31,16 @@ public class CertificatesController {
 
     @PostMapping
     public ResponseEntity<CertificateResponse> createNewCertificate(@RequestBody CertificateRequest request) {
-        return ResponseEntity.ok(CertificateMapper.dtoToResponse(
-                certificatesService.createNewCertificate(CertificateMapper.requestToDto(request))));
+        CertificateDTO certificateDTO = certificatesService.createNewCertificate(CertificateMapper.requestToDto(request));
+        return ResponseEntity.ok(CertificateMapper.dtoToResponse(certificateDTO));
     }
 
     @PutMapping(value = "/{id}")
     public ResponseEntity<CertificateResponse> updateCertificateById(
             @PathVariable int id, @RequestBody CertificateRequest request) {
         request.setId(id);
-        return ResponseEntity.ok(CertificateMapper.dtoToResponse(
-                certificatesService.updateCertificate(CertificateMapper.requestToDto(request))));
+        CertificateDTO certificateDTO = certificatesService.updateCertificate(CertificateMapper.requestToDto(request));
+        return ResponseEntity.ok(CertificateMapper.dtoToResponse(certificateDTO));
     }
 
     @DeleteMapping(value = "/{id}")

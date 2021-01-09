@@ -9,5 +9,4 @@ dependencies {
     compileOnly "javax.servlet:javax.servlet-api:${servletApiVersion}"
     implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}"
-    implementation "org.postgresql:postgresql:${postgresqlVersion}"
 }
