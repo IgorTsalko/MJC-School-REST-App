@@ -20,15 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-public class CertificatesRepository {
-
-    private final JdbcTemplate jdbcTemplate;
-    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
-    public CertificatesRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-        this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
-    }
+public class CertificateRepository {
 
     private static final String RETRIEVE_ALL_CERTIFICATES = "SELECT * FROM gift_certificate";
     private static final String RETRIEVE_CERTIFICATE_BY_ID = "SELECT * FROM gift_certificate WHERE id=?";
@@ -42,10 +34,18 @@ public class CertificatesRepository {
     private static final String UPDATE_CERTIFICATE = "UPDATE gift_certificate " +
             "SET name=:name, description=:description, price=:price, duration=:duration, last_update_date=:now WHERE id=:id";
     private static final String DELETE_CERTIFICATE = "DELETE FROM gift_certificate WHERE id=?";
-    private static final String DELETE_CERTIFICATE_TAG_RELATIONS =
+    private static final String DELETE_CERTIFICATE_TAG_CONNECTIONS =
             "DELETE FROM gift_certificate_tag WHERE gift_certificate_id=?";
+    private static final String ADD_CERTIFICATE_TAG_CONNECTIONS =
+            "INSERT INTO gift_certificate_tag(gift_certificate_id, tag_id) VALUES";
 
-    private static final String RETRIEVE_TAG_TEMPLATE = "SELECT * FROM tag WHERE ";
+    private final JdbcTemplate jdbcTemplate;
+    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
+    public CertificateRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+        this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
+    }
 
     public List<CertificateDTO> getAllCertificates() {
         List<CertificateDTO> certificates =
@@ -76,28 +76,6 @@ public class CertificatesRepository {
     }
 
     public CertificateDTO saveNewCertificate(CertificateDTO certificate) {
-        
-        // DONE! retrieve all tags that exist among sent tags.
-        StringBuilder retrieveTagSql = new StringBuilder(RETRIEVE_TAG_TEMPLATE);
-        certificate.getTags().forEach(tag -> retrieveTagSql.append("name='").append(tag.getName()).append("' OR "));
-        retrieveTagSql.delete(retrieveTagSql.lastIndexOf(" OR "), retrieveTagSql.length());
-        List<TagDTO> tags = jdbcTemplate.query(retrieveTagSql.toString(), BeanPropertyRowMapper.newInstance(TagDTO.class));
-
-        // todo: if some tag don't exist, have to create it
-        for (TagDTO tagDTO : certificate.getTags()) {
-            // todo: dynamic query creation
-            if (!tags.contains(tagDTO)) {
-                // todo: have to add tag value into INSERT sql
-            }
-        }
-        // todo: insert all missing tags
-
-        // todo: again retrieve all sent tags in order to get their id
-
-        // todo: delete all relations certificate and tags
-
-        // todo: add new relations
-
         KeyHolder keyHolder = new GeneratedKeyHolder();
         certificate.setCreateDate(LocalDateTime.now());
         certificate.setLastUpdateDate(LocalDateTime.now());
@@ -137,6 +115,28 @@ public class CertificatesRepository {
     public void deleteCertificateById(int id) {
         if (jdbcTemplate.update(DELETE_CERTIFICATE, id) < 1) {
             throw new EntityNotFoundException(id);
+        }
+    }
+
+    public CertificateDTO addCertificateTagConnections(CertificateDTO certificateDTO) {
+        StringBuilder addCertificateTagConnectionsSql = new StringBuilder(ADD_CERTIFICATE_TAG_CONNECTIONS);
+        List<TagDTO> tags = certificateDTO.getTags();
+
+        tags.forEach(t -> addCertificateTagConnectionsSql
+                .append(" (").append(certificateDTO.getId()).append(", ").append(t.getId()).append("),"));
+        addCertificateTagConnectionsSql
+                .delete(addCertificateTagConnectionsSql.lastIndexOf(","), addCertificateTagConnectionsSql.length());
+
+        if (jdbcTemplate.update(addCertificateTagConnectionsSql.toString()) == 0) {
+            throw new UpdateException(certificateDTO.getId());
+        }
+
+        return certificateDTO;
+    }
+
+    public void deleteCertificateTagConnections(int certificateId) {
+        if (jdbcTemplate.update(DELETE_CERTIFICATE_TAG_CONNECTIONS, certificateId) == 0) {
+            throw new UpdateException(certificateId);
         }
     }
 }
