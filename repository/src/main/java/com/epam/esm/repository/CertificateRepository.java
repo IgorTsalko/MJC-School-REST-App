@@ -4,6 +4,7 @@ import com.epam.esm.common.CertificateDTO;
 import com.epam.esm.common.TagDTO;
 import com.epam.esm.common.exception.EntityNotFoundException;
 import com.epam.esm.common.exception.UpdateException;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -13,12 +14,11 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Repository
 public class CertificateRepository {
@@ -36,8 +36,7 @@ public class CertificateRepository {
     private static final String DELETE_CERTIFICATE = "DELETE FROM gift_certificate WHERE id=?";
     private static final String DELETE_CERTIFICATE_TAG_CONNECTIONS =
             "DELETE FROM gift_certificate_tag WHERE gift_certificate_id=?";
-    private static final String ADD_CERTIFICATE_TAG_CONNECTIONS =
-            "INSERT INTO gift_certificate_tag(gift_certificate_id, tag_id) VALUES";
+    private static final String ADD_CERTIFICATE_TAG_CONNECTIONS = "INSERT INTO gift_certificate_tag VALUES(?, ?)";
 
     private final JdbcTemplate jdbcTemplate;
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
@@ -57,11 +56,11 @@ public class CertificateRepository {
         }
 
         jdbcTemplate.query(RETRIEVE_ALL_TAGS, rs -> {
-            while (rs.next()) {
+            do {
                 int certificateId = rs.getInt(1);
                 TagDTO tagDTO = new TagDTO().setId(rs.getInt(2)).setName(rs.getString(3));
                 certificateTagList.get(certificateId).add(tagDTO);
-            }
+            } while (rs.next());
         });
 
         certificates.forEach(certificate -> certificate.setTags(certificateTagList.get(certificate.getId())));
@@ -138,17 +137,21 @@ public class CertificateRepository {
     }
 
     public CertificateDTO addCertificateTagConnections(CertificateDTO certificateDTO) {
-        StringBuilder addCertificateTagConnectionsSql = new StringBuilder(ADD_CERTIFICATE_TAG_CONNECTIONS);
         List<TagDTO> tags = certificateDTO.getTags();
 
-        tags.forEach(t -> addCertificateTagConnectionsSql
-                .append(" (").append(certificateDTO.getId()).append(", ").append(t.getId()).append("),"));
-        addCertificateTagConnectionsSql
-                .delete(addCertificateTagConnectionsSql.lastIndexOf(","), addCertificateTagConnectionsSql.length());
+        jdbcTemplate.batchUpdate(ADD_CERTIFICATE_TAG_CONNECTIONS, new BatchPreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+                TagDTO tag = tags.get(i);
+                ps.setInt(1, certificateDTO.getId());
+                ps.setInt(2, tag.getId());
+            }
 
-        if (jdbcTemplate.update(addCertificateTagConnectionsSql.toString()) == 0) {
-            throw new UpdateException(certificateDTO.getId());
-        }
+            @Override
+            public int getBatchSize() {
+                return tags.size();
+            }
+        });
 
         return certificateDTO;
     }

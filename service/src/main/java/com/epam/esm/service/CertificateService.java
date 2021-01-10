@@ -6,6 +6,7 @@ import com.epam.esm.repository.CertificateRepository;
 import com.epam.esm.repository.TagRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
@@ -33,8 +34,9 @@ public class CertificateService {
         certificate = certificateRepository.saveNewCertificate(certificate);
 
         List<TagDTO> tags = certificate.getTags();
-        if (tags != null && tags.size() > 0) {
-            certificate.setTags(tagRepository.insertNonExistingTags(tags));
+        if (!CollectionUtils.isEmpty(tags)) {
+            tagRepository.saveTagsIfNonExist(tags);
+            certificate.setTags(tagRepository.getTagsByName(tags));
             certificate = certificateRepository.addCertificateTagConnections(certificate);
         }
 
@@ -44,15 +46,15 @@ public class CertificateService {
     @Transactional
     public CertificateDTO updateCertificate(CertificateDTO certificate) {
         certificate = certificateRepository.updateCertificateById(certificate);
+        certificateRepository.deleteCertificateTagConnections(certificate.getId());
 
         List<TagDTO> tags = certificate.getTags();
         if (tags != null) {
-            if (tags.size() == 0) {
-                certificateRepository.deleteCertificateTagConnections(certificate.getId());
+            if (tags.isEmpty()) {
                 certificate.setTags(null);
             } else {
-                certificateRepository.deleteCertificateTagConnections(certificate.getId());
-                certificate.setTags(tagRepository.insertNonExistingTags(tags));
+                tagRepository.saveTagsIfNonExist(tags);
+                certificate.setTags(tagRepository.getTagsByName(tags));
                 certificate = certificateRepository.addCertificateTagConnections(certificate);
             }
         } else {
