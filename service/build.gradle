@@ -3,4 +3,7 @@ version '0.1'
 dependencies {
     implementation project(':common')
     implementation project(':repository')
+
+    implementation "org.springframework:spring-context:${springVersion}"
+    implementation "org.springframework:spring-tx:${springVersion}"
 }

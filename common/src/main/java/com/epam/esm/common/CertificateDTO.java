@@ -2,7 +2,6 @@ package com.epam.esm.common;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -16,7 +15,7 @@ public class CertificateDTO {
     private LocalDateTime createDate;
     private LocalDateTime lastUpdateDate;
 
-    private List<Tag> tags = new ArrayList<>();
+    private List<TagDTO> tags;
 
     public Integer getId() {
         return id;
@@ -81,11 +80,11 @@ public class CertificateDTO {
         return this;
     }
 
-    public List<Tag> getTags() {
+    public List<TagDTO> getTags() {
         return tags;
     }
 
-    public CertificateDTO setTags(List<Tag> tags) {
+    public CertificateDTO setTags(List<TagDTO> tags) {
         this.tags = tags;
         return this;
     }

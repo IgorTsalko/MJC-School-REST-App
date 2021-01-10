@@ -17,9 +17,6 @@ subprojects {
     }
 
     dependencies {
-        implementation "org.springframework:spring-webmvc:${springVersion}"
-        implementation "org.springframework:spring-jdbc:${springVersion}"
-
         testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
         testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
     }
