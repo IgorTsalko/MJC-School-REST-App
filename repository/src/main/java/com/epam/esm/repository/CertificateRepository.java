@@ -25,8 +25,6 @@ public class CertificateRepository {
 
     private static final String RETRIEVE_ALL_CERTIFICATES = "SELECT * FROM gift_certificate";
     private static final String RETRIEVE_CERTIFICATE_BY_ID = "SELECT * FROM gift_certificate WHERE id=?";
-    private static final String RETRIEVE_TAGS_BY_CERTIFICATE_ID = "SELECT id, name FROM gift_certificate_tag gct " +
-            "JOIN tag ON gct.tag_id = tag.id WHERE gct.gift_certificate_id=?";
     private static final String RETRIEVE_ALL_TAGS =
             "SELECT gift_certificate_id, tag_id, tag.name FROM gift_certificate_tag gct JOIN tag ON gct.tag_id = tag.id";
     private static final String SAVE_NEW_CERTIFICATE =
@@ -68,10 +66,9 @@ public class CertificateRepository {
         return certificates;
     }
 
-    public CertificateDTO getCertificateById(int id) {
+    public CertificateDTO getCertificate(int id) {
         return jdbcTemplate.query(RETRIEVE_CERTIFICATE_BY_ID, BeanPropertyRowMapper.newInstance(CertificateDTO.class), id)
-                .stream().findAny().orElseThrow(() -> new EntityNotFoundException(id))
-                .setTags(getCertificateTagConnections(id));
+                .stream().findAny().orElseThrow(() -> new EntityNotFoundException(id));
     }
 
     public CertificateDTO saveNewCertificate(CertificateDTO certificate) {
@@ -86,14 +83,12 @@ public class CertificateRepository {
                 .addValue("create_date", certificate.getCreateDate())
                 .addValue("last_update_date", certificate.getLastUpdateDate());
 
-        if (namedParameterJdbcTemplate.update(SAVE_NEW_CERTIFICATE, params, keyHolder) == 0) {
-            throw new UpdateException(certificate.getName());
-        }
+        namedParameterJdbcTemplate.update(SAVE_NEW_CERTIFICATE, params, keyHolder);
 
         return certificate.setId((Integer) keyHolder.getKeys().get("id"));
     }
 
-    public CertificateDTO updateCertificateById(CertificateDTO certificate) {
+    public CertificateDTO updateCertificate(int certificateId, CertificateDTO certificate) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         StringBuilder updateCertificateSql = new StringBuilder(UPDATE_CERTIFICATE);
         if (certificate.getName() != null) {
@@ -115,14 +110,15 @@ public class CertificateRepository {
         updateCertificateSql.append(" last_update_date=:now WHERE id=:id");
         LocalDateTime now = LocalDateTime.now();
         certificate.setLastUpdateDate(now);
-        params.addValue("now", now).addValue("id", certificate.getId());
+        params.addValue("now", now).addValue("id", certificateId);
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         if (namedParameterJdbcTemplate.update(updateCertificateSql.toString(), params, keyHolder) == 0) {
-            throw new EntityNotFoundException(certificate.getId());
+            throw new EntityNotFoundException(certificateId);
         }
 
         return certificate
+                .setId(certificateId)
                 .setName((String) keyHolder.getKeys().get("name"))
                 .setDescription((String) keyHolder.getKeys().get("description"))
                 .setPrice((BigDecimal) keyHolder.getKeys().get("price"))
@@ -130,20 +126,18 @@ public class CertificateRepository {
                 .setCreateDate(((Timestamp) keyHolder.getKeys().get("create_date")).toLocalDateTime());
     }
 
-    public void deleteCertificateById(int id) {
-        if (jdbcTemplate.update(DELETE_CERTIFICATE, id) < 1) {
+    public void deleteCertificate(int id) {
+        if (jdbcTemplate.update(DELETE_CERTIFICATE, id) == 0) {
             throw new EntityNotFoundException(id);
         }
     }
 
-    public CertificateDTO addCertificateTagConnections(CertificateDTO certificateDTO) {
-        List<TagDTO> tags = certificateDTO.getTags();
-
+    public void addCertificateTagConnections(int certificateId, List<TagDTO> tags) {
         jdbcTemplate.batchUpdate(ADD_CERTIFICATE_TAG_CONNECTIONS, new BatchPreparedStatementSetter() {
             @Override
             public void setValues(PreparedStatement ps, int i) throws SQLException {
                 TagDTO tag = tags.get(i);
-                ps.setInt(1, certificateDTO.getId());
+                ps.setInt(1, certificateId);
                 ps.setInt(2, tag.getId());
             }
 
@@ -152,13 +146,6 @@ public class CertificateRepository {
                 return tags.size();
             }
         });
-
-        return certificateDTO;
-    }
-
-    public List<TagDTO> getCertificateTagConnections(int certificateId) {
-        return jdbcTemplate
-                .query(RETRIEVE_TAGS_BY_CERTIFICATE_ID, BeanPropertyRowMapper.newInstance(TagDTO.class), certificateId);
     }
 
     public void deleteCertificateTagConnections(int certificateId) {
