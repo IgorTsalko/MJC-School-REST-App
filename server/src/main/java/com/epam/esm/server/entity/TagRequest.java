@@ -1,10 +1,14 @@
 package com.epam.esm.server.entity;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.util.Objects;
 
 public class TagRequest {
 
     private int id;
+    @NotBlank(message = "Please provide a name")
+    @Size(min = 2, max = 50, message = "Too long or too short")
     private String name;
 
     public int getId() {

@@ -7,6 +7,8 @@ import com.epam.esm.service.CertificateService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Positive;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,12 +29,12 @@ public class CertificateController {
     }
 
     @GetMapping("/{id}")
-    public CertificateResponse getCertificate(@PathVariable int id) {
+    public CertificateResponse getCertificate(@PathVariable @Positive @Valid int id) {
         return CertificateMapper.dtoToResponse(certificateService.getCertificate(id));
     }
 
     @PostMapping
-    public ResponseEntity<CertificateResponse> createNewCertificate(@RequestBody CertificateRequest request) {
+    public ResponseEntity<CertificateResponse> createNewCertificate(@Valid @RequestBody CertificateRequest request) {
         CertificateDTO certificateDTO = certificateService.createNewCertificate(CertificateMapper.requestToDto(request));
         return ResponseEntity.ok(CertificateMapper.dtoToResponse(certificateDTO));
     }

@@ -4,8 +4,11 @@ import com.epam.esm.server.entity.TagRequest;
 import com.epam.esm.server.entity.TagResponse;
 import com.epam.esm.service.TagService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,12 +28,12 @@ public class TagController {
     }
 
     @GetMapping("/{id}")
-    public TagResponse getTag(@PathVariable int id) {
-        return TagMapper.dtoToResponse(tagService.getTag(id));
+    public ResponseEntity<Object> getTag(@PathVariable() int id) {
+        return ResponseEntity.ok(TagMapper.dtoToResponse(tagService.getTag(id)));
     }
 
     @PostMapping
-    public ResponseEntity<TagResponse> createNewTag(@RequestBody TagRequest tagRequest) {
+    public ResponseEntity<TagResponse> createNewTag(@Valid @RequestBody TagRequest tagRequest) {
         TagResponse tagResponse = TagMapper.dtoToResponse(tagService.createNewTag(TagMapper.requestToDto(tagRequest)));
         return ResponseEntity.ok(tagResponse);
     }

@@ -2,6 +2,7 @@ package com.epam.esm.server.config;
 
 import com.epam.esm.service.сonfig.ServiceConfig;
 import org.springframework.context.annotation.*;
+import org.springframework.validation.beanvalidation.MethodValidationPostProcessor;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @Configuration
@@ -10,4 +11,8 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @PropertySource("classpath:application.properties")
 @EnableWebMvc
 public class ServerConfig {
+    @Bean
+    public MethodValidationPostProcessor methodValidationPostProcessor() {
+        return new MethodValidationPostProcessor();
+    }
 }
