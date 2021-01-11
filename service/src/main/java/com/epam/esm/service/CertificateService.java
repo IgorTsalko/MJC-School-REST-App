@@ -6,6 +6,7 @@ import com.epam.esm.repository.CertificateRepository;
 import com.epam.esm.repository.TagRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
@@ -24,8 +25,9 @@ public class CertificateService {
         return certificateRepository.getAllCertificates();
     }
 
+    @Transactional
     public CertificateDTO getCertificate(int id) {
-        return certificateRepository.getCertificateById(id);
+        return certificateRepository.getCertificate(id).setTags(tagRepository.getCertificateTags(id));
     }
 
     @Transactional
@@ -33,38 +35,41 @@ public class CertificateService {
         certificate = certificateRepository.saveNewCertificate(certificate);
 
         List<TagDTO> tags = certificate.getTags();
-        if (tags != null && tags.size() > 0) {
-            certificate.setTags(tagRepository.insertNonExistingTags(tags));
-            certificate = certificateRepository.addCertificateTagConnections(certificate);
+        if (!CollectionUtils.isEmpty(tags)) {
+            tagRepository.saveTagsIfNonExist(tags);
+            tags = tagRepository.getTagsByName(tags);
+            certificateRepository.addCertificateTagConnections(certificate.getId(), tags);
+            certificate.setTags(tags);
         }
 
         return certificate;
     }
 
     @Transactional
-    public CertificateDTO updateCertificate(CertificateDTO certificate) {
-        certificate = certificateRepository.updateCertificateById(certificate);
+    public CertificateDTO updateCertificate(int certificateId, CertificateDTO certificate) {
+        certificate = certificateRepository.updateCertificate(certificateId, certificate);
 
         List<TagDTO> tags = certificate.getTags();
         if (tags != null) {
-            if (tags.size() == 0) {
-                certificateRepository.deleteCertificateTagConnections(certificate.getId());
+            certificateRepository.deleteCertificateTagConnections(certificateId);
+            if (tags.isEmpty()) {
                 certificate.setTags(null);
             } else {
-                certificateRepository.deleteCertificateTagConnections(certificate.getId());
-                certificate.setTags(tagRepository.insertNonExistingTags(tags));
-                certificate = certificateRepository.addCertificateTagConnections(certificate);
+                tagRepository.saveTagsIfNonExist(tags);
+                tags = tagRepository.getTagsByName(tags);
+                certificateRepository.addCertificateTagConnections(certificateId, tags);
+                certificate.setTags(tags);
             }
         } else {
-            certificate.setTags(certificateRepository.getCertificateTagConnections(certificate.getId()));
+            certificate.setTags(tagRepository.getCertificateTags(certificateId));
         }
 
         return certificate;
     }
 
     @Transactional
-    public void deleteCertificateById(int id) {
+    public void deleteCertificate(int id) {
         certificateRepository.deleteCertificateTagConnections(id);
-        certificateRepository.deleteCertificateById(id);
+        certificateRepository.deleteCertificate(id);
     }
 }

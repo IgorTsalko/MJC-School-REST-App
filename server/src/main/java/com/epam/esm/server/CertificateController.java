@@ -25,7 +25,7 @@ public class CertificateController {
     }
 
     @GetMapping(value = "/{id}")
-    public CertificateResponse retrieveCertificateById(@PathVariable int id) {
+    public CertificateResponse retrieveCertificate(@PathVariable int id) {
         return CertificateMapper.dtoToResponse(certificateService.getCertificate(id));
     }
 
@@ -36,16 +36,15 @@ public class CertificateController {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<CertificateResponse> updateCertificateById(
+    public ResponseEntity<CertificateResponse> updateCertificate(
             @PathVariable int id, @RequestBody CertificateRequest request) {
-        request.setId(id);
-        CertificateDTO certificateDTO = certificateService.updateCertificate(CertificateMapper.requestToDto(request));
+        CertificateDTO certificateDTO = certificateService.updateCertificate(id, CertificateMapper.requestToDto(request));
         return ResponseEntity.ok(CertificateMapper.dtoToResponse(certificateDTO));
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Object> deleteCertificateById(@PathVariable int id) {
-        certificateService.deleteCertificateById(id);
+    public ResponseEntity<Object> deleteCertificate(@PathVariable int id) {
+        certificateService.deleteCertificate(id);
         return ResponseEntity.noContent().build();
     }
 }
