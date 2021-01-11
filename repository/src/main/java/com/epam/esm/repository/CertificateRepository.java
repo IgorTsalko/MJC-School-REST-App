@@ -3,8 +3,6 @@ package com.epam.esm.repository;
 import com.epam.esm.common.CertificateDTO;
 import com.epam.esm.common.TagDTO;
 import com.epam.esm.common.exception.EntityNotFoundException;
-import com.epam.esm.common.exception.UpdateException;
-import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -14,22 +12,19 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Repository
 public class CertificateRepository {
 
     private static final String RETRIEVE_ALL_CERTIFICATES = "SELECT * FROM gift_certificate";
     private static final String RETRIEVE_CERTIFICATE_BY_ID = "SELECT * FROM gift_certificate WHERE id=?";
-    private static final String RETRIEVE_ALL_TAGS =
-            "SELECT gift_certificate_id, tag_id, tag.name FROM gift_certificate_tag gct JOIN tag ON gct.tag_id = tag.id";
     private static final String SAVE_NEW_CERTIFICATE =
             "INSERT INTO gift_certificate(name, description, price, duration, create_date, last_update_date) " +
-            "VALUES(:name, :description, :price, :duration, :create_date, :last_update_date)";
+                    "VALUES(:name, :description, :price, :duration, :create_date, :last_update_date)";
     private static final String UPDATE_CERTIFICATE = "UPDATE gift_certificate SET";
     private static final String DELETE_CERTIFICATE = "DELETE FROM gift_certificate WHERE id=?";
     private static final String DELETE_CERTIFICATE_TAG_CONNECTIONS =
@@ -45,30 +40,12 @@ public class CertificateRepository {
     }
 
     public List<CertificateDTO> getAllCertificates() {
-        List<CertificateDTO> certificates =
-                jdbcTemplate.query(RETRIEVE_ALL_CERTIFICATES, BeanPropertyRowMapper.newInstance(CertificateDTO.class));
-
-        Map<Integer, List<TagDTO>> certificateTagList = new HashMap<>();
-        for (CertificateDTO certificate : certificates) {
-            certificateTagList.put(certificate.getId(), new ArrayList<>());
-        }
-
-        jdbcTemplate.query(RETRIEVE_ALL_TAGS, rs -> {
-            do {
-                int certificateId = rs.getInt(1);
-                TagDTO tagDTO = new TagDTO().setId(rs.getInt(2)).setName(rs.getString(3));
-                certificateTagList.get(certificateId).add(tagDTO);
-            } while (rs.next());
-        });
-
-        certificates.forEach(certificate -> certificate.setTags(certificateTagList.get(certificate.getId())));
-
-        return certificates;
+        return jdbcTemplate.query(RETRIEVE_ALL_CERTIFICATES, BeanPropertyRowMapper.newInstance(CertificateDTO.class));
     }
 
     public CertificateDTO getCertificate(int id) {
         return jdbcTemplate.query(RETRIEVE_CERTIFICATE_BY_ID, BeanPropertyRowMapper.newInstance(CertificateDTO.class), id)
-                .stream().findAny().orElseThrow(() -> new EntityNotFoundException(id));
+                .stream().findAny().orElseThrow(() -> new EntityNotFoundException(CertificateDTO.class, id));
     }
 
     public CertificateDTO saveNewCertificate(CertificateDTO certificate) {
@@ -109,12 +86,11 @@ public class CertificateRepository {
         }
         updateCertificateSql.append(" last_update_date=:now WHERE id=:id");
         LocalDateTime now = LocalDateTime.now();
-        certificate.setLastUpdateDate(now);
         params.addValue("now", now).addValue("id", certificateId);
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         if (namedParameterJdbcTemplate.update(updateCertificateSql.toString(), params, keyHolder) == 0) {
-            throw new EntityNotFoundException(certificateId);
+            throw new EntityNotFoundException(CertificateDTO.class, certificateId);
         }
 
         return certificate
@@ -123,34 +99,23 @@ public class CertificateRepository {
                 .setDescription((String) keyHolder.getKeys().get("description"))
                 .setPrice((BigDecimal) keyHolder.getKeys().get("price"))
                 .setDuration((Integer) keyHolder.getKeys().get("duration"))
-                .setCreateDate(((Timestamp) keyHolder.getKeys().get("create_date")).toLocalDateTime());
+                .setCreateDate(((Timestamp) keyHolder.getKeys().get("create_date")).toLocalDateTime())
+                .setLastUpdateDate(now);
     }
 
     public void deleteCertificate(int id) {
         if (jdbcTemplate.update(DELETE_CERTIFICATE, id) == 0) {
-            throw new EntityNotFoundException(id);
+            throw new EntityNotFoundException(CertificateDTO.class, id);
         }
     }
 
     public void addCertificateTagConnections(int certificateId, List<TagDTO> tags) {
-        jdbcTemplate.batchUpdate(ADD_CERTIFICATE_TAG_CONNECTIONS, new BatchPreparedStatementSetter() {
-            @Override
-            public void setValues(PreparedStatement ps, int i) throws SQLException {
-                TagDTO tag = tags.get(i);
-                ps.setInt(1, certificateId);
-                ps.setInt(2, tag.getId());
-            }
-
-            @Override
-            public int getBatchSize() {
-                return tags.size();
-            }
-        });
+        List<Object[]> params = tags.stream().map(tag -> new Object[]{certificateId, tag.getId()})
+                .collect(Collectors.toList());
+        jdbcTemplate.batchUpdate(ADD_CERTIFICATE_TAG_CONNECTIONS, params);
     }
 
     public void deleteCertificateTagConnections(int certificateId) {
-        if (jdbcTemplate.update(DELETE_CERTIFICATE_TAG_CONNECTIONS, certificateId) == 0) {
-            throw new UpdateException(certificateId);
-        }
+        jdbcTemplate.update(DELETE_CERTIFICATE_TAG_CONNECTIONS, certificateId);
     }
 }

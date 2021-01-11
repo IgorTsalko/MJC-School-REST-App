@@ -2,6 +2,7 @@ package com.epam.esm.server;
 
 import com.epam.esm.common.ErrorDefinition;
 import com.epam.esm.common.exception.GiftCertificateException;
+import com.epam.esm.server.entity.ExceptionResponse;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,8 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         ErrorDefinition errorDefinition = ex.getErrorDefinition();
         ExceptionResponse exceptionResponse = new ExceptionResponse()
                 .setErrorCode(errorDefinition.getErrorCode())
-                .setErrorMessage(String.format(errorDefinition.getErrorMessageTemplate(), ex.getParams()));
+                .setErrorMessage(
+                        String.format(errorDefinition.getErrorMessageTemplate(), ex.getEntityName(), ex.getEntityId()));
         return new ResponseEntity<>(exceptionResponse, errorDefinition.getHttpStatus());
     }
 

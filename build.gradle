@@ -13,6 +13,7 @@ subprojects {
         servletApiVersion = '4.0.1'
         jacksonVersion = '2.12.0'
         postgresqlVersion = '42.2.18'
+        hikariVersion = '3.4.5'
         junitVersion = '5.7.0'
     }
 

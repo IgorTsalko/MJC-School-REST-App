@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class CertificateService {
@@ -21,13 +22,18 @@ public class CertificateService {
         this.tagRepository = tagRepository;
     }
 
+    @Transactional
     public List<CertificateDTO> getAllCertificates() {
-        return certificateRepository.getAllCertificates();
+        List<CertificateDTO> allCertificates = certificateRepository.getAllCertificates();
+        Map<Integer, List<TagDTO>> allCertificateTags = tagRepository.getAllCertificateTags();
+        allCertificates.forEach(certificate -> certificate.setTags(allCertificateTags.get(certificate.getId())));
+        return allCertificates;
     }
 
     @Transactional
     public CertificateDTO getCertificate(int id) {
-        return certificateRepository.getCertificate(id).setTags(tagRepository.getCertificateTags(id));
+        return certificateRepository.getCertificate(id)
+                .setTags(tagRepository.getCertificateTags(id));
     }
 
     @Transactional

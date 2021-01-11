@@ -1,6 +1,8 @@
 package com.epam.esm.server;
 
 import com.epam.esm.common.CertificateDTO;
+import com.epam.esm.server.entity.CertificateRequest;
+import com.epam.esm.server.entity.CertificateResponse;
 import com.epam.esm.service.CertificateService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,13 +21,13 @@ public class CertificateController {
     }
 
     @GetMapping
-    public List<CertificateResponse> retrieveAllCertificates() {
+    public List<CertificateResponse> getAllCertificates() {
         return certificateService.getAllCertificates()
                 .stream().map(CertificateMapper::dtoToResponse).collect(Collectors.toList());
     }
 
-    @GetMapping(value = "/{id}")
-    public CertificateResponse retrieveCertificate(@PathVariable int id) {
+    @GetMapping("/{id}")
+    public CertificateResponse getCertificate(@PathVariable int id) {
         return CertificateMapper.dtoToResponse(certificateService.getCertificate(id));
     }
 
@@ -35,14 +37,14 @@ public class CertificateController {
         return ResponseEntity.ok(CertificateMapper.dtoToResponse(certificateDTO));
     }
 
-    @PutMapping(value = "/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<CertificateResponse> updateCertificate(
             @PathVariable int id, @RequestBody CertificateRequest request) {
         CertificateDTO certificateDTO = certificateService.updateCertificate(id, CertificateMapper.requestToDto(request));
         return ResponseEntity.ok(CertificateMapper.dtoToResponse(certificateDTO));
     }
 
-    @DeleteMapping(value = "/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteCertificate(@PathVariable int id) {
         certificateService.deleteCertificate(id);
         return ResponseEntity.noContent().build();
