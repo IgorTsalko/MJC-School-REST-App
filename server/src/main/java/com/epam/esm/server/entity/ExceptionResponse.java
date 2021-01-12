@@ -1,4 +1,4 @@
-package com.epam.esm.server;
+package com.epam.esm.server.entity;
 
 public class ExceptionResponse {
 

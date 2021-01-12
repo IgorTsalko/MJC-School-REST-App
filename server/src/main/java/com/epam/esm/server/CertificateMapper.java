@@ -2,6 +2,10 @@ package com.epam.esm.server;
 
 import com.epam.esm.common.CertificateDTO;
 import com.epam.esm.common.TagDTO;
+import com.epam.esm.server.entity.CertificateRequest;
+import com.epam.esm.server.entity.CertificateResponse;
+import com.epam.esm.server.entity.TagRequest;
+import com.epam.esm.server.entity.TagResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +25,7 @@ public class CertificateMapper {
         if (certificateDTO.getTags() != null) {
             List<TagResponse> tagResponses = new ArrayList<>();
             for (TagDTO tagDTO : certificateDTO.getTags()) {
-                tagResponses.add(new TagResponse().setId(tagDTO.getId()).setName(tagDTO.getName()));
+                tagResponses.add(TagMapper.dtoToResponse(tagDTO));
             }
             certificateResponse.setTags(tagResponses);
         }
@@ -41,7 +45,7 @@ public class CertificateMapper {
         if (certificateRequest.getTags() != null) {
             List<TagDTO> tagDTOList = new ArrayList<>();
             for (TagRequest tagRequest : certificateRequest.getTags()) {
-                tagDTOList.add(new TagDTO().setId(tagRequest.getId()).setName(tagRequest.getName()));
+                tagDTOList.add(TagMapper.requestToDto(tagRequest));
             }
             certificateDTO.setTags(tagDTOList);
         }

@@ -14,6 +14,8 @@ public class DatabaseProperties {
     private String dbUser;
     @Value("${db.password}")
     private String dbPassword;
+    @Value("${db.max_pool_size}")
+    private int maxPoolSize;
 
     public String getDbDriver() {
         return dbDriver;
@@ -29,5 +31,9 @@ public class DatabaseProperties {
 
     public String getDbPassword() {
         return dbPassword;
+    }
+
+    public int getMaxPoolSize() {
+        return maxPoolSize;
     }
 }

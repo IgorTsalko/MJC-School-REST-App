@@ -1,8 +1,8 @@
-package com.epam.esm.server;
+package com.epam.esm.server.entity;
 
 import java.util.Objects;
 
-public class TagRequest {
+public class TagResponse {
 
     private int id;
     private String name;
@@ -11,23 +11,25 @@ public class TagRequest {
         return id;
     }
 
-    public void setId(int id) {
+    public TagResponse setId(int id) {
         this.id = id;
+        return this;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public TagResponse setName(String name) {
         this.name = name;
+        return this;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        TagRequest that = (TagRequest) o;
+        TagResponse that = (TagResponse) o;
         return id == that.id && Objects.equals(name, that.name);
     }
 

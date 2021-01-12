@@ -4,8 +4,7 @@ import org.springframework.http.HttpStatus;
 
 public enum ErrorDefinition {
 
-    BAD_REQUEST(40001, "Bad Request for id %s", HttpStatus.BAD_REQUEST),
-    NOT_FOUND(40401, "Requested resource not found for id %s", HttpStatus.NOT_FOUND);
+    NOT_FOUND(40401, "Requested resource not found for %s with id %s", HttpStatus.NOT_FOUND);
 
     private final int errorCode;
     private final String errorMessageTemplate;
