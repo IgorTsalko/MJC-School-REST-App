@@ -1,5 +1,6 @@
 package com.epam.esm.repository;
 
+import com.epam.esm.common.ErrorDefinition;
 import com.epam.esm.common.TagDTO;
 import com.epam.esm.common.exception.EntityNotFoundException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -45,7 +46,7 @@ public class TagRepository {
 
     public TagDTO getTag(int id) {
         return jdbcTemplate.query(RETRIEVE_TAG_BY_ID, BeanPropertyRowMapper.newInstance(TagDTO.class), id)
-                .stream().findAny().orElseThrow(() -> new EntityNotFoundException(TagDTO.class, id));
+                .stream().findAny().orElseThrow(() -> new EntityNotFoundException(ErrorDefinition.TAG_NOT_FOUND, id));
     }
 
     public Map<Integer, List<TagDTO>> getAllCertificateTags() {
@@ -101,7 +102,7 @@ public class TagRepository {
 
     public void deleteTag(int id) {
         if (jdbcTemplate.update(DELETE_TAG, id) == 0) {
-            throw new EntityNotFoundException(TagDTO.class, id);
+            throw new EntityNotFoundException(ErrorDefinition.TAG_NOT_FOUND, id);
         }
     }
 }

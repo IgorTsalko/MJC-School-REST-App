@@ -1,6 +1,7 @@
 package com.epam.esm.repository;
 
 import com.epam.esm.common.CertificateDTO;
+import com.epam.esm.common.ErrorDefinition;
 import com.epam.esm.common.TagDTO;
 import com.epam.esm.common.exception.EntityNotFoundException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -45,7 +46,8 @@ public class CertificateRepository {
 
     public CertificateDTO getCertificate(int id) {
         return jdbcTemplate.query(RETRIEVE_CERTIFICATE_BY_ID, BeanPropertyRowMapper.newInstance(CertificateDTO.class), id)
-                .stream().findAny().orElseThrow(() -> new EntityNotFoundException(CertificateDTO.class, id));
+                .stream().findAny()
+                .orElseThrow(() -> new EntityNotFoundException(ErrorDefinition.CERTIFICATE_NOT_FOUND, id));
     }
 
     public CertificateDTO saveNewCertificate(CertificateDTO certificate) {
@@ -90,7 +92,7 @@ public class CertificateRepository {
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         if (namedParameterJdbcTemplate.update(updateCertificateSql.toString(), params, keyHolder) == 0) {
-            throw new EntityNotFoundException(CertificateDTO.class, certificateId);
+            throw new EntityNotFoundException(ErrorDefinition.CERTIFICATE_NOT_FOUND, certificateId);
         }
 
         return certificate
@@ -105,7 +107,7 @@ public class CertificateRepository {
 
     public void deleteCertificate(int id) {
         if (jdbcTemplate.update(DELETE_CERTIFICATE, id) == 0) {
-            throw new EntityNotFoundException(CertificateDTO.class, id);
+            throw new EntityNotFoundException(ErrorDefinition.CERTIFICATE_NOT_FOUND, id);
         }
     }
 

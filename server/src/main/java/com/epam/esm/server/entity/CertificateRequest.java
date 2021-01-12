@@ -7,10 +7,12 @@ import java.util.Objects;
 
 public class CertificateRequest {
 
+    @Positive
     private Integer id;
     @NotEmpty
     @Size(min = 2, max = 50)
     private String name;
+    @Size(min = 3, max = 250)
     private String description;
     @DecimalMin("1.00")
     private BigDecimal price;
