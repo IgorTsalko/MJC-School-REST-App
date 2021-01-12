@@ -17,6 +17,7 @@ subprojects {
         javaxValidationVersion = '2.0.1.Final'
         hibernateValidatorVersion = '6.2.0.Final'
         junitVersion = '5.7.0'
+        h2_dbVersion = '1.4.200'
     }
 
     dependencies {

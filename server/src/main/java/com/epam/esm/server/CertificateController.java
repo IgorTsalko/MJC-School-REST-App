@@ -1,6 +1,7 @@
 package com.epam.esm.server;
 
 import com.epam.esm.common.CertificateDTO;
+import com.epam.esm.common.CertificateParamsDTO;
 import com.epam.esm.server.entity.CertificateRequest;
 import com.epam.esm.server.entity.CertificateResponse;
 import com.epam.esm.service.CertificateService;
@@ -25,8 +26,8 @@ public class CertificateController {
     }
 
     @GetMapping
-    public List<CertificateResponse> getAllCertificates() {
-        return certificateService.getAllCertificates()
+    public List<CertificateResponse> getCertificates(@Valid CertificateParamsDTO params) {
+        return certificateService.getCertificates(params)
                 .stream().map(CertificateMapper::dtoToResponse).collect(Collectors.toList());
     }
 

@@ -8,6 +8,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -48,7 +49,6 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 
         ExceptionResponse exceptionResponse = new ExceptionResponse()
                 .setErrorCode(40001)
-                .setDetails(ex.getMessage())
                 .setDetails(details);
 
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
@@ -65,8 +65,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
                 .toArray(String[]::new);
 
         ExceptionResponse exceptionResponse = new ExceptionResponse()
-                .setErrorCode(40001)
-                .setDetails(ex.getMessage())
+                .setErrorCode(40002)
                 .setDetails(details);
 
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
@@ -76,9 +75,24 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     protected ResponseEntity<Object> handleTypeMismatch(
             TypeMismatchException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         ExceptionResponse exceptionResponse = new ExceptionResponse()
-                .setErrorCode(40001)
-                .setDetails(ex.getMessage())
+                .setErrorCode(40003)
                 .setDetails(ex.getMessage());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleBindException(
+            BindException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        String[] details = ex.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(fieldError -> fieldError.getField() + " " + fieldError.getDefaultMessage())
+                .collect(Collectors.toList())
+                .toArray(String[]::new);
+
+        ExceptionResponse exceptionResponse = new ExceptionResponse()
+                .setErrorCode(40004)
+                .setDetails(details);
 
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
