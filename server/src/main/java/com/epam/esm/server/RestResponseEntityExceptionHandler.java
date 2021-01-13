@@ -15,19 +15,23 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
+import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
+
+    private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("messages");
 
     @ExceptionHandler(GiftCertificateException.class)
     protected ResponseEntity<Object> handleGiftCertificateException(GiftCertificateException ex) {
         ErrorDefinition errorDefinition = ex.getErrorDefinition();
         ExceptionResponse exceptionResponse = new ExceptionResponse()
                 .setErrorCode(errorDefinition.getErrorCode())
-                .setDetails(
-                        String.format(errorDefinition.getErrorMessageTemplate(), ex.getEntityId()));
+                .setDetails(String
+                        .format(BUNDLE.getString(errorDefinition.getErrorMessageTemplate()), ex.getEntityId()));
         return new ResponseEntity<>(exceptionResponse, errorDefinition.getHttpStatus());
     }
 
@@ -43,7 +47,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     public final ResponseEntity<Object> handleConstraintViolation(ConstraintViolationException ex) {
         String[] details = ex.getConstraintViolations()
                 .stream()
-                .map(constr -> constr.getInvalidValue() + " is invalid value. Id " + constr.getMessage())
+                .map(ConstraintViolation::getMessage)
                 .collect(Collectors.toList())
                 .toArray(String[]::new);
 
@@ -60,7 +64,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         String[] details = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
-                .map(fieldError -> fieldError.getField() + " " + fieldError.getDefaultMessage())
+                .map(fieldError -> fieldError.getField() + fieldError.getDefaultMessage())
                 .collect(Collectors.toList())
                 .toArray(String[]::new);
 

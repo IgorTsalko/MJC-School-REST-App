@@ -18,11 +18,14 @@ subprojects {
         hibernateValidatorVersion = '6.2.0.Final'
         junitVersion = '5.7.0'
         h2_dbVersion = '1.4.200'
+        mockitoVersion= '3.7.0'
     }
 
     dependencies {
         testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
         testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
+        testImplementation "org.mockito:mockito-junit-jupiter:${mockitoVersion}"
+        testImplementation "org.springframework:spring-test:${springVersion}"
     }
 
     test {

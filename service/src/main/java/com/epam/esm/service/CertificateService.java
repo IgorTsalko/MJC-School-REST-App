@@ -76,7 +76,6 @@ public class CertificateService {
 
     @Transactional
     public void deleteCertificate(int id) {
-        certificateRepository.deleteCertificateTagConnections(id);
         certificateRepository.deleteCertificate(id);
     }
 }
