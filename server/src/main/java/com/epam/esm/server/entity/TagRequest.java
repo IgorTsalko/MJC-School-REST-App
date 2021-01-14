@@ -7,10 +7,10 @@ import java.util.Objects;
 
 public class TagRequest {
 
-    @Positive
+    @Positive(message = "{notPositive}")
     private Integer id;
-    @NotEmpty()
-    @Size(min = 2, max = 50)
+    @NotEmpty(message = "{empty}")
+    @Size(min = 2, max = 50, message = "{invalidLength}")
     private String name;
 
     public Integer getId() {

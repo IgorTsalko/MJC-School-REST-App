@@ -29,7 +29,7 @@ public class TagController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getTag(@PathVariable @Positive int id) {
+    public ResponseEntity<Object> getTag(@PathVariable @Positive(message = "{notPositive}") int id) {
         return ResponseEntity.ok(TagMapper.dtoToResponse(tagService.getTag(id)));
     }
 
@@ -40,7 +40,7 @@ public class TagController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteTag(@PathVariable @Positive int id) {
+    public ResponseEntity<Object> deleteTag(@PathVariable @Positive(message = "{notPositive}") int id) {
         tagService.deleteTag(id);
         return ResponseEntity.noContent().build();
     }

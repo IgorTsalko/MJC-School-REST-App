@@ -8,16 +8,16 @@ import java.util.Objects;
 
 public class CertificateRequest {
 
-    @Positive
+    @Positive(message = "{notPositive}")
     private Integer id;
-    @NotEmpty
-    @Size(min = 2, max = 50)
+    @NotEmpty(message = "{empty}")
+    @Size(min = 2, max = 50, message = "{invalidLength}")
     private String name;
-    @Size(min = 3, max = 250)
+    @Size(min = 3, max = 250, message = "{invalidLength}")
     private String description;
-    @DecimalMin("1.00")
+    @DecimalMin(value = "1.00", message = "{lessThanOne}")
     private BigDecimal price;
-    @Positive
+    @Positive(message = "{notPositive}")
     private Integer duration;
 
     @Valid

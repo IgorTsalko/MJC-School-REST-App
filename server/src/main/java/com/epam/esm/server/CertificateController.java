@@ -32,7 +32,7 @@ public class CertificateController {
     }
 
     @GetMapping("/{id}")
-    public CertificateResponse getCertificate(@PathVariable @Positive int id) {
+    public CertificateResponse getCertificate(@PathVariable @Positive(message = "{notPositive}") int id) {
         return CertificateMapper.dtoToResponse(certificateService.getCertificate(id));
     }
 
@@ -44,13 +44,13 @@ public class CertificateController {
 
     @PutMapping("/{id}")
     public ResponseEntity<CertificateResponse> updateCertificate(
-            @PathVariable @Positive int id, @RequestBody @Valid CertificateRequest request) {
+            @PathVariable @Positive(message = "{notPositive}") int id, @RequestBody @Valid CertificateRequest request) {
         CertificateDTO certificateDTO = certificateService.updateCertificate(id, CertificateMapper.requestToDto(request));
         return ResponseEntity.ok(CertificateMapper.dtoToResponse(certificateDTO));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteCertificate(@PathVariable @Positive int id) {
+    public ResponseEntity<Object> deleteCertificate(@PathVariable @Positive(message = "{notPositive}") int id) {
         certificateService.deleteCertificate(id);
         return ResponseEntity.noContent().build();
     }
