@@ -1,11 +1,9 @@
 package com.epam.esm.repository;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.*;
 
 import com.epam.esm.common.CertificateDTO;
-import com.epam.esm.common.CertificateParamsDTO;
+import com.epam.esm.common.SearchParams;
 import com.epam.esm.repository.config.RepositoryConfigTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,7 +27,7 @@ public class CertificateRepositoryTest {
     CertificateRepository certificateRepository;
 
     @Test
-    public void retrieveAllCertificates(@Mock CertificateParamsDTO prams) {
+    public void getAllCertificates(@Mock SearchParams prams) {
         List<CertificateDTO> expCerts = List.of(
                 new CertificateDTO().setId(1).setName("Trip").setDescription("Incredible journey. 25 countries. 4 weeks")
                         .setPrice(BigDecimal.valueOf(5600.0)).setDuration(60).setCreateDate(t).setLastUpdateDate(t),
@@ -42,7 +40,7 @@ public class CertificateRepositoryTest {
     }
 
     @Test
-    public void retrieveCertificateById() {
+    public void getCertificateById() {
         CertificateDTO expCert = new CertificateDTO().setId(2).setName("Skydiving").setPrice(BigDecimal.valueOf(250.0))
                 .setDuration(30).setCreateDate(t).setLastUpdateDate(t);
         CertificateDTO realCert = certificateRepository.getCertificate(2);

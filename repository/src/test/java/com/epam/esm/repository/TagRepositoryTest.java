@@ -23,7 +23,7 @@ public class TagRepositoryTest {
     TagRepository tagRepository;
 
     @Test
-    public void retrieveAllTags() {
+    public void getAllTags() {
         List<TagDTO> expTags = List.of(
                 new TagDTO().setId(1).setName("incredible"),
                 new TagDTO().setId(2).setName("travel")
@@ -34,7 +34,7 @@ public class TagRepositoryTest {
     }
 
     @Test
-    public void retrieveTagById() {
+    public void getTagById() {
         TagDTO expTag = new TagDTO().setId(2).setName("travel");
         TagDTO realTag = tagRepository.getTag(2);
         assertEquals(expTag, realTag);

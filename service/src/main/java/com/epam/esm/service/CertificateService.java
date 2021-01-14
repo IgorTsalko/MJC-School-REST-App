@@ -1,7 +1,7 @@
 package com.epam.esm.service;
 
 import com.epam.esm.common.CertificateDTO;
-import com.epam.esm.common.CertificateParamsDTO;
+import com.epam.esm.common.SearchParams;
 import com.epam.esm.common.TagDTO;
 import com.epam.esm.repository.CertificateRepository;
 import com.epam.esm.repository.TagRepository;
@@ -24,7 +24,7 @@ public class CertificateService {
     }
 
     @Transactional
-    public List<CertificateDTO> getCertificates(CertificateParamsDTO params) {
+    public List<CertificateDTO> getCertificates(SearchParams params) {
         List<CertificateDTO> certificates = certificateRepository.getCertificates(params);
         Map<Integer, List<TagDTO>> certificateTags = tagRepository.getCertificateTags(certificates);
         certificates.forEach(certificate -> certificate.setTags(certificateTags.get(certificate.getId())));

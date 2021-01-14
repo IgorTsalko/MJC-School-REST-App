@@ -5,7 +5,7 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.*;
 
 import com.epam.esm.common.CertificateDTO;
-import com.epam.esm.common.CertificateParamsDTO;
+import com.epam.esm.common.SearchParams;
 import com.epam.esm.common.TagDTO;
 import com.epam.esm.repository.CertificateRepository;
 import com.epam.esm.repository.TagRepository;
@@ -29,7 +29,7 @@ public class CertificateServiceTest {
     TagRepository tagRepository;
 
     @Test
-    public void getAllCertificates(@Mock CertificateParamsDTO params) {
+    public void getAllCertificates(@Mock SearchParams params) {
         List<CertificateDTO> certs = List.of(
                 new CertificateDTO().setId(1).setName("Trip around the world"),
                 new CertificateDTO().setId(2).setName("Spa"),

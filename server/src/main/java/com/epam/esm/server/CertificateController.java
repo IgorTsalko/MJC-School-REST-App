@@ -1,7 +1,7 @@
 package com.epam.esm.server;
 
 import com.epam.esm.common.CertificateDTO;
-import com.epam.esm.common.CertificateParamsDTO;
+import com.epam.esm.common.SearchParams;
 import com.epam.esm.server.entity.CertificateRequest;
 import com.epam.esm.server.entity.CertificateResponse;
 import com.epam.esm.service.CertificateService;
@@ -26,13 +26,13 @@ public class CertificateController {
     }
 
     @GetMapping
-    public List<CertificateResponse> getCertificates(@Valid CertificateParamsDTO params) {
+    public List<CertificateResponse> getCertificates(@Valid SearchParams params) {
         return certificateService.getCertificates(params)
                 .stream().map(CertificateMapper::dtoToResponse).collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
-    public CertificateResponse getCertificate(@PathVariable @Positive(message = "{notPositive}") int id) {
+    public CertificateResponse getCertificate(@PathVariable @Positive int id) {
         return CertificateMapper.dtoToResponse(certificateService.getCertificate(id));
     }
 
@@ -44,13 +44,13 @@ public class CertificateController {
 
     @PutMapping("/{id}")
     public ResponseEntity<CertificateResponse> updateCertificate(
-            @PathVariable @Positive(message = "{notPositive}") int id, @RequestBody @Valid CertificateRequest request) {
+            @PathVariable @Positive int id, @RequestBody @Valid CertificateRequest request) {
         CertificateDTO certificateDTO = certificateService.updateCertificate(id, CertificateMapper.requestToDto(request));
         return ResponseEntity.ok(CertificateMapper.dtoToResponse(certificateDTO));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteCertificate(@PathVariable @Positive(message = "{notPositive}") int id) {
+    public ResponseEntity<Object> deleteCertificate(@PathVariable @Positive int id) {
         certificateService.deleteCertificate(id);
         return ResponseEntity.noContent().build();
     }
