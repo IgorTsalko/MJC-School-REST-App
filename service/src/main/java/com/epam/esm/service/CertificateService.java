@@ -39,11 +39,11 @@ public class CertificateService {
 
     @Transactional
     public CertificateDTO createNewCertificate(CertificateDTO certificate) {
-        certificate = certificateRepository.saveNewCertificate(certificate);
+        certificate = certificateRepository.createNewCertificate(certificate);
 
         List<TagDTO> tags = certificate.getTags();
         if (!CollectionUtils.isEmpty(tags)) {
-            tagRepository.saveTagsIfNonExist(tags);
+            tagRepository.createTagsIfNonExist(tags);
             tags = tagRepository.getTagsByName(tags);
             certificateRepository.addCertificateTagConnections(certificate.getId(), tags);
             certificate.setTags(tags);
@@ -62,7 +62,7 @@ public class CertificateService {
             if (tags.isEmpty()) {
                 certificate.setTags(null);
             } else {
-                tagRepository.saveTagsIfNonExist(tags);
+                tagRepository.createTagsIfNonExist(tags);
                 tags = tagRepository.getTagsByName(tags);
                 certificateRepository.addCertificateTagConnections(certificateId, tags);
                 certificate.setTags(tags);

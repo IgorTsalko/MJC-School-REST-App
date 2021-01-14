@@ -24,7 +24,7 @@ public class TagService {
     }
 
     public TagDTO createNewTag(TagDTO tag) {
-        return tagRepository.saveNewTag(tag);
+        return tagRepository.createNewTag(tag);
     }
 
     public void deleteTag(int id) {

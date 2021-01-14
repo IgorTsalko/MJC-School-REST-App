@@ -85,19 +85,19 @@ public class TagRepository {
         return namedParameterJdbcTemplate.query(RETRIEVE_TAGS, params, BeanPropertyRowMapper.newInstance(TagDTO.class));
     }
 
-    public TagDTO saveNewTag(TagDTO tag) {
+    public TagDTO createNewTag(TagDTO tag) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         namedParameterJdbcTemplate
                 .update(SAVE_NEW_TAG, new MapSqlParameterSource("name", tag.getName()), keyHolder);
         return tag.setId((Integer) keyHolder.getKeys().get("id"));
     }
 
-    public void saveNewTags(List<TagDTO> tags) {
+    public void createNewTags(List<TagDTO> tags) {
         SqlParameterSource[] params = SqlParameterSourceUtils.createBatch(tags);
         namedParameterJdbcTemplate.batchUpdate(SAVE_NEW_TAG, params);
     }
 
-    public void saveTagsIfNonExist(List<TagDTO> tags) {
+    public void createTagsIfNonExist(List<TagDTO> tags) {
         List<TagDTO> existingTags = getTagsByName(tags);
 
         List<TagDTO> nonexistentTags = tags.stream()
@@ -105,7 +105,7 @@ public class TagRepository {
                         .noneMatch(t -> t.getName().equals(exist.getName())))
                 .collect(Collectors.toList());
 
-        saveNewTags(nonexistentTags);
+        createNewTags(nonexistentTags);
     }
 
     public void deleteTag(int id) {

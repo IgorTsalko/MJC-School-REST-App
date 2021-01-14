@@ -16,6 +16,10 @@ public class DatabaseProperties {
     private String dbPassword;
     @Value("${db.max_pool_size}")
     private int maxPoolSize;
+    @Value("${db.connection_timeout}")
+    private int connectionTimeout;
+    @Value("${db.idle_timeout}")
+    private int idleTimeout;
 
     public String getDbDriver() {
         return dbDriver;
@@ -35,5 +39,13 @@ public class DatabaseProperties {
 
     public int getMaxPoolSize() {
         return maxPoolSize;
+    }
+
+    public int getConnectionTimeout() {
+        return connectionTimeout;
+    }
+
+    public int getIdleTimeout() {
+        return idleTimeout;
     }
 }

@@ -83,7 +83,7 @@ public class CertificateRepository {
                 .orElseThrow(() -> new EntityNotFoundException(ErrorDefinition.CERTIFICATE_NOT_FOUND, id));
     }
 
-    public CertificateDTO saveNewCertificate(CertificateDTO certificate) {
+    public CertificateDTO createNewCertificate(CertificateDTO certificate) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         certificate.setCreateDate(LocalDateTime.now());
         certificate.setLastUpdateDate(LocalDateTime.now());

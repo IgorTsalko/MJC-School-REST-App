@@ -5,6 +5,7 @@ import com.epam.esm.common.exception.GiftCertificateException;
 import com.epam.esm.server.entity.ExceptionResponse;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -36,27 +37,27 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         ErrorDefinition errorDefinition = ex.getErrorDefinition();
         ExceptionResponse exceptionResponse = new ExceptionResponse()
                 .setErrorCode(errorDefinition.getErrorCode())
-                .setDetails(List.of(
-                        String.format(messageSource.getMessage(errorDefinition.getErrorMessageTemplate(), null, locale),
-                        ex.getEntityId())
+                .setDetails(List.of(String.format(
+                                messageSource.getMessage(errorDefinition.getErrorMessageTemplate(), null, locale),
+                                ex.getEntityId())
                 ));
         return new ResponseEntity<>(exceptionResponse, errorDefinition.getHttpStatus());
     }
 
     @ExceptionHandler(DataAccessException.class)
-    protected ResponseEntity<Object> handleDataAccess(DataAccessException ex) {
+    protected ResponseEntity<Object> handleDataAccess(DataAccessException ex, Locale locale) {
         ExceptionResponse exceptionResponse = new ExceptionResponse()
                 .setErrorCode(40001)
-                .setDetails(List.of(ex.getMessage()));
+                .setDetails(List.of(messageSource.getMessage("database-exception", null, locale)));
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public final ResponseEntity<Object> handleConstraintViolation(ConstraintViolationException ex) {
+    protected ResponseEntity<Object> handleConstraintViolation(ConstraintViolationException ex) {
         List<String> details = ex.getConstraintViolations().stream()
                 .map(v -> String.format("%s '%s' %s", StreamSupport
-                                .stream(v.getPropertyPath().spliterator(), false)
-                                .reduce((first, second) -> second).orElse(null), v.getInvalidValue(), v.getMessage()))
+                        .stream(v.getPropertyPath().spliterator(), false)
+                        .reduce((first, second) -> second).orElse(null), v.getInvalidValue(), v.getMessage()))
                 .collect(Collectors.toList());
 
         ExceptionResponse exceptionResponse = new ExceptionResponse()
@@ -64,6 +65,15 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
                 .setDetails(details);
 
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(Throwable.class)
+    protected ResponseEntity<Object> handleThrowable(Throwable throwable, Locale locale) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse()
+                .setErrorCode(50001)
+                .setDetails(List.of(messageSource.getMessage("server-error", null, locale)));
+
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @Override
@@ -85,7 +95,11 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
             TypeMismatchException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         ExceptionResponse exceptionResponse = new ExceptionResponse()
                 .setErrorCode(40004)
-                .setDetails(List.of(ex.getMessage()));
+                .setDetails(List.of(String.format("%s %s", ex.getValue(), messageSource.getMessage(
+                        "request.incorrect-value",
+                        null,
+                        LocaleContextHolder.getLocale())))
+                );
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
 
@@ -93,7 +107,10 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     protected ResponseEntity<Object> handleBindException(
             BindException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         List<String> details = ex.getBindingResult().getFieldErrors().stream()
-                .map(c -> String.format("%s %s", c.getField(), c.getDefaultMessage()))
+                .map(c -> String.format(messageSource.getMessage(
+                        "request.incorrect-param",
+                        null,
+                        LocaleContextHolder.getLocale()), c.getRejectedValue(), c.getField()))
                 .collect(Collectors.toList());
 
         ExceptionResponse exceptionResponse = new ExceptionResponse()

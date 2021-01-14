@@ -11,7 +11,10 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @Configuration
 @Import(ServiceConfig.class)
 @ComponentScan("com.epam.esm")
-@PropertySource("classpath:application.properties")
+@PropertySource({
+        "classpath:application.properties",
+        "classpath:application-${spring.profiles.active}.properties"
+})
 @EnableWebMvc
 public class ServerConfig {
 

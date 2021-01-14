@@ -7,9 +7,9 @@ import java.util.Objects;
 
 public class TagRequest {
 
-    @Positive()
+    @Positive
     private Integer id;
-    @NotEmpty()
+    @NotEmpty
     @Size(min = 2, max = 50)
     private String name;
 
