@@ -15,8 +15,9 @@ subprojects {
         postgresqlVersion = '42.2.18'
         hikariVersion = '3.4.5'
         javaxValidationVersion = '2.0.1.Final'
-        hibernateValidatorVersion = '7.0.0.Final'
+        hibernateValidatorVersion = '6.2.0.Final'
         junitVersion = '5.7.0'
+        h2_dbVersion = '1.4.200'
     }
 
     dependencies {

@@ -1,5 +1,6 @@
 package com.epam.esm.server.entity;
 
+import javax.validation.Valid;
 import javax.validation.constraints.*;
 import java.math.BigDecimal;
 import java.util.List;
@@ -7,16 +8,19 @@ import java.util.Objects;
 
 public class CertificateRequest {
 
+    @Positive
     private Integer id;
     @NotEmpty
     @Size(min = 2, max = 50)
     private String name;
+    @Size(min = 3, max = 250)
     private String description;
     @DecimalMin("1.00")
     private BigDecimal price;
     @Positive
     private Integer duration;
 
+    @Valid
     private List<TagRequest> tags;
 
     public Integer getId() {

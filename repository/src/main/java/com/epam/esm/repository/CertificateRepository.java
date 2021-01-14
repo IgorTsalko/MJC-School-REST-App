@@ -1,6 +1,8 @@
 package com.epam.esm.repository;
 
 import com.epam.esm.common.CertificateDTO;
+import com.epam.esm.common.CertificateParamsDTO;
+import com.epam.esm.common.ErrorDefinition;
 import com.epam.esm.common.TagDTO;
 import com.epam.esm.common.exception.EntityNotFoundException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -20,7 +22,12 @@ import java.util.stream.Collectors;
 @Repository
 public class CertificateRepository {
 
-    private static final String RETRIEVE_ALL_CERTIFICATES = "SELECT * FROM gift_certificate";
+    private static final String RETRIEVE_CERTIFICATES =
+            "SELECT gift_certificate_id AS id, cert.name, description, price, duration, create_date, last_update_date" +
+                    " FROM gift_certificate cert JOIN gift_certificate_tag gct ON cert.id = gct.gift_certificate_id " +
+                    "JOIN tag ON gct.tag_id = tag.id";
+    private static final String CERTIFICATE_GROUP_BY
+            = " GROUP BY gift_certificate_id, cert.name, description, price, duration, create_date, last_update_date";
     private static final String RETRIEVE_CERTIFICATE_BY_ID = "SELECT * FROM gift_certificate WHERE id=?";
     private static final String SAVE_NEW_CERTIFICATE =
             "INSERT INTO gift_certificate(name, description, price, duration, create_date, last_update_date) " +
@@ -39,13 +46,39 @@ public class CertificateRepository {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
 
-    public List<CertificateDTO> getAllCertificates() {
-        return jdbcTemplate.query(RETRIEVE_ALL_CERTIFICATES, BeanPropertyRowMapper.newInstance(CertificateDTO.class));
+    public List<CertificateDTO> getCertificates(CertificateParamsDTO params) {
+        StringBuilder retrieveCertificatesSql = new StringBuilder(RETRIEVE_CERTIFICATES);
+
+        if (params.getName() != null || params.getTag() != null) {
+            retrieveCertificatesSql.append(" WHERE");
+            if (params.getName() != null) {
+                retrieveCertificatesSql.append(" cert.name ~* '").append(params.getName()).append("' AND");
+            }
+            if (params.getTag() != null) {
+                retrieveCertificatesSql.append(" tag.name='").append(params.getTag()).append("'");
+            }
+            retrieveCertificatesSql
+                    .delete(retrieveCertificatesSql.lastIndexOf("' AND"), retrieveCertificatesSql.length());
+        }
+
+        retrieveCertificatesSql.append(CERTIFICATE_GROUP_BY);
+
+        if (params.getSort() != null) {
+            retrieveCertificatesSql
+                    .append(" ORDER BY ").append(params.getSort());
+            if (params.getSort_order() != null) {
+                retrieveCertificatesSql.append(" ").append(params.getSort_order());
+            }
+        }
+
+        return jdbcTemplate
+                .query(retrieveCertificatesSql.toString(), BeanPropertyRowMapper.newInstance(CertificateDTO.class));
     }
 
     public CertificateDTO getCertificate(int id) {
         return jdbcTemplate.query(RETRIEVE_CERTIFICATE_BY_ID, BeanPropertyRowMapper.newInstance(CertificateDTO.class), id)
-                .stream().findAny().orElseThrow(() -> new EntityNotFoundException(CertificateDTO.class, id));
+                .stream().findAny()
+                .orElseThrow(() -> new EntityNotFoundException(ErrorDefinition.CERTIFICATE_NOT_FOUND, id));
     }
 
     public CertificateDTO saveNewCertificate(CertificateDTO certificate) {
@@ -90,7 +123,7 @@ public class CertificateRepository {
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         if (namedParameterJdbcTemplate.update(updateCertificateSql.toString(), params, keyHolder) == 0) {
-            throw new EntityNotFoundException(CertificateDTO.class, certificateId);
+            throw new EntityNotFoundException(ErrorDefinition.CERTIFICATE_NOT_FOUND, certificateId);
         }
 
         return certificate
@@ -105,7 +138,7 @@ public class CertificateRepository {
 
     public void deleteCertificate(int id) {
         if (jdbcTemplate.update(DELETE_CERTIFICATE, id) == 0) {
-            throw new EntityNotFoundException(CertificateDTO.class, id);
+            throw new EntityNotFoundException(ErrorDefinition.CERTIFICATE_NOT_FOUND, id);
         }
     }
 

@@ -3,7 +3,7 @@ package com.epam.esm.server.entity;
 public class ExceptionResponse {
 
     private int errorCode;
-    private String errorMessage;
+    private String[] details;
 
     public int getErrorCode() {
         return errorCode;
@@ -14,12 +14,12 @@ public class ExceptionResponse {
         return this;
     }
 
-    public String getErrorMessage() {
-        return errorMessage;
+    public String[] getDetails() {
+        return details;
     }
 
-    public ExceptionResponse setErrorMessage(String errorMessage) {
-        this.errorMessage = errorMessage;
+    public ExceptionResponse setDetails(String... details) {
+        this.details = details;
         return this;
     }
 }
