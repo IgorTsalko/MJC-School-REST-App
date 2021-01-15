@@ -1,7 +1,7 @@
 package com.epam.esm.repository.config;
 
-import com.epam.esm.repository.CertificateRepository;
-import com.epam.esm.repository.TagRepository;
+import com.epam.esm.repository.impl.CertificateRepositoryImpl;
+import com.epam.esm.repository.impl.TagRepositoryImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -41,13 +41,13 @@ public class RepositoryConfigTest {
     }
 
     @Bean
-    public CertificateRepository certificateRepository(
+    public CertificateRepositoryImpl certificateRepository(
             NamedParameterJdbcTemplate namedParameterJdbcTemplate, JdbcTemplate jdbcTemplate) {
-        return new CertificateRepository(jdbcTemplate, namedParameterJdbcTemplate);
+        return new CertificateRepositoryImpl(jdbcTemplate, namedParameterJdbcTemplate);
     }
 
     @Bean
-    public TagRepository tagRepository(NamedParameterJdbcTemplate namedParameterJdbcTemplate, JdbcTemplate jdbcTemplate) {
-        return new TagRepository(jdbcTemplate, namedParameterJdbcTemplate);
+    public TagRepositoryImpl tagRepository(NamedParameterJdbcTemplate namedParameterJdbcTemplate, JdbcTemplate jdbcTemplate) {
+        return new TagRepositoryImpl(jdbcTemplate, namedParameterJdbcTemplate);
     }
 }
