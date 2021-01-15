@@ -1,33 +1,16 @@
 package com.epam.esm.service;
 
 import com.epam.esm.common.TagDTO;
-import com.epam.esm.repository.TagRepository;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
-public class TagService {
+public interface TagService {
 
-    private final TagRepository tagRepository;
+    List<TagDTO> getAllTags();
 
-    public TagService(TagRepository tagRepository) {
-        this.tagRepository = tagRepository;
-    }
+    TagDTO getTag(int id);
 
-    public List<TagDTO> getAllTags() {
-        return tagRepository.getAllTags();
-    }
+    TagDTO createNewTag(TagDTO tag);
 
-    public TagDTO getTag(int id) {
-        return tagRepository.getTag(id);
-    }
-
-    public TagDTO createNewTag(TagDTO tag) {
-        return tagRepository.createNewTag(tag);
-    }
-
-    public void deleteTag(int id) {
-        tagRepository.deleteTag(id);
-    }
+    void deleteTag(int id);
 }

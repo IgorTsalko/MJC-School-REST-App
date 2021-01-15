@@ -11,7 +11,7 @@ public class SearchParams {
     private String description;
     @Size(min = 2, max = 50)
     private String tag;
-    @Size(min = 3, max = 20)
+    @Size(min = 2, max = 20)
     private String sort;
     private SortOrder sort_order;
 

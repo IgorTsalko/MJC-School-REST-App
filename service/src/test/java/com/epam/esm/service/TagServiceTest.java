@@ -4,7 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import com.epam.esm.common.TagDTO;
-import com.epam.esm.repository.TagRepository;
+import com.epam.esm.repository.impl.TagRepositoryImpl;
+import com.epam.esm.service.impl.TagServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,9 +18,9 @@ import java.util.List;
 public class TagServiceTest {
 
     @InjectMocks
-    TagService tagService;
+    TagServiceImpl tagService;
     @Mock
-    TagRepository tagRepository;
+    TagRepositoryImpl tagRepository;
 
     @Test
     public void getAllTags() {

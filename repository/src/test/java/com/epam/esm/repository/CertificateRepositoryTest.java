@@ -7,6 +7,8 @@ import com.epam.esm.common.SearchParams;
 import com.epam.esm.common.TagDTO;
 import com.epam.esm.common.exception.EntityNotFoundException;
 import com.epam.esm.repository.config.RepositoryConfigTest;
+import com.epam.esm.repository.impl.CertificateRepositoryImpl;
+import com.epam.esm.repository.impl.TagRepositoryImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -29,19 +31,36 @@ public class CertificateRepositoryTest {
     static LocalDateTime t = LocalDateTime.parse("2021-01-13T18:27:45.610874");
 
     @Autowired
-    CertificateRepository certificateRepository;
+    CertificateRepositoryImpl certificateRepository;
     @Autowired
-    TagRepository tagRepository;
+    TagRepositoryImpl tagRepository;
 
     @Test
-    public void getAllCertificates(@Mock SearchParams prams) {
+    public void getAllCertificatesWithEmptyParams(@Mock SearchParams params) {
         List<CertificateDTO> expCerts = List.of(
                 new CertificateDTO().setId(1).setName("Trip").setDescription("Incredible journey. 25 countries. 4 weeks")
                         .setPrice(BigDecimal.valueOf(5600.0)).setDuration(60).setCreateDate(t).setLastUpdateDate(t),
                 new CertificateDTO().setId(2).setName("Skydiving").setPrice(BigDecimal.valueOf(250.0)).setDuration(30)
                         .setCreateDate(t).setLastUpdateDate(t)
         );
-        List<CertificateDTO> realCerts = certificateRepository.getCertificates(prams);
+        List<CertificateDTO> realCerts = certificateRepository.getCertificates(params);
+
+        assertEquals(expCerts, realCerts);
+    }
+
+    @Test
+    public void getAllCertificatesWithParams() {
+        SearchParams params = new SearchParams();
+        params.setName("sky");
+        params.setSort("id");
+        params.setSort_order(SearchParams.SortOrder.DESC);
+
+        List<CertificateDTO> expCerts = List.of(
+                new CertificateDTO().setId(2).setName("Skydiving").setPrice(BigDecimal.valueOf(250.0)).setDuration(30)
+                        .setCreateDate(t).setLastUpdateDate(t)
+        );
+
+        List<CertificateDTO> realCerts = certificateRepository.getCertificates(params);
 
         assertEquals(expCerts, realCerts);
     }
@@ -53,6 +72,11 @@ public class CertificateRepositoryTest {
         CertificateDTO realCert = certificateRepository.getCertificate(2);
 
         assertEquals(expCert, realCert);
+    }
+
+    @Test
+    public void getCertificateByNotExistentId() {
+        assertThrows(EntityNotFoundException.class, () -> certificateRepository.getCertificate(10));
     }
 
     @Test
@@ -99,7 +123,7 @@ public class CertificateRepositoryTest {
     }
 
     @Test
-    public void updateCertificateIfNonExist() {
+    public void updateCertificateByNotExistentId() {
         assertThrows(EntityNotFoundException.class,
                 () -> certificateRepository.updateCertificate(10, new CertificateDTO()));
     }
@@ -110,7 +134,7 @@ public class CertificateRepositoryTest {
     }
 
     @Test
-    public void deleteCertificateIfNonExist() {
+    public void deleteCertificateByNotExistentId() {
         assertThrows(EntityNotFoundException.class, () -> certificateRepository.deleteCertificate(10));
     }
 
