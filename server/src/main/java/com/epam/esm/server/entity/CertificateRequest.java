@@ -9,7 +9,7 @@ import java.util.Objects;
 public class CertificateRequest {
 
     @Positive
-    private Integer id;
+    private Long id;
     @NotEmpty
     @Size(min = 2, max = 50)
     private String name;
@@ -23,11 +23,11 @@ public class CertificateRequest {
     @Valid
     private List<TagRequest> tags;
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

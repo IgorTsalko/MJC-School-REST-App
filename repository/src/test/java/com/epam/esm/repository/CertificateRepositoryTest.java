@@ -2,9 +2,9 @@ package com.epam.esm.repository;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.epam.esm.common.CertificateDTO;
+import com.epam.esm.common.Certificate;
 import com.epam.esm.common.SearchParams;
-import com.epam.esm.common.TagDTO;
+import com.epam.esm.common.Tag;
 import com.epam.esm.common.exception.EntityNotFoundException;
 import com.epam.esm.repository.config.RepositoryConfigTest;
 import com.epam.esm.repository.impl.CertificateRepositoryImpl;
@@ -37,13 +37,13 @@ public class CertificateRepositoryTest {
 
     @Test
     public void getAllCertificatesWithEmptyParams(@Mock SearchParams params) {
-        List<CertificateDTO> expCerts = List.of(
-                new CertificateDTO().setId(1).setName("Trip").setDescription("Incredible journey. 25 countries. 4 weeks")
+        List<Certificate> expCerts = List.of(
+                new Certificate().setId(1L).setName("Trip").setDescription("Incredible journey. 25 countries. 4 weeks")
                         .setPrice(BigDecimal.valueOf(5600.0)).setDuration(60).setCreateDate(t).setLastUpdateDate(t),
-                new CertificateDTO().setId(2).setName("Skydiving").setPrice(BigDecimal.valueOf(250.0)).setDuration(30)
+                new Certificate().setId(2L).setName("Skydiving").setPrice(BigDecimal.valueOf(250.0)).setDuration(30)
                         .setCreateDate(t).setLastUpdateDate(t)
         );
-        List<CertificateDTO> realCerts = certificateRepository.getCertificates(params);
+        List<Certificate> realCerts = certificateRepository.getCertificates(params);
 
         assertEquals(expCerts, realCerts);
     }
@@ -55,44 +55,44 @@ public class CertificateRepositoryTest {
         params.setSort("id");
         params.setSort_order(SearchParams.SortOrder.DESC);
 
-        List<CertificateDTO> expCerts = List.of(
-                new CertificateDTO().setId(2).setName("Skydiving").setPrice(BigDecimal.valueOf(250.0)).setDuration(30)
+        List<Certificate> expCerts = List.of(
+                new Certificate().setId(2L).setName("Skydiving").setPrice(BigDecimal.valueOf(250.0)).setDuration(30)
                         .setCreateDate(t).setLastUpdateDate(t)
         );
 
-        List<CertificateDTO> realCerts = certificateRepository.getCertificates(params);
+        List<Certificate> realCerts = certificateRepository.getCertificates(params);
 
         assertEquals(expCerts, realCerts);
     }
 
     @Test
     public void getCertificateById() {
-        CertificateDTO expCert = new CertificateDTO().setId(2).setName("Skydiving").setPrice(BigDecimal.valueOf(250.0))
+        Certificate expCert = new Certificate().setId(2L).setName("Skydiving").setPrice(BigDecimal.valueOf(250.0))
                 .setDuration(30).setCreateDate(t).setLastUpdateDate(t);
-        CertificateDTO realCert = certificateRepository.getCertificate(2);
+        Certificate realCert = certificateRepository.getCertificate(2L);
 
         assertEquals(expCert, realCert);
     }
 
     @Test
     public void getCertificateByNotExistentId() {
-        assertThrows(EntityNotFoundException.class, () -> certificateRepository.getCertificate(10));
+        assertThrows(EntityNotFoundException.class, () -> certificateRepository.getCertificate(10L));
     }
 
     @Test
     public void createNewCertificate() {
-        CertificateDTO expCert = new CertificateDTO()
-                .setId(3)
+        Certificate expCert = new Certificate()
+                .setId(3L)
                 .setName("NewCertificate")
                 .setPrice(BigDecimal.valueOf(178.0))
                 .setDuration(14);
 
-        CertificateDTO cert = new CertificateDTO()
+        Certificate cert = new Certificate()
                 .setName("NewCertificate")
                 .setPrice(BigDecimal.valueOf(178.0))
                 .setDuration(14);
 
-        CertificateDTO actualCert = certificateRepository.createNewCertificate(cert);
+        Certificate actualCert = certificateRepository.createNewCertificate(cert);
         expCert.setCreateDate(actualCert.getCreateDate());
         expCert.setLastUpdateDate(actualCert.getLastUpdateDate());
 
@@ -101,21 +101,21 @@ public class CertificateRepositoryTest {
 
     @Test
     public void updateCertificate() {
-        CertificateDTO expCert = new CertificateDTO()
-                .setId(2)
+        Certificate expCert = new Certificate()
+                .setId(2L)
                 .setName("Skydiving-2")
                 .setDescription("New cool description")
                 .setPrice(BigDecimal.valueOf(357.0))
                 .setDuration(14);
 
-        CertificateDTO cert = new CertificateDTO()
+        Certificate cert = new Certificate()
                 .setName("Skydiving-2")
                 .setDescription("New cool description")
                 .setPrice(BigDecimal.valueOf(357.0))
                 .setDuration(14);
 
-        certificateRepository.updateCertificate(2, cert);
-        CertificateDTO actualCert = certificateRepository.getCertificate(2);
+        certificateRepository.updateCertificate(2L, cert);
+        Certificate actualCert = certificateRepository.getCertificate(2L);
         expCert.setCreateDate(actualCert.getCreateDate());
         expCert.setLastUpdateDate(actualCert.getLastUpdateDate());
 
@@ -125,38 +125,38 @@ public class CertificateRepositoryTest {
     @Test
     public void updateCertificateByNotExistentId() {
         assertThrows(EntityNotFoundException.class,
-                () -> certificateRepository.updateCertificate(10, new CertificateDTO()));
+                () -> certificateRepository.updateCertificate(10L, new Certificate()));
     }
 
     @Test
     public void deleteCertificate() {
-        assertDoesNotThrow(() -> certificateRepository.deleteCertificate(1));
+        assertDoesNotThrow(() -> certificateRepository.deleteCertificate(1L));
     }
 
     @Test
     public void deleteCertificateByNotExistentId() {
-        assertThrows(EntityNotFoundException.class, () -> certificateRepository.deleteCertificate(10));
+        assertThrows(EntityNotFoundException.class, () -> certificateRepository.deleteCertificate(10L));
     }
 
     @Test
     public void addCertificateTagConnections() {
-        List<TagDTO> expTags = List.of(
-                new TagDTO().setId(1).setName("incredible"),
-                new TagDTO().setId(2).setName("travel")
+        List<Tag> expTags = List.of(
+                new Tag().setId(1L).setName("incredible"),
+                new Tag().setId(2L).setName("travel")
         );
-        List<TagDTO> tags = List.of(
-                new TagDTO().setId(2).setName("travel")
+        List<Tag> tags = List.of(
+                new Tag().setId(2L).setName("travel")
         );
-        certificateRepository.addCertificateTagConnections(1, tags);
-        List<TagDTO> actualTags = tagRepository.getCertificateTags(1);
+        certificateRepository.addCertificateTagConnections(1L, tags);
+        List<Tag> actualTags = tagRepository.getCertificateTags(1L);
         assertEquals(expTags, actualTags);
     }
 
     @Test
     public void deleteCertificateTagConnections() {
-        certificateRepository.deleteCertificateTagConnections(2);
-        List<TagDTO> expTags = new ArrayList<>();
-        List<TagDTO> actualTags = tagRepository.getCertificateTags(2);
+        certificateRepository.deleteCertificateTagConnections(2L);
+        List<Tag> expTags = new ArrayList<>();
+        List<Tag> actualTags = tagRepository.getCertificateTags(2L);
         assertEquals(expTags, actualTags);
     }
 }

@@ -2,8 +2,8 @@ package com.epam.esm.repository;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.epam.esm.common.CertificateDTO;
-import com.epam.esm.common.TagDTO;
+import com.epam.esm.common.Certificate;
+import com.epam.esm.common.Tag;
 import com.epam.esm.common.exception.EntityNotFoundException;
 import com.epam.esm.repository.config.RepositoryConfigTest;
 import com.epam.esm.repository.impl.TagRepositoryImpl;
@@ -28,115 +28,115 @@ public class TagRepositoryTest {
 
     @Test
     public void getAllTags() {
-        List<TagDTO> expTags = getMockTags();
-        List<TagDTO> actualTags = tagRepository.getAllTags();
+        List<Tag> expTags = getMockTags();
+        List<Tag> actualTags = tagRepository.getAllTags();
         assertEquals(expTags, actualTags);
     }
 
     @Test
     public void getTagById() {
-        TagDTO expTag = new TagDTO().setId(2).setName("travel");
-        TagDTO actualTag = tagRepository.getTag(2);
+        Tag expTag = new Tag().setId(2L).setName("travel");
+        Tag actualTag = tagRepository.getTag(2L);
         assertEquals(expTag, actualTag);
     }
 
     @Test
     public void getTagByNotExistentId() {
-        assertThrows(EntityNotFoundException.class, () -> tagRepository.getTag(10));
+        assertThrows(EntityNotFoundException.class, () -> tagRepository.getTag(10L));
     }
 
     @Test
     public void getCertificateTagsByListCertificatesIds() {
-        Map<Integer, List<TagDTO>> expCertTags = Map.of(
-                1, List.of(new TagDTO().setId(1).setName("incredible")),
-                2, List.of(new TagDTO().setId(1).setName("incredible"), new TagDTO().setId(2).setName("travel"))
+        Map<Long, List<Tag>> expCertTags = Map.of(
+                1L, List.of(new Tag().setId(1L).setName("incredible")),
+                2L, List.of(new Tag().setId(1L).setName("incredible"), new Tag().setId(2L).setName("travel"))
         );
-        List<CertificateDTO> certs = List.of(
-                new CertificateDTO().setId(1).setName("Trip"),
-                new CertificateDTO().setId(2).setName("Skydiving")
+        List<Certificate> certs = List.of(
+                new Certificate().setId(1L).setName("Trip"),
+                new Certificate().setId(2L).setName("Skydiving")
         );
-        Map<Integer, List<TagDTO>> actualCertTags = tagRepository.getCertificatesTags(certs);
+        Map<Long, List<Tag>> actualCertTags = tagRepository.getCertificatesTags(certs);
         assertEquals(expCertTags, actualCertTags);
     }
 
     @Test
     public void getCertificateTagsByCertificateId() {
-        List<TagDTO> expTags = getMockTags();
-        List<TagDTO> actualTags = tagRepository.getCertificateTags(2);
+        List<Tag> expTags = getMockTags();
+        List<Tag> actualTags = tagRepository.getCertificateTags(2L);
         assertEquals(expTags, actualTags);
     }
 
     @Test
     public void getTagsByName() {
-        List<TagDTO> expTags = getMockTags();
-        List<TagDTO> tags = List.of(
-                new TagDTO().setName("incredible"),
-                new TagDTO().setName("travel")
+        List<Tag> expTags = getMockTags();
+        List<Tag> tags = List.of(
+                new Tag().setName("incredible"),
+                new Tag().setName("travel")
         );
-        List<TagDTO> actualTags = tagRepository.getTagsByName(tags);
+        List<Tag> actualTags = tagRepository.getTagsByName(tags);
         assertEquals(expTags, actualTags);
     }
 
     @Test
     public void createNewTag() {
-        TagDTO expTag = new TagDTO().setId(3).setName("NewTag");
-        TagDTO newTag = new TagDTO().setName("NewTag");
-        TagDTO actualTag = tagRepository.createNewTag(newTag);
+        Tag expTag = new Tag().setId(3L).setName("NewTag");
+        Tag newTag = new Tag().setName("NewTag");
+        Tag actualTag = tagRepository.createNewTag(newTag);
         assertEquals(expTag, actualTag);
     }
 
     @Test
     public void createNewTags() {
-        List<TagDTO> expTags = List.of(
-                new TagDTO().setId(3).setName("someNewTag1"),
-                new TagDTO().setId(4).setName("someNewTag2")
+        List<Tag> expTags = List.of(
+                new Tag().setId(3L).setName("someNewTag1"),
+                new Tag().setId(4L).setName("someNewTag2")
         );
-        List<TagDTO> tags = List.of(
-                new TagDTO().setName("someNewTag1"),
-                new TagDTO().setName("someNewTag2")
+        List<Tag> tags = List.of(
+                new Tag().setName("someNewTag1"),
+                new Tag().setName("someNewTag2")
         );
         tagRepository.createNewTags(tags);
-        List<TagDTO> actualTags = tagRepository.getTagsByName(tags);
+        List<Tag> actualTags = tagRepository.getTagsByName(tags);
         assertEquals(expTags, actualTags);
     }
 
     @Test
     public void createTagsIfNonExist() {
-        List<TagDTO> expTags = List.of(
-                new TagDTO().setId(1).setName("incredible"),
-                new TagDTO().setId(2).setName("travel"),
-                new TagDTO().setId(3).setName("someNewTag1"),
-                new TagDTO().setId(4).setName("someNewTag2")
+        List<Tag> expTags = List.of(
+                new Tag().setId(1L).setName("incredible"),
+                new Tag().setId(2L).setName("travel"),
+                new Tag().setId(3L).setName("someNewTag1"),
+                new Tag().setId(4L).setName("someNewTag2")
         );
-        List<TagDTO> tags = List.of(
-                new TagDTO().setName("incredible"),
-                new TagDTO().setName("someNewTag1"),
-                new TagDTO().setName("someNewTag2")
+        List<Tag> tags = List.of(
+                new Tag().setName("incredible"),
+                new Tag().setName("someNewTag1"),
+                new Tag().setName("someNewTag2")
         );
         tagRepository.createTagsIfNonExist(tags);
-        List<TagDTO> actualTags = tagRepository.getAllTags();
+        List<Tag> actualTags = tagRepository.getAllTags();
         assertEquals(expTags, actualTags);
     }
 
     @Test
     public void deleteTag() {
-        List<TagDTO> expTags = List.of(
-                new TagDTO().setId(2).setName("travel")
+        List<Tag> expTags = List.of(
+                new Tag().setId(2L).setName("travel")
         );
-        tagRepository.deleteTag(1);
-        List<TagDTO> actualTags = tagRepository.getAllTags();
+        tagRepository.deleteTag(1L);
+        List<Tag> actualTags = tagRepository.getAllTags();
         assertEquals(expTags, actualTags);
     }
 
     @Test
     public void deleteTagByNotExistentId() {
-        assertThrows(EntityNotFoundException.class, () -> tagRepository.deleteTag(10));
+        assertThrows(EntityNotFoundException.class, () -> tagRepository.deleteTag(10L));
     }
 
-    private List<TagDTO> getMockTags() {
+    private List<Tag> getMockTags() {
         return List.of(
-                new TagDTO().setId(1).setName("incredible"),
-                new TagDTO().setId(2).setName("travel")
+                new Tag().setId(1L).setName("incredible"),
+                new Tag().setId(2L).setName("travel")
         );
     }
 }

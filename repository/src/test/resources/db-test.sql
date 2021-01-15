@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS gift_certificate_tag, gift_certificate, tag;
 
 CREATE TABLE gift_certificate (
-	id INTEGER AUTO_INCREMENT PRIMARY KEY,
+	id LONG AUTO_INCREMENT PRIMARY KEY,
 	name VARCHAR(50) NOT NULL UNIQUE,
 	description TEXT,
 	price NUMERIC(10, 1) NOT NULL,
@@ -11,7 +11,7 @@ CREATE TABLE gift_certificate (
 );
 
 CREATE TABLE tag (
-	id INTEGER AUTO_INCREMENT PRIMARY KEY,
+	id LONG AUTO_INCREMENT PRIMARY KEY,
 	name VARCHAR(50) NOT NULL UNIQUE
 );
 

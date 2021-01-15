@@ -1,9 +1,9 @@
 package com.epam.esm.repository.impl;
 
-import com.epam.esm.common.CertificateDTO;
+import com.epam.esm.common.Certificate;
 import com.epam.esm.common.SearchParams;
 import com.epam.esm.common.ErrorDefinition;
-import com.epam.esm.common.TagDTO;
+import com.epam.esm.common.Tag;
 import com.epam.esm.common.exception.EntityNotFoundException;
 import com.epam.esm.repository.CertificateRepository;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -47,7 +47,7 @@ public class CertificateRepositoryImpl implements CertificateRepository {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
 
-    public List<CertificateDTO> getCertificates(SearchParams params) {
+    public List<Certificate> getCertificates(SearchParams params) {
         StringBuilder retrieveCertificatesSql = new StringBuilder(RETRIEVE_CERTIFICATES);
 
         if (params.getName() != null || params.getDescription() != null || params.getTag() != null) {
@@ -75,16 +75,16 @@ public class CertificateRepositoryImpl implements CertificateRepository {
         }
 
         return jdbcTemplate
-                .query(retrieveCertificatesSql.toString(), BeanPropertyRowMapper.newInstance(CertificateDTO.class));
+                .query(retrieveCertificatesSql.toString(), BeanPropertyRowMapper.newInstance(Certificate.class));
     }
 
-    public CertificateDTO getCertificate(int id) {
-        return jdbcTemplate.query(RETRIEVE_CERTIFICATE_BY_ID, BeanPropertyRowMapper.newInstance(CertificateDTO.class), id)
+    public Certificate getCertificate(Long id) {
+        return jdbcTemplate.query(RETRIEVE_CERTIFICATE_BY_ID, BeanPropertyRowMapper.newInstance(Certificate.class), id)
                 .stream().findAny()
                 .orElseThrow(() -> new EntityNotFoundException(ErrorDefinition.CERTIFICATE_NOT_FOUND, id));
     }
 
-    public CertificateDTO createNewCertificate(CertificateDTO certificate) {
+    public Certificate createNewCertificate(Certificate certificate) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         certificate.setCreateDate(LocalDateTime.now());
         certificate.setLastUpdateDate(LocalDateTime.now());
@@ -98,10 +98,10 @@ public class CertificateRepositoryImpl implements CertificateRepository {
 
         namedParameterJdbcTemplate.update(SAVE_NEW_CERTIFICATE, params, keyHolder);
 
-        return certificate.setId((Integer) keyHolder.getKeys().get("id"));
+        return certificate.setId((Long) keyHolder.getKeys().get("id"));
     }
 
-    public CertificateDTO updateCertificate(int certificateId, CertificateDTO certificate) {
+    public Certificate updateCertificate(Long certificateId, Certificate certificate) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         StringBuilder updateCertificateSql = new StringBuilder(UPDATE_CERTIFICATE);
         if (certificate.getName() != null) {
@@ -139,19 +139,19 @@ public class CertificateRepositoryImpl implements CertificateRepository {
                 .setLastUpdateDate(now);
     }
 
-    public void deleteCertificate(int id) {
+    public void deleteCertificate(Long id) {
         if (jdbcTemplate.update(DELETE_CERTIFICATE, id) == 0) {
             throw new EntityNotFoundException(ErrorDefinition.CERTIFICATE_NOT_FOUND, id);
         }
     }
 
-    public void addCertificateTagConnections(int certificateId, List<TagDTO> tags) {
+    public void addCertificateTagConnections(Long certificateId, List<Tag> tags) {
         List<Object[]> params = tags.stream().map(tag -> new Object[]{certificateId, tag.getId()})
                 .collect(Collectors.toList());
         jdbcTemplate.batchUpdate(ADD_CERTIFICATE_TAG_CONNECTIONS, params);
     }
 
-    public void deleteCertificateTagConnections(int certificateId) {
+    public void deleteCertificateTagConnections(Long certificateId) {
         jdbcTemplate.update(DELETE_CERTIFICATE_TAG_CONNECTIONS, certificateId);
     }
 }

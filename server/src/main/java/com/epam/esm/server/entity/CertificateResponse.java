@@ -9,7 +9,7 @@ import java.util.Objects;
 
 public class CertificateResponse {
 
-    private Integer id;
+    private Long id;
     private String name;
     private String description;
     private BigDecimal price;
@@ -23,11 +23,11 @@ public class CertificateResponse {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime lastUpdateDate = LocalDateTime.now();
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public CertificateResponse setId(Integer id) {
+    public CertificateResponse setId(Long id) {
         this.id = id;
         return this;
     }

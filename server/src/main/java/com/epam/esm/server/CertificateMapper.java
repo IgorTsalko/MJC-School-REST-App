@@ -1,7 +1,7 @@
 package com.epam.esm.server;
 
-import com.epam.esm.common.CertificateDTO;
-import com.epam.esm.common.TagDTO;
+import com.epam.esm.common.Certificate;
+import com.epam.esm.common.Tag;
 import com.epam.esm.server.entity.CertificateRequest;
 import com.epam.esm.server.entity.CertificateResponse;
 import com.epam.esm.server.entity.TagRequest;
@@ -12,20 +12,20 @@ import java.util.List;
 
 public class CertificateMapper {
 
-    public static CertificateResponse dtoToResponse(CertificateDTO certificateDTO) {
+    public static CertificateResponse convertToResponse(Certificate certificate) {
         CertificateResponse certificateResponse = new CertificateResponse()
-                .setId(certificateDTO.getId())
-                .setName(certificateDTO.getName())
-                .setDescription(certificateDTO.getDescription())
-                .setPrice(certificateDTO.getPrice())
-                .setDuration(certificateDTO.getDuration())
-                .setCreateDate(certificateDTO.getCreateDate())
-                .setLastUpdateDate(certificateDTO.getLastUpdateDate());
+                .setId(certificate.getId())
+                .setName(certificate.getName())
+                .setDescription(certificate.getDescription())
+                .setPrice(certificate.getPrice())
+                .setDuration(certificate.getDuration())
+                .setCreateDate(certificate.getCreateDate())
+                .setLastUpdateDate(certificate.getLastUpdateDate());
 
-        if (certificateDTO.getTags() != null) {
+        if (certificate.getTags() != null) {
             List<TagResponse> tagResponses = new ArrayList<>();
-            for (TagDTO tagDTO : certificateDTO.getTags()) {
-                tagResponses.add(TagMapper.dtoToResponse(tagDTO));
+            for (Tag tag : certificate.getTags()) {
+                tagResponses.add(TagMapper.convertToResponse(tag));
             }
             certificateResponse.setTags(tagResponses);
         }
@@ -33,23 +33,22 @@ public class CertificateMapper {
         return certificateResponse;
     }
 
-    public static CertificateDTO requestToDto(CertificateRequest certificateRequest) {
-        CertificateDTO certificateDTO = new CertificateDTO()
+    public static Certificate convertToEntity(CertificateRequest certificateRequest) {
+        Certificate certificate = new Certificate()
                 .setId(certificateRequest.getId())
                 .setName(certificateRequest.getName())
                 .setDescription(certificateRequest.getDescription())
                 .setPrice(certificateRequest.getPrice())
                 .setDuration(certificateRequest.getDuration());
 
-
         if (certificateRequest.getTags() != null) {
-            List<TagDTO> tagDTOList = new ArrayList<>();
+            List<Tag> tags = new ArrayList<>();
             for (TagRequest tagRequest : certificateRequest.getTags()) {
-                tagDTOList.add(TagMapper.requestToDto(tagRequest));
+                tags.add(TagMapper.convertToEntity(tagRequest));
             }
-            certificateDTO.setTags(tagDTOList);
+            certificate.setTags(tags);
         }
 
-        return certificateDTO;
+        return certificate;
     }
 }

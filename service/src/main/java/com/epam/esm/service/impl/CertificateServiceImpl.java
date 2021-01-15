@@ -1,8 +1,8 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.common.CertificateDTO;
+import com.epam.esm.common.Certificate;
 import com.epam.esm.common.SearchParams;
-import com.epam.esm.common.TagDTO;
+import com.epam.esm.common.Tag;
 import com.epam.esm.repository.CertificateRepository;
 import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.CertificateService;
@@ -25,24 +25,24 @@ public class CertificateServiceImpl implements CertificateService {
     }
 
     @Transactional
-    public List<CertificateDTO> getCertificates(SearchParams params) {
-        List<CertificateDTO> certificates = certificateRepository.getCertificates(params);
-        Map<Integer, List<TagDTO>> certificateTags = tagRepository.getCertificatesTags(certificates);
+    public List<Certificate> getCertificates(SearchParams params) {
+        List<Certificate> certificates = certificateRepository.getCertificates(params);
+        Map<Long, List<Tag>> certificateTags = tagRepository.getCertificatesTags(certificates);
         certificates.forEach(certificate -> certificate.setTags(certificateTags.get(certificate.getId())));
         return certificates;
     }
 
     @Transactional
-    public CertificateDTO getCertificate(int id) {
+    public Certificate getCertificate(Long id) {
         return certificateRepository.getCertificate(id)
                 .setTags(tagRepository.getCertificateTags(id));
     }
 
     @Transactional
-    public CertificateDTO createNewCertificate(CertificateDTO certificate) {
+    public Certificate createNewCertificate(Certificate certificate) {
         certificate = certificateRepository.createNewCertificate(certificate);
 
-        List<TagDTO> tags = certificate.getTags();
+        List<Tag> tags = certificate.getTags();
         if (!CollectionUtils.isEmpty(tags)) {
             tagRepository.createTagsIfNonExist(tags);
             tags = tagRepository.getTagsByName(tags);
@@ -54,10 +54,10 @@ public class CertificateServiceImpl implements CertificateService {
     }
 
     @Transactional
-    public CertificateDTO updateCertificate(int certificateId, CertificateDTO certificate) {
+    public Certificate updateCertificate(Long certificateId, Certificate certificate) {
         certificate = certificateRepository.updateCertificate(certificateId, certificate);
 
-        List<TagDTO> tags = certificate.getTags();
+        List<Tag> tags = certificate.getTags();
         if (tags != null) {
             certificateRepository.deleteCertificateTagConnections(certificateId);
             if (tags.isEmpty()) {
@@ -76,7 +76,7 @@ public class CertificateServiceImpl implements CertificateService {
     }
 
     @Transactional
-    public void deleteCertificate(int id) {
+    public void deleteCertificate(Long id) {
         certificateRepository.deleteCertificate(id);
     }
 }

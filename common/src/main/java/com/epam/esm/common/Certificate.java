@@ -5,9 +5,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
-public class CertificateDTO {
+public class Certificate {
 
-    private Integer id;
+    private Long id;
     private String name;
     private String description;
     private BigDecimal price;
@@ -15,13 +15,13 @@ public class CertificateDTO {
     private LocalDateTime createDate;
     private LocalDateTime lastUpdateDate;
 
-    private List<TagDTO> tags;
+    private List<Tag> tags;
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public CertificateDTO setId(Integer id) {
+    public Certificate setId(Long id) {
         this.id = id;
         return this;
     }
@@ -30,7 +30,7 @@ public class CertificateDTO {
         return name;
     }
 
-    public CertificateDTO setName(String name) {
+    public Certificate setName(String name) {
         this.name = name;
         return this;
     }
@@ -39,7 +39,7 @@ public class CertificateDTO {
         return description;
     }
 
-    public CertificateDTO setDescription(String description) {
+    public Certificate setDescription(String description) {
         this.description = description;
         return this;
     }
@@ -48,7 +48,7 @@ public class CertificateDTO {
         return price;
     }
 
-    public CertificateDTO setPrice(BigDecimal price) {
+    public Certificate setPrice(BigDecimal price) {
         this.price = price;
         return this;
     }
@@ -57,7 +57,7 @@ public class CertificateDTO {
         return duration;
     }
 
-    public CertificateDTO setDuration(Integer duration) {
+    public Certificate setDuration(Integer duration) {
         this.duration = duration;
         return this;
     }
@@ -66,7 +66,7 @@ public class CertificateDTO {
         return createDate;
     }
 
-    public CertificateDTO setCreateDate(LocalDateTime createDate) {
+    public Certificate setCreateDate(LocalDateTime createDate) {
         this.createDate = createDate;
         return this;
     }
@@ -75,16 +75,16 @@ public class CertificateDTO {
         return lastUpdateDate;
     }
 
-    public CertificateDTO setLastUpdateDate(LocalDateTime lastUpdateDate) {
+    public Certificate setLastUpdateDate(LocalDateTime lastUpdateDate) {
         this.lastUpdateDate = lastUpdateDate;
         return this;
     }
 
-    public List<TagDTO> getTags() {
+    public List<Tag> getTags() {
         return tags;
     }
 
-    public CertificateDTO setTags(List<TagDTO> tags) {
+    public Certificate setTags(List<Tag> tags) {
         this.tags = tags;
         return this;
     }
@@ -93,7 +93,7 @@ public class CertificateDTO {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        CertificateDTO that = (CertificateDTO) o;
+        Certificate that = (Certificate) o;
         return Objects.equals(id, that.id)
                 && Objects.equals(name, that.name)
                 && Objects.equals(description, that.description)

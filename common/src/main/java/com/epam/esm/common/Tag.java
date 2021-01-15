@@ -2,16 +2,16 @@ package com.epam.esm.common;
 
 import java.util.Objects;
 
-public class TagDTO {
+public class Tag {
 
-    private Integer id;
+    private Long id;
     private String name;
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public TagDTO setId(Integer id) {
+    public Tag setId(Long id) {
         this.id = id;
         return this;
     }
@@ -20,7 +20,7 @@ public class TagDTO {
         return name;
     }
 
-    public TagDTO setName(String name) {
+    public Tag setName(String name) {
         this.name = name;
         return this;
     }
@@ -29,8 +29,8 @@ public class TagDTO {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        TagDTO tagDTO = (TagDTO) o;
-        return Objects.equals(id, tagDTO.id) && Objects.equals(name, tagDTO.name);
+        Tag tag = (Tag) o;
+        return Objects.equals(id, tag.id) && Objects.equals(name, tag.name);
     }
 
     @Override

@@ -4,14 +4,14 @@ import java.util.Objects;
 
 public class TagResponse {
 
-    private int id;
+    private Long id;
     private String name;
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public TagResponse setId(int id) {
+    public TagResponse setId(Long id) {
         this.id = id;
         return this;
     }
@@ -30,7 +30,7 @@ public class TagResponse {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TagResponse that = (TagResponse) o;
-        return id == that.id && Objects.equals(name, that.name);
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name);
     }
 
     @Override

@@ -1,8 +1,8 @@
 package com.epam.esm.repository.impl;
 
-import com.epam.esm.common.CertificateDTO;
+import com.epam.esm.common.Certificate;
 import com.epam.esm.common.ErrorDefinition;
-import com.epam.esm.common.TagDTO;
+import com.epam.esm.common.Tag;
 import com.epam.esm.common.exception.EntityNotFoundException;
 import com.epam.esm.repository.TagRepository;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -43,29 +43,29 @@ public class TagRepositoryImpl implements TagRepository {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
 
-    public List<TagDTO> getAllTags() {
-        return jdbcTemplate.query(RETRIEVE_ALL_TAGS, BeanPropertyRowMapper.newInstance(TagDTO.class));
+    public List<Tag> getAllTags() {
+        return jdbcTemplate.query(RETRIEVE_ALL_TAGS, BeanPropertyRowMapper.newInstance(Tag.class));
     }
 
-    public TagDTO getTag(int id) {
-        return jdbcTemplate.query(RETRIEVE_TAG_BY_ID, BeanPropertyRowMapper.newInstance(TagDTO.class), id)
+    public Tag getTag(Long id) {
+        return jdbcTemplate.query(RETRIEVE_TAG_BY_ID, BeanPropertyRowMapper.newInstance(Tag.class), id)
                 .stream().findAny().orElseThrow(() -> new EntityNotFoundException(ErrorDefinition.TAG_NOT_FOUND, id));
     }
 
-    public Map<Integer, List<TagDTO>> getCertificatesTags(List<CertificateDTO> certificates) {
-        Map<Integer, List<TagDTO>> certificateTag = new HashMap<>();
+    public Map<Long, List<Tag>> getCertificatesTags(List<Certificate> certificates) {
+        Map<Long, List<Tag>> certificateTag = new HashMap<>();
 
         if (!certificates.isEmpty()) {
-            List<Integer> ids = certificates.stream().map(CertificateDTO::getId).collect(Collectors.toList());
+            List<Long> ids = certificates.stream().map(Certificate::getId).collect(Collectors.toList());
             MapSqlParameterSource params = new MapSqlParameterSource()
                     .addValue("ids", ids);
 
             namedParameterJdbcTemplate.query(RETRIEVE_CERTIFICATE_TAGS, params, rs -> {
                 do {
-                    int certificateId = rs.getInt(1);
-                    TagDTO tagDTO = new TagDTO().setId(rs.getInt(2)).setName(rs.getString(3));
+                    Long certificateId = rs.getLong(1);
+                    Tag tag = new Tag().setId(rs.getLong(2)).setName(rs.getString(3));
                     certificateTag.computeIfAbsent(certificateId, k -> new ArrayList<>());
-                    certificateTag.get(certificateId).add(tagDTO);
+                    certificateTag.get(certificateId).add(tag);
                 } while (rs.next());
             });
         }
@@ -73,35 +73,35 @@ public class TagRepositoryImpl implements TagRepository {
         return certificateTag;
     }
 
-    public List<TagDTO> getCertificateTags(int certificateId) {
+    public List<Tag> getCertificateTags(Long certificateId) {
         return jdbcTemplate
-                .query(RETRIEVE_TAGS_BY_CERTIFICATE_ID, BeanPropertyRowMapper.newInstance(TagDTO.class), certificateId);
+                .query(RETRIEVE_TAGS_BY_CERTIFICATE_ID, BeanPropertyRowMapper.newInstance(Tag.class), certificateId);
     }
 
-    public List<TagDTO> getTagsByName(List<TagDTO> tagDTOList) {
-        List<String> names = tagDTOList.stream().map(TagDTO::getName).collect(Collectors.toList());
+    public List<Tag> getTagsByName(List<Tag> tagList) {
+        List<String> names = tagList.stream().map(Tag::getName).collect(Collectors.toList());
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("names", names);
 
-        return namedParameterJdbcTemplate.query(RETRIEVE_TAGS, params, BeanPropertyRowMapper.newInstance(TagDTO.class));
+        return namedParameterJdbcTemplate.query(RETRIEVE_TAGS, params, BeanPropertyRowMapper.newInstance(Tag.class));
     }
 
-    public TagDTO createNewTag(TagDTO tag) {
+    public Tag createNewTag(Tag tag) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         namedParameterJdbcTemplate
                 .update(SAVE_NEW_TAG, new MapSqlParameterSource("name", tag.getName()), keyHolder);
-        return tag.setId((Integer) keyHolder.getKeys().get("id"));
+        return tag.setId((Long) keyHolder.getKeys().get("id"));
     }
 
-    public void createNewTags(List<TagDTO> tags) {
+    public void createNewTags(List<Tag> tags) {
         SqlParameterSource[] params = SqlParameterSourceUtils.createBatch(tags);
         namedParameterJdbcTemplate.batchUpdate(SAVE_NEW_TAG, params);
     }
 
-    public void createTagsIfNonExist(List<TagDTO> tags) {
-        List<TagDTO> existingTags = getTagsByName(tags);
+    public void createTagsIfNonExist(List<Tag> tags) {
+        List<Tag> existingTags = getTagsByName(tags);
 
-        List<TagDTO> nonexistentTags = tags.stream()
+        List<Tag> nonexistentTags = tags.stream()
                 .filter(exist -> existingTags.stream()
                         .noneMatch(t -> t.getName().equals(exist.getName())))
                 .collect(Collectors.toList());
@@ -109,7 +109,7 @@ public class TagRepositoryImpl implements TagRepository {
         createNewTags(nonexistentTags);
     }
 
-    public void deleteTag(int id) {
+    public void deleteTag(Long id) {
         if (jdbcTemplate.update(DELETE_TAG, id) == 0) {
             throw new EntityNotFoundException(ErrorDefinition.TAG_NOT_FOUND, id);
         }

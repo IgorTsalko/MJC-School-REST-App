@@ -37,10 +37,11 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         ErrorDefinition errorDefinition = ex.getErrorDefinition();
         ExceptionResponse exceptionResponse = new ExceptionResponse()
                 .setErrorCode(errorDefinition.getErrorCode())
-                .setDetails(List.of(String.format(
-                                messageSource.getMessage(errorDefinition.getErrorMessageTemplate(), null, locale),
-                                ex.getEntityId())
-                ));
+                .setDetails(List.of(messageSource.getMessage(
+                        errorDefinition.getErrorMessageTemplate(),
+                        new Object[]{ex.getEntityId()},
+                        locale))
+                );
         return new ResponseEntity<>(exceptionResponse, errorDefinition.getHttpStatus());
     }
 
@@ -107,10 +108,10 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     protected ResponseEntity<Object> handleBindException(
             BindException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         List<String> details = ex.getBindingResult().getFieldErrors().stream()
-                .map(c -> String.format(messageSource.getMessage(
+                .map(c -> messageSource.getMessage(
                         "request.incorrect-param",
-                        null,
-                        LocaleContextHolder.getLocale()), c.getRejectedValue(), c.getField()))
+                        new Object[]{c.getRejectedValue(), c.getField()},
+                        LocaleContextHolder.getLocale()))
                 .collect(Collectors.toList());
 
         ExceptionResponse exceptionResponse = new ExceptionResponse()
