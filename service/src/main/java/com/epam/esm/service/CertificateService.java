@@ -1,7 +1,7 @@
 package com.epam.esm.service;
 
 import com.epam.esm.common.CertificateDTO;
-import com.epam.esm.common.CertificateParamsDTO;
+import com.epam.esm.common.SearchParams;
 import com.epam.esm.common.TagDTO;
 import com.epam.esm.repository.CertificateRepository;
 import com.epam.esm.repository.TagRepository;
@@ -24,7 +24,7 @@ public class CertificateService {
     }
 
     @Transactional
-    public List<CertificateDTO> getCertificates(CertificateParamsDTO params) {
+    public List<CertificateDTO> getCertificates(SearchParams params) {
         List<CertificateDTO> certificates = certificateRepository.getCertificates(params);
         Map<Integer, List<TagDTO>> certificateTags = tagRepository.getCertificateTags(certificates);
         certificates.forEach(certificate -> certificate.setTags(certificateTags.get(certificate.getId())));
@@ -39,11 +39,11 @@ public class CertificateService {
 
     @Transactional
     public CertificateDTO createNewCertificate(CertificateDTO certificate) {
-        certificate = certificateRepository.saveNewCertificate(certificate);
+        certificate = certificateRepository.createNewCertificate(certificate);
 
         List<TagDTO> tags = certificate.getTags();
         if (!CollectionUtils.isEmpty(tags)) {
-            tagRepository.saveTagsIfNonExist(tags);
+            tagRepository.createTagsIfNonExist(tags);
             tags = tagRepository.getTagsByName(tags);
             certificateRepository.addCertificateTagConnections(certificate.getId(), tags);
             certificate.setTags(tags);
@@ -62,7 +62,7 @@ public class CertificateService {
             if (tags.isEmpty()) {
                 certificate.setTags(null);
             } else {
-                tagRepository.saveTagsIfNonExist(tags);
+                tagRepository.createTagsIfNonExist(tags);
                 tags = tagRepository.getTagsByName(tags);
                 certificateRepository.addCertificateTagConnections(certificateId, tags);
                 certificate.setTags(tags);

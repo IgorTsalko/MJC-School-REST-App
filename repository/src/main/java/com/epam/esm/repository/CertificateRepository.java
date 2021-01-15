@@ -1,7 +1,7 @@
 package com.epam.esm.repository;
 
 import com.epam.esm.common.CertificateDTO;
-import com.epam.esm.common.CertificateParamsDTO;
+import com.epam.esm.common.SearchParams;
 import com.epam.esm.common.ErrorDefinition;
 import com.epam.esm.common.TagDTO;
 import com.epam.esm.common.exception.EntityNotFoundException;
@@ -46,21 +46,23 @@ public class CertificateRepository {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
 
-    public List<CertificateDTO> getCertificates(CertificateParamsDTO params) {
+    public List<CertificateDTO> getCertificates(SearchParams params) {
         StringBuilder retrieveCertificatesSql = new StringBuilder(RETRIEVE_CERTIFICATES);
 
-        if (params.getName() != null || params.getTag() != null) {
-            retrieveCertificatesSql.append(" WHERE");
+        if (params.getName() != null || params.getDescription() != null || params.getTag() != null) {
+            retrieveCertificatesSql.append(" WHERE ");
+            List<String> conditions = new ArrayList<>();
             if (params.getName() != null) {
-                retrieveCertificatesSql.append(" cert.name ~* '").append(params.getName()).append("' AND");
+                conditions.add("cert.name ~* '" + params.getName());
+            }
+            if (params.getDescription() != null) {
+                conditions.add("description ~* '" + params.getDescription());
             }
             if (params.getTag() != null) {
-                retrieveCertificatesSql.append(" tag.name='").append(params.getTag()).append("'");
+                conditions.add("tag.name='" + params.getTag());
             }
-            retrieveCertificatesSql
-                    .delete(retrieveCertificatesSql.lastIndexOf("' AND"), retrieveCertificatesSql.length());
+            retrieveCertificatesSql.append(String.join("' AND ", conditions)).append("'");
         }
-
         retrieveCertificatesSql.append(CERTIFICATE_GROUP_BY);
 
         if (params.getSort() != null) {
@@ -81,7 +83,7 @@ public class CertificateRepository {
                 .orElseThrow(() -> new EntityNotFoundException(ErrorDefinition.CERTIFICATE_NOT_FOUND, id));
     }
 
-    public CertificateDTO saveNewCertificate(CertificateDTO certificate) {
+    public CertificateDTO createNewCertificate(CertificateDTO certificate) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         certificate.setCreateDate(LocalDateTime.now());
         certificate.setLastUpdateDate(LocalDateTime.now());

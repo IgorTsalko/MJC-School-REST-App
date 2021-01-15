@@ -1,7 +1,6 @@
 package com.epam.esm.service;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.*;
 
 import com.epam.esm.common.TagDTO;
@@ -29,9 +28,9 @@ public class TagServiceTest {
                 new TagDTO().setId(2).setName("travel")
         );
         when(tagRepository.getAllTags()).thenReturn(expTags);
-        List<TagDTO> realTags = tagService.getAllTags();
+        List<TagDTO> actualTags = tagService.getAllTags();
 
-        assertEquals(expTags, realTags);
+        assertEquals(expTags, actualTags);
         verify(tagRepository, only()).getAllTags();
     }
 
@@ -40,9 +39,26 @@ public class TagServiceTest {
         TagDTO expTag = new TagDTO().setId(1).setName("incredible");
         when(tagRepository.getTag(anyInt())).thenReturn(expTag);
 
-        TagDTO realTag = tagService.getTag(1);
+        TagDTO actualTag = tagService.getTag(1);
 
-        assertEquals(expTag, realTag);
+        assertEquals(expTag, actualTag);
         verify(tagRepository, only()).getTag(anyInt());
+    }
+
+    @Test
+    public void createNewTag(@Mock TagDTO tagDTO) {
+        TagDTO expTag = new TagDTO().setId(1).setName("incredible");
+        when(tagRepository.createNewTag(tagDTO)).thenReturn(expTag);
+
+        TagDTO actualTag = tagService.createNewTag(tagDTO);
+
+        assertEquals(expTag, actualTag);
+        verify(tagRepository, only()).createNewTag(tagDTO);
+    }
+
+    @Test
+    public void deleteTag() {
+        tagService.deleteTag(anyInt());
+        verify(tagRepository, only()).deleteTag(anyInt());
     }
 }

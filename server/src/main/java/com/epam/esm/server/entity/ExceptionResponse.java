@@ -1,9 +1,11 @@
 package com.epam.esm.server.entity;
 
+import java.util.List;
+
 public class ExceptionResponse {
 
     private int errorCode;
-    private String[] details;
+    private List<String> details;
 
     public int getErrorCode() {
         return errorCode;
@@ -14,11 +16,11 @@ public class ExceptionResponse {
         return this;
     }
 
-    public String[] getDetails() {
+    public List<String> getDetails() {
         return details;
     }
 
-    public ExceptionResponse setDetails(String... details) {
+    public ExceptionResponse setDetails(List<String> details) {
         this.details = details;
         return this;
     }
