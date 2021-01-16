@@ -10,7 +10,6 @@ public class CertificateRequest {
 
     @Positive
     private Long id;
-    @NotEmpty
     @Size(min = 2, max = 50)
     private String name;
     @Size(min = 3, max = 250)

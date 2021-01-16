@@ -4,8 +4,12 @@ import com.epam.esm.common.ErrorDefinition;
 
 public class GiftCertificateException extends RuntimeException {
 
-    private final ErrorDefinition errorDefinition;
-    private final Long entityId;
+    private ErrorDefinition errorDefinition;
+    private Long entityId;
+
+    public GiftCertificateException(ErrorDefinition errorDefinition) {
+        this.errorDefinition = errorDefinition;
+    }
 
     public GiftCertificateException(ErrorDefinition errorDefinition, Long id) {
         this.errorDefinition = errorDefinition;

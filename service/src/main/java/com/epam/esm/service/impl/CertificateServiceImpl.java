@@ -3,6 +3,7 @@ package com.epam.esm.service.impl;
 import com.epam.esm.common.Certificate;
 import com.epam.esm.common.SearchParams;
 import com.epam.esm.common.Tag;
+import com.epam.esm.common.exception.IncorrectBodyException;
 import com.epam.esm.repository.CertificateRepository;
 import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.CertificateService;
@@ -40,6 +41,10 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Transactional
     public Certificate createNewCertificate(Certificate certificate) {
+        if (certificate.getName() == null || certificate.getPrice() == null || certificate.getDuration() == null) {
+            throw new IncorrectBodyException();
+        }
+
         certificate = certificateRepository.createNewCertificate(certificate);
 
         List<Tag> tags = certificate.getTags();
@@ -55,6 +60,10 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Transactional
     public Certificate updateCertificate(Long certificateId, Certificate certificate) {
+        if (certificate.isEmpty()) {
+            throw new IncorrectBodyException();
+        }
+
         certificate = certificateRepository.updateCertificate(certificateId, certificate);
 
         List<Tag> tags = certificate.getTags();

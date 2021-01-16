@@ -98,7 +98,7 @@ public class CertificateRepositoryImpl implements CertificateRepository {
 
         namedParameterJdbcTemplate.update(SAVE_NEW_CERTIFICATE, params, keyHolder);
 
-        return certificate.setId((Long) keyHolder.getKeys().get("id"));
+        return certificate.setId(((Number) keyHolder.getKeys().get("id")).longValue());
     }
 
     public Certificate updateCertificate(Long certificateId, Certificate certificate) {

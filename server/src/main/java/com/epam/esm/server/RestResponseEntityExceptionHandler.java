@@ -2,6 +2,7 @@ package com.epam.esm.server;
 
 import com.epam.esm.common.ErrorDefinition;
 import com.epam.esm.common.exception.GiftCertificateException;
+import com.epam.esm.common.exception.IncorrectBodyException;
 import com.epam.esm.server.entity.ExceptionResponse;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.context.MessageSource;
@@ -10,7 +11,9 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -68,6 +71,18 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(IncorrectBodyException.class)
+    protected ResponseEntity<Object> handleIncorrectBody(Throwable throwable, Locale locale) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse()
+                .setErrorCode(40006)
+                .setDetails(List.of(messageSource.getMessage(
+                        "incorrect-body",
+                        null,
+                        LocaleContextHolder.getLocale()))
+                );
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(Throwable.class)
     protected ResponseEntity<Object> handleThrowable(Throwable throwable, Locale locale) {
         ExceptionResponse exceptionResponse = new ExceptionResponse()
@@ -118,6 +133,32 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
                 .setErrorCode(40005)
                 .setDetails(details);
 
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(
+            HttpRequestMethodNotSupportedException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse()
+                .setErrorCode(40008)
+                .setDetails(List.of(messageSource.getMessage(
+                        "method-not_supported",
+                        null,
+                        LocaleContextHolder.getLocale()))
+                );
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(
+            HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse()
+                .setErrorCode(40007)
+                .setDetails(List.of(messageSource.getMessage(
+                        "incorrect-body",
+                        null,
+                        LocaleContextHolder.getLocale()))
+                );
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
 }

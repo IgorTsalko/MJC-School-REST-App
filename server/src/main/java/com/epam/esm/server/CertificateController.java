@@ -71,6 +71,7 @@ public class CertificateController {
     @PutMapping("/{id}")
     public ResponseEntity<CertificateResponse> updateCertificate(
             @PathVariable @Positive Long id, @RequestBody @Valid CertificateRequest request) {
+        System.out.println(request);
         Certificate certificate = certificateService.updateCertificate(id, CertificateMapper.convertToEntity(request));
         return ResponseEntity.ok(CertificateMapper.convertToResponse(certificate));
     }
