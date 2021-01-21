@@ -14,14 +14,11 @@ public class CertificateResponse {
     private String description;
     private BigDecimal price;
     private Integer duration;
-
-    private List<TagResponse> tags;
-
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createDate = LocalDateTime.now();
-
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime lastUpdateDate = LocalDateTime.now();
+    private List<TagResponse> tags;
 
     public Long getId() {
         return id;
@@ -123,9 +120,9 @@ public class CertificateResponse {
                 ", description='" + description + '\'' +
                 ", price=" + price +
                 ", duration=" + duration +
-                ", tag=" + tags +
                 ", createDate=" + createDate +
                 ", lastUpdateDate=" + lastUpdateDate +
+                ", tags=" + tags +
                 '}';
     }
 }

@@ -14,7 +14,6 @@ public class Certificate {
     private Integer duration;
     private LocalDateTime createDate;
     private LocalDateTime lastUpdateDate;
-
     private List<Tag> tags;
 
     public Long getId() {

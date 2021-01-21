@@ -13,22 +13,17 @@ public class CertificateCreateRequest {
 
     @Positive
     private Long id;
-
     @NotNull
     @Size(min = 2, max = 50)
     private String name;
-
     @Size(min = 3, max = 250)
     private String description;
-
     @NotNull
     @DecimalMin(value = "1.00")
     private BigDecimal price;
-
     @NotNull
     @Positive
     private Integer duration;
-
     @Valid
     private List<TagRequest> tags;
 
@@ -106,7 +101,7 @@ public class CertificateCreateRequest {
                 ", description='" + description + '\'' +
                 ", price=" + price +
                 ", duration=" + duration +
-                ", tag=" + tags +
+                ", tags=" + tags +
                 '}';
     }
 }
