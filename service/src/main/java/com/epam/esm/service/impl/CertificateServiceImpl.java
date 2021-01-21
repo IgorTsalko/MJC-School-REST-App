@@ -3,7 +3,6 @@ package com.epam.esm.service.impl;
 import com.epam.esm.common.Certificate;
 import com.epam.esm.common.SearchParams;
 import com.epam.esm.common.Tag;
-import com.epam.esm.common.exception.IncorrectBodyException;
 import com.epam.esm.repository.CertificateRepository;
 import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.CertificateService;
@@ -26,26 +25,22 @@ public class CertificateServiceImpl implements CertificateService {
     }
 
     @Transactional
-    public List<Certificate> getCertificates(SearchParams params) {
-        List<Certificate> certificates = certificateRepository.getCertificates(params);
+    public List<Certificate> getAll(SearchParams params) {
+        List<Certificate> certificates = certificateRepository.getAll(params);
         Map<Long, List<Tag>> certificateTags = tagRepository.getCertificatesTags(certificates);
         certificates.forEach(certificate -> certificate.setTags(certificateTags.get(certificate.getId())));
         return certificates;
     }
 
     @Transactional
-    public Certificate getCertificate(Long id) {
-        return certificateRepository.getCertificate(id)
+    public Certificate get(Long id) {
+        return certificateRepository.get(id)
                 .setTags(tagRepository.getCertificateTags(id));
     }
 
     @Transactional
-    public Certificate createNewCertificate(Certificate certificate) {
-        if (certificate.getName() == null || certificate.getPrice() == null || certificate.getDuration() == null) {
-            throw new IncorrectBodyException();
-        }
-
-        certificate = certificateRepository.createNewCertificate(certificate);
+    public Certificate create(Certificate certificate) {
+        certificate = certificateRepository.create(certificate);
 
         List<Tag> tags = certificate.getTags();
         if (!CollectionUtils.isEmpty(tags)) {
@@ -59,33 +54,44 @@ public class CertificateServiceImpl implements CertificateService {
     }
 
     @Transactional
-    public Certificate updateCertificate(Long certificateId, Certificate certificate) {
-        if (certificate.isEmpty()) {
-            throw new IncorrectBodyException();
-        }
-
-        certificate = certificateRepository.updateCertificate(certificateId, certificate);
+    public Certificate upsert(Long id, Certificate certificate) {
+        certificate = certificateRepository.upsert(id, certificate);
 
         List<Tag> tags = certificate.getTags();
-        if (tags != null) {
-            certificateRepository.deleteCertificateTagConnections(certificateId);
-            if (tags.isEmpty()) {
-                certificate.setTags(null);
-            } else {
-                tagRepository.createTagsIfNonExist(tags);
-                tags = tagRepository.getTagsByName(tags);
-                certificateRepository.addCertificateTagConnections(certificateId, tags);
-                certificate.setTags(tags);
-            }
-        } else {
-            certificate.setTags(tagRepository.getCertificateTags(certificateId));
+        if (!CollectionUtils.isEmpty(tags)) {
+            tagRepository.createTagsIfNonExist(tags);
+            tags = tagRepository.getTagsByName(tags);
+            certificateRepository.addCertificateTagConnections(certificate.getId(), tags);
+            certificate.setTags(tags);
         }
 
         return certificate;
     }
 
     @Transactional
-    public void deleteCertificate(Long id) {
-        certificateRepository.deleteCertificate(id);
+    public Certificate update(Long id, Certificate certificate) {
+        certificate = certificateRepository.update(id, certificate);
+
+        List<Tag> tags = certificate.getTags();
+        if (tags != null) {
+            certificateRepository.deleteCertificateTagConnections(id);
+            if (tags.isEmpty()) {
+                certificate.setTags(null);
+            } else {
+                tagRepository.createTagsIfNonExist(tags);
+                tags = tagRepository.getTagsByName(tags);
+                certificateRepository.addCertificateTagConnections(id, tags);
+                certificate.setTags(tags);
+            }
+        } else {
+            certificate.setTags(tagRepository.getCertificateTags(id));
+        }
+
+        return certificate;
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        certificateRepository.delete(id);
     }
 }

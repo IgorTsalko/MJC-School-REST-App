@@ -43,7 +43,7 @@ public class CertificateRepositoryTest {
                 new Certificate().setId(2L).setName("Skydiving").setPrice(BigDecimal.valueOf(250.0)).setDuration(30)
                         .setCreateDate(t).setLastUpdateDate(t)
         );
-        List<Certificate> realCerts = certificateRepository.getCertificates(params);
+        List<Certificate> realCerts = certificateRepository.getAll(params);
 
         assertEquals(expCerts, realCerts);
     }
@@ -60,7 +60,7 @@ public class CertificateRepositoryTest {
                         .setCreateDate(t).setLastUpdateDate(t)
         );
 
-        List<Certificate> realCerts = certificateRepository.getCertificates(params);
+        List<Certificate> realCerts = certificateRepository.getAll(params);
 
         assertEquals(expCerts, realCerts);
     }
@@ -69,14 +69,14 @@ public class CertificateRepositoryTest {
     public void getCertificateById() {
         Certificate expCert = new Certificate().setId(2L).setName("Skydiving").setPrice(BigDecimal.valueOf(250.0))
                 .setDuration(30).setCreateDate(t).setLastUpdateDate(t);
-        Certificate realCert = certificateRepository.getCertificate(2L);
+        Certificate realCert = certificateRepository.get(2L);
 
         assertEquals(expCert, realCert);
     }
 
     @Test
     public void getCertificateByNotExistentId() {
-        assertThrows(EntityNotFoundException.class, () -> certificateRepository.getCertificate(10L));
+        assertThrows(EntityNotFoundException.class, () -> certificateRepository.get(10L));
     }
 
     @Test
@@ -92,7 +92,7 @@ public class CertificateRepositoryTest {
                 .setPrice(BigDecimal.valueOf(178.0))
                 .setDuration(14);
 
-        Certificate actualCert = certificateRepository.createNewCertificate(cert);
+        Certificate actualCert = certificateRepository.create(cert);
         expCert.setCreateDate(actualCert.getCreateDate());
         expCert.setLastUpdateDate(actualCert.getLastUpdateDate());
 
@@ -114,8 +114,8 @@ public class CertificateRepositoryTest {
                 .setPrice(BigDecimal.valueOf(357.0))
                 .setDuration(14);
 
-        certificateRepository.updateCertificate(2L, cert);
-        Certificate actualCert = certificateRepository.getCertificate(2L);
+        certificateRepository.update(2L, cert);
+        Certificate actualCert = certificateRepository.get(2L);
         expCert.setCreateDate(actualCert.getCreateDate());
         expCert.setLastUpdateDate(actualCert.getLastUpdateDate());
 
@@ -125,17 +125,17 @@ public class CertificateRepositoryTest {
     @Test
     public void updateCertificateByNotExistentId() {
         assertThrows(EntityNotFoundException.class,
-                () -> certificateRepository.updateCertificate(10L, new Certificate()));
+                () -> certificateRepository.update(10L, new Certificate()));
     }
 
     @Test
     public void deleteCertificate() {
-        assertDoesNotThrow(() -> certificateRepository.deleteCertificate(1L));
+        assertDoesNotThrow(() -> certificateRepository.delete(1L));
     }
 
     @Test
     public void deleteCertificateByNotExistentId() {
-        assertThrows(EntityNotFoundException.class, () -> certificateRepository.deleteCertificate(10L));
+        assertThrows(EntityNotFoundException.class, () -> certificateRepository.delete(10L));
     }
 
     @Test

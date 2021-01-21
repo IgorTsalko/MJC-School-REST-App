@@ -15,7 +15,7 @@ public interface CertificateRepository {
      * @param params the object that contains parameters for retrieve <code>Certificates</code>
      * @return list of appropriate <code>Certificates</code>
      */
-    List<Certificate> getCertificates(SearchParams params);
+    List<Certificate> getAll(SearchParams params);
 
     /**
      * Retrieve certain <code>Certificate</code> for appropriate id.
@@ -23,7 +23,7 @@ public interface CertificateRepository {
      * @param id specific certificate's identifier
      * @return certain <code>Certificate</code>
      */
-    Certificate getCertificate(Long id);
+    Certificate get(Long id);
 
     /**
      * Create new <code>Certificate</code> and return it
@@ -31,36 +31,46 @@ public interface CertificateRepository {
      * @param certificate the object that contain properties for new <code>Certificate</code>
      * @return created <code>Certificate</code>
      */
-    Certificate createNewCertificate(Certificate certificate);
+    Certificate create(Certificate certificate);
 
     /**
-     * Update certain <code>Certificate</code> and return it
+     * Fully updates a specific <code>Certificate</code> or creates a new one if such not exists
      *
-     * @param certificateId specific certificate's identifier
+     * @param id specific certificate's identifier
+     * @param certificate the object that contain properties for updating
+     *                    or creating <code>Certificate</code>
+     * @return updated or created <code>Certificate</code>
+     */
+    Certificate upsert(Long id, Certificate certificate);
+
+    /**
+     * Update certain fields of a certain <code>Certificate</code> and return it
+     *
+     * @param id specific certificate's identifier
      * @param certificate the object that contain properties for updating <code>Certificate</code>
      * @return updated <code>Certificate</code>
      */
-    Certificate updateCertificate(Long certificateId, Certificate certificate);
+    Certificate update(Long id, Certificate certificate);
 
     /**
      * Delete certain <code>Certificate</code>
      *
      * @param id specific certificate's identifier
      */
-    void deleteCertificate(Long id);
+    void delete(Long id);
 
     /**
      * Link certificates to matching tags
      *
-     * @param certificateId specific certificate's identifier
+     * @param id specific certificate's identifier
      * @param tags list of <code>Tag</code> entities
      */
-    void addCertificateTagConnections(Long certificateId, List<Tag> tags);
+    void addCertificateTagConnections(Long id, List<Tag> tags);
 
     /**
      * Delete certificate connections with matching tags
      *
-     * @param certificateId specific certificate's identifier
+     * @param id specific certificate's identifier
      */
-    void deleteCertificateTagConnections(Long certificateId);
+    void deleteCertificateTagConnections(Long id);
 }

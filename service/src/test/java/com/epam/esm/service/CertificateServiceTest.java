@@ -40,12 +40,12 @@ public class CertificateServiceTest {
         expCerts.forEach(c -> c.setTags(expTags.get(c.getId())));
 
         List<Certificate> certs = getMockCertificates();
-        when(certificateRepository.getCertificates(paramsMock)).thenReturn(certs);
+        when(certificateRepository.getAll(paramsMock)).thenReturn(certs);
         when(tagRepository.getCertificatesTags(anyList())).thenReturn(expTags);
-        List<Certificate> actualCerts = certificateService.getCertificates(paramsMock);
+        List<Certificate> actualCerts = certificateService.getAll(paramsMock);
 
         assertEquals(expCerts, actualCerts);
-        verify(certificateRepository, only()).getCertificates(paramsMock);
+        verify(certificateRepository, only()).getAll(paramsMock);
         verify(tagRepository, only()).getCertificatesTags(anyList());
     }
 
@@ -57,27 +57,27 @@ public class CertificateServiceTest {
         Certificate cert = new Certificate().setId(2L).setName("Spa");
 
         when(tagRepository.getCertificateTags(anyLong())).thenReturn(tags);
-        when(certificateRepository.getCertificate(anyLong())).thenReturn(cert);
-        Certificate actualCert = certificateService.getCertificate(anyLong());
+        when(certificateRepository.get(anyLong())).thenReturn(cert);
+        Certificate actualCert = certificateService.get(anyLong());
 
         assertEquals(expCert, actualCert);
         verify(tagRepository, only()).getCertificateTags(anyLong());
-        verify(certificateRepository, only()).getCertificate(anyLong());
+        verify(certificateRepository, only()).get(anyLong());
     }
 
     @Test
     public void createNewCertificate(@Mock Certificate certMock) {
         Certificate expCert = new Certificate().setId(2L).setName("Spa");
-        List<Tag> tags = getMockTagsWithoutId();
-        expCert.setTags(tags);
+        List<Tag> expTags = getMockTagsWithoutId();
+        expCert.setTags(expTags);
 
-        List<Tag> expTags = getMockTags();
-        when(certificateRepository.createNewCertificate(certMock)).thenReturn(expCert);
-        when(tagRepository.getTagsByName(anyList())).thenReturn(expTags);
-        Certificate actualCert = certificateService.createNewCertificate(certMock);
+        List<Tag> tags = getMockTags();
+        when(certificateRepository.create(certMock)).thenReturn(expCert);
+        when(tagRepository.getTagsByName(anyList())).thenReturn(tags);
+        Certificate actualCert = certificateService.create(certMock);
 
         assertEquals(expCert, actualCert);
-        verify(certificateRepository).createNewCertificate(certMock);
+        verify(certificateRepository).create(certMock);
         verify(tagRepository).createTagsIfNonExist(anyList());
         verify(tagRepository).getTagsByName(anyList());
         verify(certificateRepository).addCertificateTagConnections(anyLong(), anyList());
@@ -94,13 +94,13 @@ public class CertificateServiceTest {
         List<Tag> tags = getMockTagsWithoutId();
         cert.setTags(tags);
 
-        when(certificateRepository.updateCertificate(1L, certMock)).thenReturn(cert);
+        when(certificateRepository.update(1L, certMock)).thenReturn(cert);
         when(tagRepository.getTagsByName(anyList())).thenReturn(expTags);
-        Certificate actualCert = certificateService.updateCertificate(1L, certMock);
+        Certificate actualCert = certificateService.update(1L, certMock);
 
         assertEquals(expCert, actualCert);
 
-        verify(certificateRepository).updateCertificate(1L, certMock);
+        verify(certificateRepository).update(1L, certMock);
         verify(certificateRepository).deleteCertificateTagConnections(anyLong());
         verify(tagRepository).createTagsIfNonExist(anyList());
         verify(tagRepository).getTagsByName(anyList());
@@ -116,12 +116,12 @@ public class CertificateServiceTest {
         List<Tag> tags = new ArrayList<>();
         cert.setTags(tags);
 
-        when(certificateRepository.updateCertificate(1L, certMock)).thenReturn(cert);
-        Certificate actualCert = certificateService.updateCertificate(1L, certMock);
+        when(certificateRepository.update(1L, certMock)).thenReturn(cert);
+        Certificate actualCert = certificateService.update(1L, certMock);
 
         assertEquals(expCert, actualCert);
 
-        verify(certificateRepository).updateCertificate(1L, certMock);
+        verify(certificateRepository).update(1L, certMock);
         verify(certificateRepository).deleteCertificateTagConnections(anyLong());
         verifyNoMoreInteractions(certificateRepository);
     }
@@ -135,20 +135,20 @@ public class CertificateServiceTest {
         Certificate cert = getMockCertificate();
         List<Tag> tags = getMockTags();
 
-        when(certificateRepository.updateCertificate(1L, certMock)).thenReturn(cert);
+        when(certificateRepository.update(1L, certMock)).thenReturn(cert);
         when(tagRepository.getCertificateTags(anyLong())).thenReturn(tags);
-        Certificate actualCert = certificateService.updateCertificate(1L, certMock);
+        Certificate actualCert = certificateService.update(1L, certMock);
 
         assertEquals(expCert, actualCert);
 
-        verify(certificateRepository, only()).updateCertificate(1L, certMock);
+        verify(certificateRepository, only()).update(1L, certMock);
         verify(tagRepository, only()).getCertificateTags(anyLong());
     }
 
     @Test
     public void deleteCertificate() {
-        certificateService.deleteCertificate(anyLong());
-        verify(certificateRepository, only()).deleteCertificate(anyLong());
+        certificateService.delete(anyLong());
+        verify(certificateRepository, only()).delete(anyLong());
     }
 
     private List<Certificate> getMockCertificates() {

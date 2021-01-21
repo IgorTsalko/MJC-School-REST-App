@@ -30,7 +30,7 @@ public class TagController {
      */
     @GetMapping
     public List<TagResponse> getAllTags() {
-        return tagService.getAllTags().stream().map(TagMapper::convertToResponse).collect(Collectors.toList());
+        return tagService.getAll().stream().map(TagMapper::convertToResponse).collect(Collectors.toList());
     }
 
     /**
@@ -41,7 +41,7 @@ public class TagController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<Object> getTag(@PathVariable @Positive Long id) {
-        return ResponseEntity.ok(TagMapper.convertToResponse(tagService.getTag(id)));
+        return ResponseEntity.ok(TagMapper.convertToResponse(tagService.get(id)));
     }
 
     /**
@@ -53,7 +53,7 @@ public class TagController {
     @PostMapping
     public ResponseEntity<TagResponse> createNewTag(@RequestBody @Valid TagRequest tagRequest) {
         TagResponse tagResponse =
-                TagMapper.convertToResponse(tagService.createNewTag(TagMapper.convertToEntity(tagRequest)));
+                TagMapper.convertToResponse(tagService.create(TagMapper.convertToEntity(tagRequest)));
         return ResponseEntity.ok(tagResponse);
     }
 
@@ -65,7 +65,7 @@ public class TagController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteTag(@PathVariable @Positive Long id) {
-        tagService.deleteTag(id);
+        tagService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

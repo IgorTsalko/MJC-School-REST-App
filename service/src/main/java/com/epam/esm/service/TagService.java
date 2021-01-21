@@ -11,7 +11,7 @@ public interface TagService {
      *
      * @return list of <code>Tags</code>
      */
-    List<Tag> getAllTags();
+    List<Tag> getAll();
 
     /**
      * Retrieve certain <code>Tag</code> for appropriate id.
@@ -19,7 +19,7 @@ public interface TagService {
      * @param id specific tag's identifier
      * @return certain <code>Tag</code>
      */
-    Tag getTag(Long id);
+    Tag get(Long id);
 
     /**
      * Create new <code>Tag</code> and return it
@@ -27,12 +27,12 @@ public interface TagService {
      * @param tag the object that contain properties for new <code>Tag</code>
      * @return created <code>Tag</code>
      */
-    Tag createNewTag(Tag tag);
+    Tag create(Tag tag);
 
     /**
      * Delete certain <code>Tag</code>
      *
      * @param id specific tag's identifier
      */
-    void deleteTag(Long id);
+    void delete(Long id);
 }

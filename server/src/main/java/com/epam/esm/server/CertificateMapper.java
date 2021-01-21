@@ -1,13 +1,9 @@
 package com.epam.esm.server;
 
 import com.epam.esm.common.Certificate;
-import com.epam.esm.common.Tag;
-import com.epam.esm.server.entity.CertificateRequest;
-import com.epam.esm.server.entity.CertificateResponse;
-import com.epam.esm.server.entity.TagRequest;
-import com.epam.esm.server.entity.TagResponse;
+import com.epam.esm.server.entity.*;
 
-import java.util.ArrayList;
+import java.math.BigDecimal;
 import java.util.List;
 
 public class CertificateMapper {
@@ -23,30 +19,50 @@ public class CertificateMapper {
                 .setLastUpdateDate(certificate.getLastUpdateDate());
 
         if (certificate.getTags() != null) {
-            List<TagResponse> tagResponses = new ArrayList<>();
-            for (Tag tag : certificate.getTags()) {
-                tagResponses.add(TagMapper.convertToResponse(tag));
-            }
-            certificateResponse.setTags(tagResponses);
+            certificateResponse.setTags(TagMapper.convertToResponse(certificate.getTags()));
         }
 
         return certificateResponse;
     }
 
-    public static Certificate convertToEntity(CertificateRequest certificateRequest) {
-        Certificate certificate = new Certificate()
-                .setId(certificateRequest.getId())
-                .setName(certificateRequest.getName())
-                .setDescription(certificateRequest.getDescription())
-                .setPrice(certificateRequest.getPrice())
-                .setDuration(certificateRequest.getDuration());
+    public static Certificate convertToEntity(CertificateUpdateRequest certificateUpdateRequest) {
+        return createCertificate(
+                certificateUpdateRequest.getId(),
+                certificateUpdateRequest.getName(),
+                certificateUpdateRequest.getDescription(),
+                certificateUpdateRequest.getPrice(),
+                certificateUpdateRequest.getDuration(),
+                certificateUpdateRequest.getTags());
+    }
 
-        if (certificateRequest.getTags() != null) {
-            List<Tag> tags = new ArrayList<>();
-            for (TagRequest tagRequest : certificateRequest.getTags()) {
-                tags.add(TagMapper.convertToEntity(tagRequest));
-            }
-            certificate.setTags(tags);
+    public static Certificate convertToEntity(CertificateCreateRequest certificateCreateRequest) {
+        return createCertificate(
+                certificateCreateRequest.getId(),
+                certificateCreateRequest.getName(),
+                certificateCreateRequest.getDescription(),
+                certificateCreateRequest.getPrice(),
+                certificateCreateRequest.getDuration(),
+                certificateCreateRequest.getTags()
+        );
+    }
+
+    private static Certificate createCertificate(
+            Long id,
+            String name,
+            String description,
+            BigDecimal price,
+            Integer duration,
+            List<TagRequest> tags) {
+
+        Certificate certificate = new Certificate()
+                .setId(id)
+                .setName(name)
+                .setDescription(description)
+                .setPrice(price)
+                .setDuration(duration);
+
+        if (tags != null) {
+            certificate.setTags(TagMapper.convertToEntity(tags));
         }
 
         return certificate;

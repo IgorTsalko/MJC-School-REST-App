@@ -1,7 +1,6 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.common.Tag;
-import com.epam.esm.common.exception.IncorrectBodyException;
 import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.TagService;
 import org.springframework.stereotype.Service;
@@ -17,22 +16,19 @@ public class TagServiceImpl implements TagService {
         this.tagRepository = tagRepository;
     }
 
-    public List<Tag> getAllTags() {
+    public List<Tag> getAll() {
         return tagRepository.getAllTags();
     }
 
-    public Tag getTag(Long id) {
+    public Tag get(Long id) {
         return tagRepository.getTag(id);
     }
 
-    public Tag createNewTag(Tag tag) {
-        if (tag.getName() == null) {
-            throw new IncorrectBodyException();
-        }
+    public Tag create(Tag tag) {
         return tagRepository.createNewTag(tag);
     }
 
-    public void deleteTag(Long id) {
+    public void delete(Long id) {
         tagRepository.deleteTag(id);
     }
 }

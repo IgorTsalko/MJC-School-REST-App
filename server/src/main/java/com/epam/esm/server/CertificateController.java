@@ -2,9 +2,11 @@ package com.epam.esm.server;
 
 import com.epam.esm.common.Certificate;
 import com.epam.esm.common.SearchParams;
-import com.epam.esm.server.entity.CertificateRequest;
+import com.epam.esm.server.entity.CertificateCreateRequest;
+import com.epam.esm.server.entity.CertificateUpdateRequest;
 import com.epam.esm.server.entity.CertificateResponse;
 import com.epam.esm.service.CertificateService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +36,7 @@ public class CertificateController {
      */
     @GetMapping
     public List<CertificateResponse> getCertificates(@Valid SearchParams params) {
-        return certificateService.getCertificates(params)
+        return certificateService.getAll(params)
                 .stream().map(CertificateMapper::convertToResponse).collect(Collectors.toList());
     }
 
@@ -46,7 +48,7 @@ public class CertificateController {
      */
     @GetMapping("/{id}")
     public CertificateResponse getCertificate(@PathVariable @Positive Long id) {
-        return CertificateMapper.convertToResponse(certificateService.getCertificate(id));
+        return CertificateMapper.convertToResponse(certificateService.get(id));
     }
 
     /**
@@ -56,23 +58,37 @@ public class CertificateController {
      * @return created <code>Certificate</code>
      */
     @PostMapping
-    public ResponseEntity<CertificateResponse> createNewCertificate(@RequestBody @Valid CertificateRequest request) {
-        Certificate certificate = certificateService.createNewCertificate(CertificateMapper.convertToEntity(request));
+    public ResponseEntity<CertificateResponse> createNewCertificate(@RequestBody @Valid CertificateCreateRequest request) {
+        Certificate certificate = certificateService.create(CertificateMapper.convertToEntity(request));
+        return new ResponseEntity<>(CertificateMapper.convertToResponse(certificate), HttpStatus.CREATED);
+    }
+
+    /**
+     * Fully updates a specific <code>Certificate</code> or creates a new one
+     * if such not exists and return it
+     *
+     * @param id specific certificate's identifier
+     * @param request the object that contain properties for updating or creating <code>Certificate</code>
+     * @return updated or created <code>Certificate</code>
+     */
+    @PutMapping("/{id}")
+    public ResponseEntity<CertificateResponse> upsert(
+            @PathVariable @Positive Long id, @RequestBody @Valid CertificateCreateRequest request) {
+        Certificate certificate = certificateService.upsert(id, CertificateMapper.convertToEntity(request));
         return ResponseEntity.ok(CertificateMapper.convertToResponse(certificate));
     }
 
     /**
-     * Update certain <code>Certificate</code> and return it
+     * Update certain fields of a certain <code>Certificate</code> and return it
      *
      * @param id specific certificate's identifier
      * @param request the object that contain properties for updating <code>Certificate</code>
      * @return updated <code>Certificate</code>
      */
-    @PutMapping("/{id}")
-    public ResponseEntity<CertificateResponse> updateCertificate(
-            @PathVariable @Positive Long id, @RequestBody @Valid CertificateRequest request) {
-        System.out.println(request);
-        Certificate certificate = certificateService.updateCertificate(id, CertificateMapper.convertToEntity(request));
+    @PatchMapping("/{id}")
+    public ResponseEntity<CertificateResponse> partialUpdate(
+            @PathVariable @Positive Long id, @RequestBody @Valid CertificateUpdateRequest request) {
+        Certificate certificate = certificateService.update(id, CertificateMapper.convertToEntity(request));
         return ResponseEntity.ok(CertificateMapper.convertToResponse(certificate));
     }
 
@@ -84,7 +100,7 @@ public class CertificateController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteCertificate(@PathVariable @Positive Long id) {
-        certificateService.deleteCertificate(id);
+        certificateService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

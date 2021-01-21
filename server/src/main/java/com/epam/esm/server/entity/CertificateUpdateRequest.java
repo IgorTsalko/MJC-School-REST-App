@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 
-public class CertificateRequest {
+public class CertificateUpdateRequest {
 
     @Positive
     private Long id;
@@ -74,7 +74,7 @@ public class CertificateRequest {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        CertificateRequest that = (CertificateRequest) o;
+        CertificateUpdateRequest that = (CertificateUpdateRequest) o;
         return Objects.equals(id, that.id)
                 && Objects.equals(name, that.name)
                 && Objects.equals(description, that.description)
