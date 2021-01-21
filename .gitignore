@@ -1,0 +1,12 @@
+/build
+/server/out
+/repository/out
+.idea
+/.gradle
+/gradle
+/server/build
+/service/build
+/repository/build
+/common/build
+gradlew.bat
+gradlew*

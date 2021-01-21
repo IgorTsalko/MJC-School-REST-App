@@ -1,0 +1,6 @@
+version '1.0'
+
+dependencies {
+    implementation "org.springframework:spring-web:${springVersion}"
+    compileOnly "javax.validation:validation-api:${javaxValidationVersion}"
+}
