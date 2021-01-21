@@ -1,6 +1,6 @@
 package com.epam.esm.server.entity;
 
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.util.Objects;
@@ -9,7 +9,7 @@ public class TagRequest {
 
     @Positive
     private Long id;
-    @NotEmpty
+    @NotNull
     @Size(min = 2, max = 50)
     private String name;
 

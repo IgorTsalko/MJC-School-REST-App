@@ -90,7 +90,7 @@ public class TagRepositoryImpl implements TagRepository {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         namedParameterJdbcTemplate
                 .update(SAVE_NEW_TAG, new MapSqlParameterSource("name", tag.getName()), keyHolder);
-        return tag.setId((Long) keyHolder.getKeys().get("id"));
+        return tag.setId(((Number) keyHolder.getKeys().get("id")).longValue());
     }
 
     public void createNewTags(List<Tag> tags) {

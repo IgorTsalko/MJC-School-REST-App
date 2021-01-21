@@ -89,6 +89,15 @@ public class Certificate {
         return this;
     }
 
+    public boolean isEmpty() {
+        return id == null
+                && name == null
+                && description == null
+                && price == null
+                && duration == null
+                && tags == null;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

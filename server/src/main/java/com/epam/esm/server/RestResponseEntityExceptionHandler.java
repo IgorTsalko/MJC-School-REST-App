@@ -7,10 +7,14 @@ import org.springframework.beans.TypeMismatchException;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.InvalidDataAccessResourceUsageException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -45,10 +49,26 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         return new ResponseEntity<>(exceptionResponse, errorDefinition.getHttpStatus());
     }
 
+    @ExceptionHandler(DuplicateKeyException.class)
+    protected ResponseEntity<Object> handleDataAccess(DuplicateKeyException ex, Locale locale) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse()
+                .setErrorCode(40901)
+                .setDetails(List.of(messageSource.getMessage("database-conflict", null, locale)));
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(InvalidDataAccessResourceUsageException.class)
+    protected ResponseEntity<Object> handleDataAccess(InvalidDataAccessResourceUsageException ex, Locale locale) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse()
+                .setErrorCode(40001)
+                .setDetails(List.of(messageSource.getMessage("bad-request", null, locale)));
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.CONFLICT);
+    }
+
     @ExceptionHandler(DataAccessException.class)
     protected ResponseEntity<Object> handleDataAccess(DataAccessException ex, Locale locale) {
         ExceptionResponse exceptionResponse = new ExceptionResponse()
-                .setErrorCode(40001)
+                .setErrorCode(40002)
                 .setDetails(List.of(messageSource.getMessage("database-exception", null, locale)));
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
@@ -62,7 +82,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
                 .collect(Collectors.toList());
 
         ExceptionResponse exceptionResponse = new ExceptionResponse()
-                .setErrorCode(40002)
+                .setErrorCode(40003)
                 .setDetails(details);
 
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
@@ -85,7 +105,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
                 .collect(Collectors.toList());
 
         ExceptionResponse exceptionResponse = new ExceptionResponse()
-                .setErrorCode(40003)
+                .setErrorCode(40005)
                 .setDetails(details);
 
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
@@ -95,7 +115,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     protected ResponseEntity<Object> handleTypeMismatch(
             TypeMismatchException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         ExceptionResponse exceptionResponse = new ExceptionResponse()
-                .setErrorCode(40004)
+                .setErrorCode(40006)
                 .setDetails(List.of(String.format("%s %s", ex.getValue(), messageSource.getMessage(
                         "request.incorrect-value",
                         null,
@@ -115,9 +135,35 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
                 .collect(Collectors.toList());
 
         ExceptionResponse exceptionResponse = new ExceptionResponse()
-                .setErrorCode(40005)
+                .setErrorCode(40007)
                 .setDetails(details);
 
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(
+            HttpRequestMethodNotSupportedException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse()
+                .setErrorCode(40008)
+                .setDetails(List.of(messageSource.getMessage(
+                        "method-not_supported",
+                        null,
+                        LocaleContextHolder.getLocale()))
+                );
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(
+            HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse()
+                .setErrorCode(40009)
+                .setDetails(List.of(messageSource.getMessage(
+                        "incorrect-body",
+                        null,
+                        LocaleContextHolder.getLocale()))
+                );
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
 }

@@ -29,7 +29,7 @@ public class TagServiceTest {
                 new Tag().setId(2L).setName("travel")
         );
         when(tagRepository.getAllTags()).thenReturn(expTags);
-        List<Tag> actualTags = tagService.getAllTags();
+        List<Tag> actualTags = tagService.getAll();
 
         assertEquals(expTags, actualTags);
         verify(tagRepository, only()).getAllTags();
@@ -40,7 +40,7 @@ public class TagServiceTest {
         Tag expTag = new Tag().setId(1L).setName("incredible");
         when(tagRepository.getTag(anyLong())).thenReturn(expTag);
 
-        Tag actualTag = tagService.getTag(1L);
+        Tag actualTag = tagService.get(1L);
 
         assertEquals(expTag, actualTag);
         verify(tagRepository, only()).getTag(anyLong());
@@ -51,7 +51,7 @@ public class TagServiceTest {
         Tag expTag = new Tag().setId(1L).setName("incredible");
         when(tagRepository.createNewTag(tag)).thenReturn(expTag);
 
-        Tag actualTag = tagService.createNewTag(tag);
+        Tag actualTag = tagService.create(tag);
 
         assertEquals(expTag, actualTag);
         verify(tagRepository, only()).createNewTag(tag);
@@ -59,7 +59,7 @@ public class TagServiceTest {
 
     @Test
     public void deleteTag() {
-        tagService.deleteTag(anyLong());
+        tagService.delete(anyLong());
         verify(tagRepository, only()).deleteTag(anyLong());
     }
 }

@@ -16,19 +16,19 @@ public class TagServiceImpl implements TagService {
         this.tagRepository = tagRepository;
     }
 
-    public List<Tag> getAllTags() {
+    public List<Tag> getAll() {
         return tagRepository.getAllTags();
     }
 
-    public Tag getTag(Long id) {
+    public Tag get(Long id) {
         return tagRepository.getTag(id);
     }
 
-    public Tag createNewTag(Tag tag) {
+    public Tag create(Tag tag) {
         return tagRepository.createNewTag(tag);
     }
 
-    public void deleteTag(Long id) {
+    public void delete(Long id) {
         tagRepository.deleteTag(id);
     }
 }
