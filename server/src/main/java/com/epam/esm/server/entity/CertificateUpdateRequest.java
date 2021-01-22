@@ -18,7 +18,6 @@ public class CertificateUpdateRequest {
     private BigDecimal price;
     @Positive
     private Integer duration;
-
     @Valid
     private List<TagRequest> tags;
 
@@ -96,7 +95,7 @@ public class CertificateUpdateRequest {
                 ", description='" + description + '\'' +
                 ", price=" + price +
                 ", duration=" + duration +
-                ", tag=" + tags +
+                ", tags=" + tags +
                 '}';
     }
 }

@@ -1,18 +1,19 @@
-apply plugin: 'war'
-
-version '1.0'
+plugins {
+    id "org.springframework.boot" version "${springBootVersion}"
+    id "io.spring.dependency-management" version "${springDependencyManagementVersion}"
+}
 
 dependencies {
     implementation project(':common')
     implementation project(':service')
 
-    implementation "org.springframework:spring-webmvc:${springVersion}"
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation "org.springframework:spring-tx:${springVersion}"
-
-    compileOnly "javax.servlet:javax.servlet-api:${servletApiVersion}"
-    compileOnly "javax.validation:validation-api:${javaxValidationVersion}"
     implementation "org.hibernate.validator:hibernate-validator:${hibernateValidatorVersion}"
+    compileOnly "javax.validation:validation-api:${javaxValidationVersion}"
+}
 
-    implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
-    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}"
+test {
+    useJUnitPlatform()
 }

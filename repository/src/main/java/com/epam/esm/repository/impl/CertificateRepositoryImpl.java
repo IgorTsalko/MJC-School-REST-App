@@ -70,7 +70,6 @@ public class CertificateRepositoryImpl implements CertificateRepository {
             retrieveCertificatesSql.append(String.join("' AND ", conditions)).append("'");
         }
         retrieveCertificatesSql.append(CERTIFICATE_GROUP_BY);
-        System.out.println(retrieveCertificatesSql);
 
         if (params.getSort() != null) {
             retrieveCertificatesSql

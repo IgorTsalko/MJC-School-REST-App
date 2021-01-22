@@ -116,10 +116,10 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
             TypeMismatchException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         ExceptionResponse exceptionResponse = new ExceptionResponse()
                 .setErrorCode(40006)
-                .setDetails(List.of(String.format("%s %s", ex.getValue(), messageSource.getMessage(
+                .setDetails(List.of(messageSource.getMessage(
                         "request.incorrect-value",
-                        null,
-                        LocaleContextHolder.getLocale())))
+                        new Object[]{ex.getValue()},
+                        LocaleContextHolder.getLocale()))
                 );
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
