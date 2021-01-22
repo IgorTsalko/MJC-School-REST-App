@@ -24,16 +24,16 @@ import java.util.stream.Collectors;
 @Repository
 public class TagRepositoryImpl implements TagRepository {
 
-    private static final String RETRIEVE_TAG_BY_ID = "SELECT * FROM tag WHERE id=?";
-    private static final String RETRIEVE_ALL_TAGS = "SELECT * FROM tag";
-    private static final String RETRIEVE_CERTIFICATE_TAGS =
+    private static final String SQL_SELECT_BY_ID = "SELECT * FROM tag WHERE id=?";
+    private static final String SQL_SELECT_ALL = "SELECT * FROM tag";
+    private static final String SQL_SELECT_CERTIFICATE_TAGS =
             "SELECT gift_certificate_id, tag_id, tag.name FROM gift_certificate_tag gct JOIN tag ON gct.tag_id = tag.id " +
                     "WHERE gift_certificate_id IN (:ids)";
-    private static final String RETRIEVE_TAGS_BY_CERTIFICATE_ID = "SELECT id, name FROM gift_certificate_tag gct " +
+    private static final String SQL_SELECT_BY_CERTIFICATE_ID = "SELECT id, name FROM gift_certificate_tag gct " +
             "JOIN tag ON gct.tag_id = tag.id WHERE gct.gift_certificate_id=?";
-    private static final String RETRIEVE_TAGS = "SELECT * FROM tag WHERE name IN (:names)";
-    private static final String SAVE_NEW_TAG = "INSERT INTO tag(name) VALUES(:name)";
-    private static final String DELETE_TAG = "DELETE FROM tag WHERE id=?";
+    private static final String SQL_SELECT_BY_NAME = "SELECT * FROM tag WHERE name IN (:names)";
+    private static final String SQL_INSERT = "INSERT INTO tag(name) VALUES(:name)";
+    private static final String SQL_DELETE = "DELETE FROM tag WHERE id=?";
 
     private final JdbcTemplate jdbcTemplate;
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
@@ -44,11 +44,11 @@ public class TagRepositoryImpl implements TagRepository {
     }
 
     public List<Tag> getAllTags() {
-        return jdbcTemplate.query(RETRIEVE_ALL_TAGS, BeanPropertyRowMapper.newInstance(Tag.class));
+        return jdbcTemplate.query(SQL_SELECT_ALL, BeanPropertyRowMapper.newInstance(Tag.class));
     }
 
     public Tag getTag(Long id) {
-        return jdbcTemplate.query(RETRIEVE_TAG_BY_ID, BeanPropertyRowMapper.newInstance(Tag.class), id)
+        return jdbcTemplate.query(SQL_SELECT_BY_ID, BeanPropertyRowMapper.newInstance(Tag.class), id)
                 .stream().findAny().orElseThrow(() -> new EntityNotFoundException(ErrorDefinition.TAG_NOT_FOUND, id));
     }
 
@@ -60,7 +60,7 @@ public class TagRepositoryImpl implements TagRepository {
             MapSqlParameterSource params = new MapSqlParameterSource()
                     .addValue("ids", ids);
 
-            namedParameterJdbcTemplate.query(RETRIEVE_CERTIFICATE_TAGS, params, rs -> {
+            namedParameterJdbcTemplate.query(SQL_SELECT_CERTIFICATE_TAGS, params, rs -> {
                 do {
                     Long certificateId = rs.getLong(1);
                     Tag tag = new Tag().setId(rs.getLong(2)).setName(rs.getString(3));
@@ -75,7 +75,7 @@ public class TagRepositoryImpl implements TagRepository {
 
     public List<Tag> getCertificateTags(Long certificateId) {
         return jdbcTemplate
-                .query(RETRIEVE_TAGS_BY_CERTIFICATE_ID, BeanPropertyRowMapper.newInstance(Tag.class), certificateId);
+                .query(SQL_SELECT_BY_CERTIFICATE_ID, BeanPropertyRowMapper.newInstance(Tag.class), certificateId);
     }
 
     public List<Tag> getTagsByName(List<Tag> tagList) {
@@ -83,19 +83,19 @@ public class TagRepositoryImpl implements TagRepository {
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("names", names);
 
-        return namedParameterJdbcTemplate.query(RETRIEVE_TAGS, params, BeanPropertyRowMapper.newInstance(Tag.class));
+        return namedParameterJdbcTemplate.query(SQL_SELECT_BY_NAME, params, BeanPropertyRowMapper.newInstance(Tag.class));
     }
 
     public Tag createNewTag(Tag tag) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         namedParameterJdbcTemplate
-                .update(SAVE_NEW_TAG, new MapSqlParameterSource("name", tag.getName()), keyHolder);
+                .update(SQL_INSERT, new MapSqlParameterSource("name", tag.getName()), keyHolder);
         return tag.setId(((Number) keyHolder.getKeys().get("id")).longValue());
     }
 
     public void createNewTags(List<Tag> tags) {
         SqlParameterSource[] params = SqlParameterSourceUtils.createBatch(tags);
-        namedParameterJdbcTemplate.batchUpdate(SAVE_NEW_TAG, params);
+        namedParameterJdbcTemplate.batchUpdate(SQL_INSERT, params);
     }
 
     public void createTagsIfNonExist(List<Tag> tags) {
@@ -110,7 +110,7 @@ public class TagRepositoryImpl implements TagRepository {
     }
 
     public void deleteTag(Long id) {
-        if (jdbcTemplate.update(DELETE_TAG, id) == 0) {
+        if (jdbcTemplate.update(SQL_DELETE, id) == 0) {
             throw new EntityNotFoundException(ErrorDefinition.TAG_NOT_FOUND, id);
         }
     }

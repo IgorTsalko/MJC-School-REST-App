@@ -7,11 +7,9 @@ dependencies {
     implementation project(':common')
     implementation project(':service')
 
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation "org.springframework.boot:spring-boot-starter-web:${springBootVersion}"
+    implementation "org.springframework.boot:spring-boot-starter-validation:${springBootVersion}"
     implementation "org.springframework:spring-tx:${springVersion}"
-    implementation "org.hibernate.validator:hibernate-validator:${hibernateValidatorVersion}"
-    compileOnly "javax.validation:validation-api:${javaxValidationVersion}"
 }
 
 test {

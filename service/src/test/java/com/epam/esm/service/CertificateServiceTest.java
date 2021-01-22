@@ -32,7 +32,6 @@ public class CertificateServiceTest {
     @Mock
     TagRepositoryImpl tagRepository;
 
-
     @Test
     public void getAllCertificates(@Mock SearchParams paramsMock) {
         List<Certificate> expCerts = getMockCertificates();
