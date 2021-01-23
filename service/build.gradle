@@ -6,12 +6,12 @@ plugins {
 dependencies {
     implementation project(":common")
     implementation project(":repository")
-    testImplementation project(':repository')
 
     implementation "org.springframework:spring-tx:${springVersion}"
-    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation "org.springframework.boot:spring-boot-starter:${springBootVersion}"
 
-    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+    testImplementation project(':repository')
+    testImplementation("org.springframework.boot:spring-boot-starter-test:${springBootVersion}") {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
 }

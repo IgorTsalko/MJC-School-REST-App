@@ -23,26 +23,24 @@ import java.util.stream.Collectors;
 @Repository
 public class CertificateRepositoryImpl implements CertificateRepository {
 
-    private static final String RETRIEVE_CERTIFICATES =
-            "SELECT gift_certificate_id AS id, cert.name, description, price, duration, create_date, last_update_date" +
+    private static final String SQL_SELECT_ALL =
+            "SELECT gift_certificate_id AS id, cert.name AS name, description, price, duration, create_date, last_update_date" +
                     " FROM gift_certificate cert JOIN gift_certificate_tag gct ON cert.id = gct.gift_certificate_id " +
                     "JOIN tag ON gct.tag_id = tag.id";
-    private static final String CERTIFICATE_GROUP_BY
-            = " GROUP BY gift_certificate_id, cert.name, description, price, duration, create_date, last_update_date";
-    private static final String RETRIEVE_CERTIFICATE_BY_ID = "SELECT * FROM gift_certificate WHERE id=?";
-    private static final String SAVE_NEW_CERTIFICATE =
+    private static final String SQL_SELECT_ALL_BY_ID = "SELECT * FROM gift_certificate WHERE id=?";
+    private static final String SQL_INSERT =
             "INSERT INTO gift_certificate(name, description, price, duration, create_date, last_update_date) " +
                     "VALUES(:name, :description, :price, :duration, :create_date, :last_update_date)";
-    private static final String UPSERT =
+    private static final String SQL_UPSERT =
             "INSERT INTO gift_certificate(id, name, description, price, duration, create_date, last_update_date) " +
                     "VALUES(:id, :name, :description, :price, :duration, :create_date, :last_update_date) " +
                     "ON CONFLICT (id) DO UPDATE SET name=:name, description=:description, price=:price, " +
                     "duration=:duration, last_update_date=:last_update_date";
-    private static final String UPDATE_CERTIFICATE = "UPDATE gift_certificate SET";
-    private static final String DELETE_CERTIFICATE = "DELETE FROM gift_certificate WHERE id=?";
-    private static final String DELETE_CERTIFICATE_TAG_CONNECTIONS =
+    private static final String SQL_UPDATE = "UPDATE gift_certificate SET";
+    private static final String SQL_DELETE = "DELETE FROM gift_certificate WHERE id=?";
+    private static final String SQL_ADD_CERTIFICATE_TAG_CONNECTIONS = "INSERT INTO gift_certificate_tag VALUES(?, ?)";
+    private static final String SQL_DELETE_CERTIFICATE_TAG_CONNECTIONS =
             "DELETE FROM gift_certificate_tag WHERE gift_certificate_id=?";
-    private static final String ADD_CERTIFICATE_TAG_CONNECTIONS = "INSERT INTO gift_certificate_tag VALUES(?, ?)";
 
     private final JdbcTemplate jdbcTemplate;
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
@@ -53,13 +51,13 @@ public class CertificateRepositoryImpl implements CertificateRepository {
     }
 
     public List<Certificate> getAll(SearchParams params) {
-        StringBuilder retrieveCertificatesSql = new StringBuilder(RETRIEVE_CERTIFICATES);
+        StringBuilder retrieveCertificatesSql = new StringBuilder(SQL_SELECT_ALL);
 
         if (params.getName() != null || params.getDescription() != null || params.getTag() != null) {
             retrieveCertificatesSql.append(" WHERE ");
             List<String> conditions = new ArrayList<>();
             if (params.getName() != null) {
-                conditions.add("cert.name ~* '^" + params.getName());
+                conditions.add("name ~* '^" + params.getName());
             }
             if (params.getDescription() != null) {
                 conditions.add("description ~* '^" + params.getDescription());
@@ -69,7 +67,8 @@ public class CertificateRepositoryImpl implements CertificateRepository {
             }
             retrieveCertificatesSql.append(String.join("' AND ", conditions)).append("'");
         }
-        retrieveCertificatesSql.append(CERTIFICATE_GROUP_BY);
+        retrieveCertificatesSql
+                .append(" GROUP BY gift_certificate_id, name, description, price, duration, create_date, last_update_date");
 
         if (params.getSort() != null) {
             retrieveCertificatesSql
@@ -84,7 +83,7 @@ public class CertificateRepositoryImpl implements CertificateRepository {
     }
 
     public Certificate get(Long id) {
-        return jdbcTemplate.query(RETRIEVE_CERTIFICATE_BY_ID, BeanPropertyRowMapper.newInstance(Certificate.class), id)
+        return jdbcTemplate.query(SQL_SELECT_ALL_BY_ID, BeanPropertyRowMapper.newInstance(Certificate.class), id)
                 .stream().findAny()
                 .orElseThrow(() -> new EntityNotFoundException(ErrorDefinition.CERTIFICATE_NOT_FOUND, id));
     }
@@ -101,7 +100,7 @@ public class CertificateRepositoryImpl implements CertificateRepository {
                 .addValue("create_date", certificate.getCreateDate())
                 .addValue("last_update_date", certificate.getLastUpdateDate());
 
-        namedParameterJdbcTemplate.update(SAVE_NEW_CERTIFICATE, params, keyHolder);
+        namedParameterJdbcTemplate.update(SQL_INSERT, params, keyHolder);
 
         return certificate.setId(((Number) keyHolder.getKeys().get("id")).longValue());
     }
@@ -119,14 +118,14 @@ public class CertificateRepositoryImpl implements CertificateRepository {
                 .addValue("create_date", certificate.getCreateDate())
                 .addValue("last_update_date", certificate.getLastUpdateDate());
 
-        namedParameterJdbcTemplate.update(UPSERT, params, keyHolder);
+        namedParameterJdbcTemplate.update(SQL_UPSERT, params, keyHolder);
 
         return certificate.setId(((Number) keyHolder.getKeys().get("id")).longValue());
     }
 
     public Certificate update(Long id, Certificate certificate) {
         MapSqlParameterSource params = new MapSqlParameterSource();
-        StringBuilder updateCertificateSql = new StringBuilder(UPDATE_CERTIFICATE);
+        StringBuilder updateCertificateSql = new StringBuilder(SQL_UPDATE);
         if (certificate.getName() != null) {
             updateCertificateSql.append(" name=:name,");
             params.addValue("name", certificate.getName());
@@ -163,7 +162,7 @@ public class CertificateRepositoryImpl implements CertificateRepository {
     }
 
     public void delete(Long id) {
-        if (jdbcTemplate.update(DELETE_CERTIFICATE, id) == 0) {
+        if (jdbcTemplate.update(SQL_DELETE, id) == 0) {
             throw new EntityNotFoundException(ErrorDefinition.CERTIFICATE_NOT_FOUND, id);
         }
     }
@@ -171,10 +170,10 @@ public class CertificateRepositoryImpl implements CertificateRepository {
     public void addCertificateTagConnections(Long id, List<Tag> tags) {
         List<Object[]> params = tags.stream().map(tag -> new Object[]{id, tag.getId()})
                 .collect(Collectors.toList());
-        jdbcTemplate.batchUpdate(ADD_CERTIFICATE_TAG_CONNECTIONS, params);
+        jdbcTemplate.batchUpdate(SQL_ADD_CERTIFICATE_TAG_CONNECTIONS, params);
     }
 
     public void deleteCertificateTagConnections(Long id) {
-        jdbcTemplate.update(DELETE_CERTIFICATE_TAG_CONNECTIONS, id);
+        jdbcTemplate.update(SQL_DELETE_CERTIFICATE_TAG_CONNECTIONS, id);
     }
 }
