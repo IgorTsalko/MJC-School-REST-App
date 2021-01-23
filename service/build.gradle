@@ -9,6 +9,7 @@ dependencies {
 
     implementation "org.springframework:spring-tx:${springVersion}"
     implementation "org.springframework.boot:spring-boot-starter:${springBootVersion}"
+    implementation "javax.persistence:javax.persistence-api:2.2"
 
     testImplementation project(':repository')
     testImplementation("org.springframework.boot:spring-boot-starter-test:${springBootVersion}") {

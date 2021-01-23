@@ -1,4 +1,5 @@
 dependencies {
     implementation "org.springframework:spring-web:${springVersion}"
-    compileOnly "javax.validation:validation-api:${javaxValidationVersion}"
+    implementation "javax.validation:validation-api:${javaxValidationVersion}"
+    implementation "javax.persistence:javax.persistence-api:2.2"
 }

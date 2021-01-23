@@ -1,9 +1,14 @@
 package com.epam.esm.common;
 
+import javax.persistence.*;
 import java.util.Objects;
 
+@Entity
+@Table(name = "tag")
 public class Tag {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
 

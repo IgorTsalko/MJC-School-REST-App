@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 public class CertificateRepositoryImpl implements CertificateRepository {
 
     private static final String SQL_SELECT_ALL =
-            "SELECT gift_certificate_id AS id, cert.name AS name, description, price, duration, create_date, last_update_date" +
+            "SELECT gift_certificate_id AS id, cert.name, description, price, duration, create_date, last_update_date" +
                     " FROM gift_certificate cert JOIN gift_certificate_tag gct ON cert.id = gct.gift_certificate_id " +
                     "JOIN tag ON gct.tag_id = tag.id";
     private static final String SQL_SELECT_ALL_BY_ID = "SELECT * FROM gift_certificate WHERE id=?";
@@ -57,7 +57,7 @@ public class CertificateRepositoryImpl implements CertificateRepository {
             retrieveCertificatesSql.append(" WHERE ");
             List<String> conditions = new ArrayList<>();
             if (params.getName() != null) {
-                conditions.add("name ~* '^" + params.getName());
+                conditions.add("cert.name ~* '^" + params.getName());
             }
             if (params.getDescription() != null) {
                 conditions.add("description ~* '^" + params.getDescription());
@@ -68,7 +68,7 @@ public class CertificateRepositoryImpl implements CertificateRepository {
             retrieveCertificatesSql.append(String.join("' AND ", conditions)).append("'");
         }
         retrieveCertificatesSql
-                .append(" GROUP BY gift_certificate_id, name, description, price, duration, create_date, last_update_date");
+                .append(" GROUP BY gift_certificate_id, cert.name, description, price, duration, create_date, last_update_date");
 
         if (params.getSort() != null) {
             retrieveCertificatesSql
