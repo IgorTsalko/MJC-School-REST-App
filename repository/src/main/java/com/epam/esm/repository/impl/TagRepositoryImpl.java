@@ -5,56 +5,40 @@ import com.epam.esm.common.ErrorDefinition;
 import com.epam.esm.common.Tag;
 import com.epam.esm.common.exception.EntityNotFoundException;
 import com.epam.esm.repository.TagRepository;
-import org.hibernate.SessionFactory;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.persistence.*;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
 public class TagRepositoryImpl implements TagRepository {
 
-    private static final String SQL_SELECT_BY_ID = "SELECT * FROM tag WHERE id=?";
-    private static final String SQL_SELECT_ALL = "SELECT * FROM tag";
     private static final String SQL_SELECT_CERTIFICATE_TAGS =
             "SELECT gift_certificate_id, tag_id, tag.name FROM gift_certificate_tag gct JOIN tag ON gct.tag_id = tag.id " +
                     "WHERE gift_certificate_id IN (:ids)";
-    private static final String SQL_SELECT_BY_CERTIFICATE_ID = "SELECT id, name FROM gift_certificate_tag gct " +
-            "JOIN tag ON gct.tag_id = tag.id WHERE gct.gift_certificate_id=?";
-    private static final String SQL_SELECT_BY_NAME = "SELECT * FROM tag WHERE name IN (:names)";
-    private static final String SQL_INSERT = "INSERT INTO tag(name) VALUES(:name)";
-    private static final String SQL_DELETE = "DELETE FROM tag WHERE id=?";
 
     private final JdbcTemplate jdbcTemplate;
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-    private final SessionFactory sessionFactory;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public TagRepositoryImpl(JdbcTemplate jdbcTemplate,
-                             NamedParameterJdbcTemplate namedParameterJdbcTemplate,
-                             SessionFactory sessionFactory) {
+                             NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
-        this.sessionFactory = sessionFactory;
     }
 
     public List<Tag> getAllTags() {
-        return jdbcTemplate.query(SQL_SELECT_ALL, BeanPropertyRowMapper.newInstance(Tag.class));
+        return entityManager.createQuery("FROM Tag", Tag.class).getResultList();
     }
 
     public Tag getTag(Long id) {
-        Tag tag = sessionFactory.getCurrentSession().get(Tag.class, id);
+        Tag tag = entityManager.find(Tag.class, id);
         if (tag == null) {
             throw new EntityNotFoundException(ErrorDefinition.TAG_NOT_FOUND, id);
         }
@@ -83,28 +67,27 @@ public class TagRepositoryImpl implements TagRepository {
     }
 
     public List<Tag> getCertificateTags(Long certificateId) {
-        return jdbcTemplate
-                .query(SQL_SELECT_BY_CERTIFICATE_ID, BeanPropertyRowMapper.newInstance(Tag.class), certificateId);
+        //todo: EXCEPTION if I use second param Tag.class for createQuery:
+        // Type specified for TypedQuery [com.epam.esm.common.Tag] is incompatible with query return type [interface java.util.Collection]
+        return entityManager.createQuery("select c.tags from Certificate c where c.id=:id")
+                .setParameter("id", certificateId)
+                .getResultList();
     }
 
     public List<Tag> getTagsByName(List<Tag> tagList) {
         List<String> names = tagList.stream().map(Tag::getName).collect(Collectors.toList());
-        MapSqlParameterSource params = new MapSqlParameterSource()
-                .addValue("names", names);
-
-        return namedParameterJdbcTemplate.query(SQL_SELECT_BY_NAME, params, BeanPropertyRowMapper.newInstance(Tag.class));
+        return entityManager.createQuery("from Tag where name in (:names)", Tag.class)
+                .setParameter("names", names)
+                .getResultList();
     }
 
     public Tag createNewTag(Tag tag) {
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-        namedParameterJdbcTemplate
-                .update(SQL_INSERT, new MapSqlParameterSource("name", tag.getName()), keyHolder);
-        return tag.setId(((Number) keyHolder.getKeys().get("id")).longValue());
+        entityManager.persist(tag);
+        return tag;
     }
 
     public void createNewTags(List<Tag> tags) {
-        SqlParameterSource[] params = SqlParameterSourceUtils.createBatch(tags);
-        namedParameterJdbcTemplate.batchUpdate(SQL_INSERT, params);
+        tags.forEach(t -> entityManager.persist(t));
     }
 
     public void createTagsIfNonExist(List<Tag> tags) {
@@ -119,7 +102,9 @@ public class TagRepositoryImpl implements TagRepository {
     }
 
     public void deleteTag(Long id) {
-        if (jdbcTemplate.update(SQL_DELETE, id) == 0) {
+        Query query = entityManager.createQuery("delete Tag where id=:id");
+        query.setParameter("id", id);
+        if (query.executeUpdate() == 0) {
             throw new EntityNotFoundException(ErrorDefinition.TAG_NOT_FOUND, id);
         }
     }
