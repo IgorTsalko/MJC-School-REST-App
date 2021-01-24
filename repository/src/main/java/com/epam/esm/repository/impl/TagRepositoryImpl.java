@@ -5,6 +5,7 @@ import com.epam.esm.common.ErrorDefinition;
 import com.epam.esm.common.Tag;
 import com.epam.esm.common.exception.EntityNotFoundException;
 import com.epam.esm.repository.TagRepository;
+import org.hibernate.SessionFactory;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -38,9 +39,14 @@ public class TagRepositoryImpl implements TagRepository {
     private final JdbcTemplate jdbcTemplate;
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-    public TagRepositoryImpl(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+    private final SessionFactory sessionFactory;
+
+    public TagRepositoryImpl(JdbcTemplate jdbcTemplate,
+                             NamedParameterJdbcTemplate namedParameterJdbcTemplate,
+                             SessionFactory sessionFactory) {
         this.jdbcTemplate = jdbcTemplate;
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
+        this.sessionFactory = sessionFactory;
     }
 
     public List<Tag> getAllTags() {
@@ -48,8 +54,11 @@ public class TagRepositoryImpl implements TagRepository {
     }
 
     public Tag getTag(Long id) {
-        return jdbcTemplate.query(SQL_SELECT_BY_ID, BeanPropertyRowMapper.newInstance(Tag.class), id)
-                .stream().findAny().orElseThrow(() -> new EntityNotFoundException(ErrorDefinition.TAG_NOT_FOUND, id));
+        Tag tag = sessionFactory.getCurrentSession().get(Tag.class, id);
+        if (tag == null) {
+            throw new EntityNotFoundException(ErrorDefinition.TAG_NOT_FOUND, id);
+        }
+        return tag;
     }
 
     public Map<Long, List<Tag>> getCertificatesTags(List<Certificate> certificates) {
