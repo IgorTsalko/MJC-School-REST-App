@@ -50,9 +50,8 @@ public class RepositoryConfigTest {
     }
 
     @Bean
-    public TagRepositoryImpl tagRepository(NamedParameterJdbcTemplate namedParameterJdbcTemplate,
-                                           JdbcTemplate jdbcTemplate) {
-        return new TagRepositoryImpl(jdbcTemplate, namedParameterJdbcTemplate);
+    public TagRepositoryImpl tagRepository(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+        return new TagRepositoryImpl(namedParameterJdbcTemplate);
     }
 
     @Bean

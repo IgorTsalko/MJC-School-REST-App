@@ -27,44 +27,37 @@ public class CertificateServiceImpl implements CertificateService {
     @Transactional
     public List<Certificate> getAll(SearchParams params) {
         List<Certificate> certificates = certificateRepository.getAll(params);
-        Map<Long, List<Tag>> certificateTags = tagRepository.getCertificatesTags(certificates);
-        certificates.forEach(certificate -> certificate.setTags(certificateTags.get(certificate.getId())));
+//        Map<Long, List<Tag>> certificateTags = tagRepository.getCertificatesTags(certificates);
+//        certificates.forEach(certificate -> certificate.setTags(certificateTags.get(certificate.getId())));
         return certificates;
     }
 
     @Transactional
     public Certificate get(Long id) {
-        return certificateRepository.get(id)
-                .setTags(tagRepository.getCertificateTags(id));
+        return certificateRepository.get(id);
     }
 
     @Transactional
     public Certificate create(Certificate certificate) {
-        certificate = certificateRepository.create(certificate);
-
         List<Tag> tags = certificate.getTags();
         if (!CollectionUtils.isEmpty(tags)) {
             tagRepository.createTagsIfNonExist(tags);
             tags = tagRepository.getTagsByName(tags);
-            certificateRepository.addCertificateTagConnections(certificate.getId(), tags);
             certificate.setTags(tags);
         }
-
+        certificate = certificateRepository.create(certificate);
         return certificate;
     }
 
     @Transactional
     public Certificate upsert(Long id, Certificate certificate) {
-        certificate = certificateRepository.upsert(id, certificate);
-
         List<Tag> tags = certificate.getTags();
         if (!CollectionUtils.isEmpty(tags)) {
             tagRepository.createTagsIfNonExist(tags);
             tags = tagRepository.getTagsByName(tags);
-            certificateRepository.addCertificateTagConnections(certificate.getId(), tags);
             certificate.setTags(tags);
         }
-
+        certificate = certificateRepository.upsert(id, certificate);
         return certificate;
     }
 
