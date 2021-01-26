@@ -2,4 +2,5 @@ dependencies {
     implementation "org.springframework:spring-web:${springVersion}"
     implementation "javax.validation:validation-api:${javaxValidationVersion}"
     implementation "javax.persistence:javax.persistence-api:2.2"
+    implementation "org.hibernate:hibernate-core:${hibernateCoreVersion}"
 }

@@ -30,7 +30,6 @@ public class PersistenceJPAConfig {
     public HibernateJpaVendorAdapter vendorAdapterDev() {
         HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         vendorAdapter.setShowSql(true);
-//        vendorAdapter.setGenerateDdl(true);
         return vendorAdapter;
     }
 

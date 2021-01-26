@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class CertificateServiceImpl implements CertificateService {
@@ -26,61 +25,44 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Transactional
     public List<Certificate> getAll(SearchParams params) {
-        List<Certificate> certificates = certificateRepository.getAll(params);
-//        Map<Long, List<Tag>> certificateTags = tagRepository.getCertificatesTags(certificates);
-//        certificates.forEach(certificate -> certificate.setTags(certificateTags.get(certificate.getId())));
-        return certificates;
+        return certificateRepository.getAll(params);
     }
 
     @Transactional
     public Certificate get(Long id) {
-        return certificateRepository.get(id);
+        return certificateRepository.get(id)
+                .setTags(tagRepository.getCertificateTags(id));
     }
 
     @Transactional
     public Certificate create(Certificate certificate) {
         List<Tag> tags = certificate.getTags();
         if (!CollectionUtils.isEmpty(tags)) {
-            tagRepository.createTagsIfNonExist(tags);
-            tags = tagRepository.getTagsByName(tags);
+            tags = tagRepository.createNonExistentTags(tags);
             certificate.setTags(tags);
         }
-        certificate = certificateRepository.create(certificate);
-        return certificate;
+        return certificateRepository.create(certificate);
     }
 
     @Transactional
-    public Certificate upsert(Long id, Certificate certificate) {
+    public Certificate put(Long id, Certificate certificate) {
         List<Tag> tags = certificate.getTags();
         if (!CollectionUtils.isEmpty(tags)) {
-            tagRepository.createTagsIfNonExist(tags);
-            tags = tagRepository.getTagsByName(tags);
+            tags = tagRepository.createNonExistentTags(tags);
             certificate.setTags(tags);
         }
-        certificate = certificateRepository.upsert(id, certificate);
-        return certificate;
+        return certificateRepository.upsert(id, certificate);
     }
 
     @Transactional
     public Certificate update(Long id, Certificate certificate) {
-        certificate = certificateRepository.update(id, certificate);
-
         List<Tag> tags = certificate.getTags();
         if (tags != null) {
-            certificateRepository.deleteCertificateTagConnections(id);
-            if (tags.isEmpty()) {
-                certificate.setTags(null);
-            } else {
-                tagRepository.createTagsIfNonExist(tags);
-                tags = tagRepository.getTagsByName(tags);
-                certificateRepository.addCertificateTagConnections(id, tags);
-                certificate.setTags(tags);
-            }
-        } else {
-            certificate.setTags(tagRepository.getCertificateTags(id));
+            tags = tagRepository.createNonExistentTags(tags);
+            certificate.setTags(tags);
         }
-
-        return certificate;
+        return certificateRepository.get(id)
+                .setTags(tagRepository.getCertificateTags(id));
     }
 
     @Transactional

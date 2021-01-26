@@ -41,14 +41,6 @@ public interface TagRepository {
     List<Tag> getCertificateTags(Long certificateId);
 
     /**
-     * Retrieves tags by appropriate names
-     *
-     * @param tagList list of tags
-     * @return list of appropriate tags
-     */
-    List<Tag> getTagsByName(List<Tag> tagList);
-
-    /**
      * Create new <code>Tag</code> and return it
      *
      * @param tag the object that contain properties for new <code>Tag</code>
@@ -57,18 +49,11 @@ public interface TagRepository {
     Tag createNewTag(Tag tag);
 
     /**
-     * Create new tags by tag's names
-     *
-     * @param tags list of tags
-     */
-    void createNewTags(List<Tag> tags);
-
-    /**
      * Create new tags by tag's names if any tags are not exist
      *
      * @param tags list of tags
      */
-    void createTagsIfNonExist(List<Tag> tags);
+    List<Tag> createNonExistentTags(List<Tag> tags);
 
     /**
      * Delete certain <code>Tag</code>

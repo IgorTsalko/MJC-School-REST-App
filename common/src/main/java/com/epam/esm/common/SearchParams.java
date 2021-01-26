@@ -47,7 +47,7 @@ public class SearchParams {
         this.sort = sort;
     }
 
-    public SortOrder getSort_order() {
+    public SortOrder getSortOrder() {
         return sort_order;
     }
 

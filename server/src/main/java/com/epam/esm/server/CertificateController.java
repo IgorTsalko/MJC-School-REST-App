@@ -72,9 +72,9 @@ public class CertificateController {
      * @return updated or created <code>Certificate</code>
      */
     @PutMapping("/{id}")
-    public ResponseEntity<CertificateResponse> upsert(
+    public ResponseEntity<CertificateResponse> put(
             @PathVariable @Positive Long id, @RequestBody @Valid CertificateCreateRequest request) {
-        Certificate certificate = certificateService.upsert(id, CertificateMapper.convertToEntity(request));
+        Certificate certificate = certificateService.put(id, CertificateMapper.convertToEntity(request));
         return ResponseEntity.ok(CertificateMapper.convertToResponse(certificate));
     }
 
