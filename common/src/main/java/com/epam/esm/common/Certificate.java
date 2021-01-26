@@ -21,10 +21,10 @@ public class Certificate {
     private LocalDateTime createDate;
     @Column(name = "last_update_date")
     private LocalDateTime lastUpdateDate;
-    @ManyToMany
+    @OneToMany
     @JoinTable(name = "gift_certificate_tag",
-            joinColumns = @JoinColumn(name = "tag_id"),
-            inverseJoinColumns = @JoinColumn(name = "gift_certificate_id")
+            joinColumns = @JoinColumn(name = "gift_certificate_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
     private List<Tag> tags;
 
@@ -98,15 +98,6 @@ public class Certificate {
     public Certificate setTags(List<Tag> tags) {
         this.tags = tags;
         return this;
-    }
-
-    public boolean isEmpty() {
-        return id == null
-                && name == null
-                && description == null
-                && price == null
-                && duration == null
-                && tags == null;
     }
 
     @Override

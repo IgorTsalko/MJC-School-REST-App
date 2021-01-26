@@ -160,7 +160,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         ExceptionResponse exceptionResponse = new ExceptionResponse()
                 .setErrorCode(40009)
                 .setDetails(List.of(messageSource.getMessage(
-                        "incorrect-body",
+                        "request.incorrect-body",
                         null,
                         LocaleContextHolder.getLocale()))
                 );

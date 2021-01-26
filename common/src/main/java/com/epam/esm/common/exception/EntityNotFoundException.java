@@ -7,4 +7,8 @@ public class EntityNotFoundException extends GiftCertificateException {
     public EntityNotFoundException(ErrorDefinition errorDefinition, Long id) {
         super(errorDefinition, id);
     }
+
+    public EntityNotFoundException(ErrorDefinition errorDefinition, Long id, Throwable cause) {
+        super(errorDefinition, id, cause);
+    }
 }

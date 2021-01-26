@@ -7,11 +7,13 @@ public class GiftCertificateException extends RuntimeException {
     private ErrorDefinition errorDefinition;
     private Long entityId;
 
-    public GiftCertificateException(ErrorDefinition errorDefinition) {
+    public GiftCertificateException(ErrorDefinition errorDefinition, Long id) {
         this.errorDefinition = errorDefinition;
+        this.entityId = id;
     }
 
-    public GiftCertificateException(ErrorDefinition errorDefinition, Long id) {
+    public GiftCertificateException(ErrorDefinition errorDefinition, Long id, Throwable cause) {
+        super(cause);
         this.errorDefinition = errorDefinition;
         this.entityId = id;
     }
