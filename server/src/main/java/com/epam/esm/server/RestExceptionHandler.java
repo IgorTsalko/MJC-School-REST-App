@@ -28,11 +28,11 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @ControllerAdvice
-public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
+public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     private final MessageSource messageSource;
 
-    public RestResponseEntityExceptionHandler(MessageSource messageSource) {
+    public RestExceptionHandler(MessageSource messageSource) {
         this.messageSource = messageSource;
     }
 

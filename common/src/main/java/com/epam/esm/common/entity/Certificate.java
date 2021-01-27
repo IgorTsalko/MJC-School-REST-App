@@ -1,4 +1,4 @@
-package com.epam.esm.common;
+package com.epam.esm.common.entity;
 
 import javax.persistence.*;
 import java.math.BigDecimal;

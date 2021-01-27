@@ -1,8 +1,7 @@
 package com.epam.esm.repository.impl;
 
-import com.epam.esm.common.Certificate;
 import com.epam.esm.common.ErrorDefinition;
-import com.epam.esm.common.Tag;
+import com.epam.esm.common.entity.Tag;
 import com.epam.esm.common.exception.EntityNotFoundException;
 import com.epam.esm.repository.TagRepository;
 import org.springframework.stereotype.Repository;
@@ -31,21 +30,6 @@ public class TagRepositoryImpl implements TagRepository {
             throw new EntityNotFoundException(ErrorDefinition.TAG_NOT_FOUND, id);
         }
         return tag;
-    }
-
-    @SuppressWarnings("unchecked")
-    public Map<Long, List<Tag>> getCertificatesTags(List<Certificate> certificates) {
-        List<Long> ids = certificates.stream().map(Certificate::getId).collect(Collectors.toList());
-        Map<Long, List<Tag>> certificateTag = new HashMap<>();
-
-        ids.forEach(id -> {
-            List<Tag> tags = entityManager.createQuery(JPQL_SELECT_CERTIFICATE_TAGS)
-                    .setParameter("id", id)
-                    .getResultList();
-            certificateTag.put(id, tags);
-        });
-
-        return certificateTag;
     }
 
     @SuppressWarnings("unchecked")

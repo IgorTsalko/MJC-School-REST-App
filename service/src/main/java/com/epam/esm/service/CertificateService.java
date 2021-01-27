@@ -1,6 +1,6 @@
 package com.epam.esm.service;
 
-import com.epam.esm.common.Certificate;
+import com.epam.esm.common.entity.Certificate;
 import com.epam.esm.common.SearchParams;
 
 import java.util.List;

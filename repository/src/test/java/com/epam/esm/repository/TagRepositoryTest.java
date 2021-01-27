@@ -1,11 +1,8 @@
 package com.epam.esm.repository;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.verify;
 
-import com.epam.esm.common.Certificate;
-import com.epam.esm.common.Tag;
+import com.epam.esm.common.entity.Tag;
 import com.epam.esm.common.exception.EntityNotFoundException;
 import com.epam.esm.repository.config.RepositoryConfigTest;
 import com.epam.esm.repository.impl.TagRepositoryImpl;
@@ -16,9 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Map;
 
 @SpringBootTest(classes = RepositoryConfigTest.class)
 @ExtendWith(MockitoExtension.class)
@@ -44,22 +41,8 @@ public class TagRepositoryTest {
     }
 
     @Test
-    public void getTagByNotExistentId() {
+    public void getTagByNonExistentId() {
         assertThrows(EntityNotFoundException.class, () -> tagRepository.getTag(10L));
-    }
-
-    @Test
-    public void getCertificateTagsByListCertificatesIds() {
-        Map<Long, List<Tag>> expCertTags = Map.of(
-                1L, List.of(new Tag().setId(1L).setName("incredible")),
-                2L, List.of(new Tag().setId(1L).setName("incredible"), new Tag().setId(2L).setName("travel"))
-        );
-        List<Certificate> certs = List.of(
-                new Certificate().setId(1L).setName("Trip"),
-                new Certificate().setId(2L).setName("Skydiving")
-        );
-        Map<Long, List<Tag>> actualCertTags = tagRepository.getCertificatesTags(certs);
-        assertEquals(expCertTags, actualCertTags);
     }
 
     @Test
@@ -70,6 +53,7 @@ public class TagRepositoryTest {
     }
 
     @Test
+    @Transactional
     public void createNewTag() {
         Tag expTag = new Tag().setId(3L).setName("NewTag");
         Tag newTag = new Tag().setName("NewTag");
@@ -78,7 +62,8 @@ public class TagRepositoryTest {
     }
 
     @Test
-    public void createTagsIfNonExist() {
+    @Transactional
+    public void createNonExistentTags() {
         List<Tag> expTags = List.of(
                 new Tag().setId(1L).setName("incredible"),
                 new Tag().setId(2L).setName("travel"),
@@ -96,7 +81,8 @@ public class TagRepositoryTest {
     }
 
     @Test
-    public void deleteTag() {
+    @Transactional
+    public void deleteTagById() {
         List<Tag> expTags = List.of(
                 new Tag().setId(2L).setName("travel")
         );
@@ -106,7 +92,8 @@ public class TagRepositoryTest {
     }
 
     @Test
-    public void deleteTagByNotExistentId() {
+    @Transactional
+    public void deleteTagByNonExistentId() {
         assertThrows(EntityNotFoundException.class, () -> tagRepository.deleteTag(10L));
     }
 
