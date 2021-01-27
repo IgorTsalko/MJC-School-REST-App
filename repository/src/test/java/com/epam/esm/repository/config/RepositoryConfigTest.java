@@ -44,14 +44,13 @@ public class RepositoryConfigTest {
     }
 
     @Bean
-    public CertificateRepositoryImpl certificateRepository(
-            NamedParameterJdbcTemplate namedParameterJdbcTemplate, JdbcTemplate jdbcTemplate) {
-        return new CertificateRepositoryImpl(jdbcTemplate, namedParameterJdbcTemplate);
+    public CertificateRepositoryImpl certificateRepository() {
+        return new CertificateRepositoryImpl();
     }
 
     @Bean
-    public TagRepositoryImpl tagRepository(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
-        return new TagRepositoryImpl(namedParameterJdbcTemplate);
+    public TagRepositoryImpl tagRepository() {
+        return new TagRepositoryImpl();
     }
 
     @Bean

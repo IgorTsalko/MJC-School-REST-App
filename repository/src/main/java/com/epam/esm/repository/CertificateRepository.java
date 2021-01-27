@@ -58,19 +58,4 @@ public interface CertificateRepository {
      * @param id specific certificate's identifier
      */
     void delete(Long id);
-
-    /**
-     * Link certificates to matching tags
-     *
-     * @param id specific certificate's identifier
-     * @param tags list of <code>Tag</code> entities
-     */
-    void addCertificateTagConnections(Long id, List<Tag> tags);
-
-    /**
-     * Delete certificate connections with matching tags
-     *
-     * @param id specific certificate's identifier
-     */
-    void deleteCertificateTagConnections(Long id);
 }

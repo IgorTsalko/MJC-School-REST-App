@@ -40,7 +40,7 @@ public interface CertificateService {
      *                    or creating <code>Certificate</code>
      * @return updated or created <code>Certificate</code>
      */
-    Certificate upsert(Long id, Certificate certificate);
+    Certificate put(Long id, Certificate certificate);
 
     /**
      * Update certain fields of a certain <code>Certificate</code> and return it

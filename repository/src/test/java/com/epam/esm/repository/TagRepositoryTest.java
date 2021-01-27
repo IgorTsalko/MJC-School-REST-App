@@ -1,6 +1,8 @@
 package com.epam.esm.repository;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.verify;
 
 import com.epam.esm.common.Certificate;
 import com.epam.esm.common.Tag;
@@ -68,37 +70,11 @@ public class TagRepositoryTest {
     }
 
     @Test
-    public void getTagsByName() {
-        List<Tag> expTags = getMockTags();
-        List<Tag> tags = List.of(
-                new Tag().setName("incredible"),
-                new Tag().setName("travel")
-        );
-        List<Tag> actualTags = tagRepository.getTagsByName(tags);
-        assertEquals(expTags, actualTags);
-    }
-
-    @Test
     public void createNewTag() {
         Tag expTag = new Tag().setId(3L).setName("NewTag");
         Tag newTag = new Tag().setName("NewTag");
         Tag actualTag = tagRepository.createNewTag(newTag);
         assertEquals(expTag, actualTag);
-    }
-
-    @Test
-    public void createNewTags() {
-        List<Tag> expTags = List.of(
-                new Tag().setId(3L).setName("someNewTag1"),
-                new Tag().setId(4L).setName("someNewTag2")
-        );
-        List<Tag> tags = List.of(
-                new Tag().setName("someNewTag1"),
-                new Tag().setName("someNewTag2")
-        );
-        tagRepository.createNewTags(tags);
-        List<Tag> actualTags = tagRepository.getTagsByName(tags);
-        assertEquals(expTags, actualTags);
     }
 
     @Test
@@ -114,7 +90,7 @@ public class TagRepositoryTest {
                 new Tag().setName("someNewTag1"),
                 new Tag().setName("someNewTag2")
         );
-        tagRepository.createTagsIfNonExist(tags);
+        tagRepository.createNonExistentTags(tags);
         List<Tag> actualTags = tagRepository.getAllTags();
         assertEquals(expTags, actualTags);
     }

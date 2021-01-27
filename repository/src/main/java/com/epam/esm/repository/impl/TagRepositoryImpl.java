@@ -16,7 +16,6 @@ public class TagRepositoryImpl implements TagRepository {
 
     private static final String JPQL_SELECT_ALL = "FROM Tag";
     private static final String JPQL_SELECT_BY_NAME = "from Tag where name in (:names)";
-    private static final String JPQL_DELETE = "delete Tag where id=:id";
     private static final String JPQL_SELECT_CERTIFICATE_TAGS = "select c.tags from Certificate c where c.id=:id";
 
     @PersistenceContext
@@ -39,13 +38,12 @@ public class TagRepositoryImpl implements TagRepository {
         List<Long> ids = certificates.stream().map(Certificate::getId).collect(Collectors.toList());
         Map<Long, List<Tag>> certificateTag = new HashMap<>();
 
-        //todo: Batch?
-        for(Long id : ids) {
+        ids.forEach(id -> {
             List<Tag> tags = entityManager.createQuery(JPQL_SELECT_CERTIFICATE_TAGS)
                     .setParameter("id", id)
                     .getResultList();
             certificateTag.put(id, tags);
-        }
+        });
 
         return certificateTag;
     }
@@ -57,39 +55,37 @@ public class TagRepositoryImpl implements TagRepository {
                 .getResultList();
     }
 
-    public List<Tag> getTagsByName(List<Tag> tagList) {
-        List<String> names = tagList.stream().map(Tag::getName).collect(Collectors.toList());
-        return entityManager.createQuery(JPQL_SELECT_BY_NAME, Tag.class)
-                .setParameter("names", names)
-                .getResultList();
-    }
-
     public Tag createNewTag(Tag tag) {
         entityManager.persist(tag);
         return tag;
     }
 
-    public void createNewTags(List<Tag> tags) {
-        tags = tags.stream().distinct().collect(Collectors.toList());
-        tags.forEach(t -> entityManager.persist(t));
+    private List<Tag> getTagsByName(List<Tag> tags) {
+        List<String> names = tags.stream().map(Tag::getName).collect(Collectors.toList());
+        return entityManager.createQuery(JPQL_SELECT_BY_NAME, Tag.class)
+                .setParameter("names", names)
+                .getResultList();
     }
 
-    public void createTagsIfNonExist(List<Tag> tags) {
+    public List<Tag> createNonExistentTags(List<Tag> tags) {
         List<Tag> existingTags = getTagsByName(tags);
-
         List<Tag> nonexistentTags = tags.stream()
-                .filter(exist -> existingTags.stream()
+                .filter(exist -> existingTags
+                        .stream()
                         .noneMatch(t -> t.getName().equals(exist.getName())))
                 .collect(Collectors.toList());
 
-        createNewTags(nonexistentTags);
+        nonexistentTags.stream().distinct().collect(Collectors.toList())
+                .forEach(t -> entityManager.persist(t));
+
+        return getTagsByName(tags);
     }
 
     public void deleteTag(Long id) {
-        Query query = entityManager.createQuery(JPQL_DELETE);
-        query.setParameter("id", id);
-        if (query.executeUpdate() != 1) {
+        Tag tag = entityManager.find(Tag.class, id);
+        if (tag == null) {
             throw new EntityNotFoundException(ErrorDefinition.TAG_NOT_FOUND, id);
         }
+        entityManager.remove(tag);
     }
 }
