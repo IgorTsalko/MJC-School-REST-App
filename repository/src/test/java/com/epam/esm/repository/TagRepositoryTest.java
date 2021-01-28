@@ -29,20 +29,20 @@ public class TagRepositoryTest {
     @Test
     public void getAllTags() {
         List<Tag> expTags = getMockTags();
-        List<Tag> actualTags = tagRepository.getAllTags();
+        List<Tag> actualTags = tagRepository.getAll();
         assertEquals(expTags, actualTags);
     }
 
     @Test
     public void getTagById() {
         Tag expTag = new Tag().setId(2L).setName("travel");
-        Tag actualTag = tagRepository.getTag(2L);
+        Tag actualTag = tagRepository.get(2L);
         assertEquals(expTag, actualTag);
     }
 
     @Test
     public void getTagByNonExistentId() {
-        assertThrows(EntityNotFoundException.class, () -> tagRepository.getTag(10L));
+        assertThrows(EntityNotFoundException.class, () -> tagRepository.get(10L));
     }
 
     @Test
@@ -57,7 +57,7 @@ public class TagRepositoryTest {
     public void createNewTag() {
         Tag expTag = new Tag().setId(3L).setName("NewTag");
         Tag newTag = new Tag().setName("NewTag");
-        Tag actualTag = tagRepository.createNewTag(newTag);
+        Tag actualTag = tagRepository.create(newTag);
         assertEquals(expTag, actualTag);
     }
 
@@ -75,8 +75,8 @@ public class TagRepositoryTest {
                 new Tag().setName("someNewTag1"),
                 new Tag().setName("someNewTag2")
         );
-        tagRepository.createNonExistentTags(tags);
-        List<Tag> actualTags = tagRepository.getAllTags();
+        tagRepository.createNonExistent(tags);
+        List<Tag> actualTags = tagRepository.getAll();
         assertEquals(expTags, actualTags);
     }
 
@@ -86,15 +86,15 @@ public class TagRepositoryTest {
         List<Tag> expTags = List.of(
                 new Tag().setId(2L).setName("travel")
         );
-        tagRepository.deleteTag(1L);
-        List<Tag> actualTags = tagRepository.getAllTags();
+        tagRepository.delete(1L);
+        List<Tag> actualTags = tagRepository.getAll();
         assertEquals(expTags, actualTags);
     }
 
     @Test
     @Transactional
     public void deleteTagByNonExistentId() {
-        assertThrows(EntityNotFoundException.class, () -> tagRepository.deleteTag(10L));
+        assertThrows(EntityNotFoundException.class, () -> tagRepository.delete(10L));
     }
 
     private List<Tag> getMockTags() {

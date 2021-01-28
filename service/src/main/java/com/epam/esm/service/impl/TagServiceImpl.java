@@ -18,20 +18,20 @@ public class TagServiceImpl implements TagService {
     }
 
     public List<Tag> getAll() {
-        return tagRepository.getAllTags();
+        return tagRepository.getAll();
     }
 
     public Tag get(Long id) {
-        return tagRepository.getTag(id);
+        return tagRepository.get(id);
     }
 
     @Transactional
     public Tag create(Tag tag) {
-        return tagRepository.createNewTag(tag);
+        return tagRepository.create(tag);
     }
 
     @Transactional
     public void delete(Long id) {
-        tagRepository.deleteTag(id);
+        tagRepository.delete(id);
     }
 }
