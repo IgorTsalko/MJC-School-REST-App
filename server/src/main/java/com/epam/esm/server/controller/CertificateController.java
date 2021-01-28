@@ -36,7 +36,7 @@ public class CertificateController {
      * @return list of appropriate <code>Certificates</code>
      */
     @GetMapping
-    public List<CertificateResponse> getCertificates(@Valid SearchParams params) {
+    public List<CertificateResponse> getAll(@Valid SearchParams params) {
         return certificateService.getAll(params)
                 .stream().map(CertificateMapper::convertToResponse).collect(Collectors.toList());
     }
@@ -48,7 +48,7 @@ public class CertificateController {
      * @return certain <code>Certificate</code>
      */
     @GetMapping("/{id}")
-    public CertificateResponse getCertificate(@PathVariable @Positive Long id) {
+    public CertificateResponse get(@PathVariable @Positive Long id) {
         return CertificateMapper.convertToResponse(certificateService.get(id));
     }
 
@@ -59,7 +59,7 @@ public class CertificateController {
      * @return created <code>Certificate</code>
      */
     @PostMapping
-    public ResponseEntity<CertificateResponse> createNewCertificate(@RequestBody @Valid CertificateCreateRequest request) {
+    public ResponseEntity<CertificateResponse> create(@RequestBody @Valid CertificateCreateRequest request) {
         Certificate certificate = certificateService.create(CertificateMapper.convertToEntity(request));
         return new ResponseEntity<>(CertificateMapper.convertToResponse(certificate), HttpStatus.CREATED);
     }
@@ -100,7 +100,7 @@ public class CertificateController {
      * @return successful status code
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteCertificate(@PathVariable @Positive Long id) {
+    public ResponseEntity<Object> delete(@PathVariable @Positive Long id) {
         certificateService.delete(id);
         return ResponseEntity.noContent().build();
     }

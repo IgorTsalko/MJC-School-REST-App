@@ -30,7 +30,7 @@ public class TagController {
      * @return list of <code>Tags</code>
      */
     @GetMapping
-    public List<TagResponse> getAllTags() {
+    public List<TagResponse> getAll() {
         return tagService.getAll().stream().map(TagMapper::convertToResponse).collect(Collectors.toList());
     }
 
@@ -41,7 +41,7 @@ public class TagController {
      * @return certain <code>Tag</code>
      */
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getTag(@PathVariable @Positive Long id) {
+    public ResponseEntity<Object> get(@PathVariable @Positive Long id) {
         return ResponseEntity.ok(TagMapper.convertToResponse(tagService.get(id)));
     }
 
@@ -52,7 +52,7 @@ public class TagController {
      * @return created <code>Tag</code>
      */
     @PostMapping
-    public ResponseEntity<TagResponse> createNewTag(@RequestBody @Valid TagRequest tagRequest) {
+    public ResponseEntity<TagResponse> create(@RequestBody @Valid TagRequest tagRequest) {
         TagResponse tagResponse =
                 TagMapper.convertToResponse(tagService.create(TagMapper.convertToEntity(tagRequest)));
         return ResponseEntity.ok(tagResponse);
@@ -65,7 +65,7 @@ public class TagController {
      * @return successful status code
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteTag(@PathVariable @Positive Long id) {
+    public ResponseEntity<Object> delete(@PathVariable @Positive Long id) {
         tagService.delete(id);
         return ResponseEntity.noContent().build();
     }

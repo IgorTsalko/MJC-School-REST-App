@@ -11,7 +11,7 @@ public interface TagRepository {
      *
      * @return list of <code>Tags</code>
      */
-    List<Tag> getAllTags();
+    List<Tag> getAll();
 
     /**
      * Retrieve certain <code>Tag</code> for appropriate id.
@@ -19,7 +19,7 @@ public interface TagRepository {
      * @param id specific tag's identifier
      * @return certain <code>Tag</code>
      */
-    Tag getTag(Long id);
+    Tag get(Long id);
 
     /**
      * Retrieves certificate connections with matching tags for appropriate <code>Certificate</code>
@@ -35,19 +35,19 @@ public interface TagRepository {
      * @param tag the object that contain properties for new <code>Tag</code>
      * @return created <code>Tag</code>
      */
-    Tag createNewTag(Tag tag);
+    Tag create(Tag tag);
 
     /**
      * Create new tags by tag's names if any tags are not exist
      *
      * @param tags list of tags
      */
-    List<Tag> createNonExistentTags(List<Tag> tags);
+    List<Tag> createNonExistent(List<Tag> tags);
 
     /**
      * Delete certain <code>Tag</code>
      *
      * @param id specific tag's identifier
      */
-    void deleteTag(Long id);
+    void delete(Long id);
 }

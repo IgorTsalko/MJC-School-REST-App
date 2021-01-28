@@ -1,6 +1,7 @@
 package com.epam.esm.server.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -18,6 +19,7 @@ public class CertificateResponse {
     private LocalDateTime createDate = LocalDateTime.now();
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime lastUpdateDate = LocalDateTime.now();
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<TagResponse> tags;
 
     public Long getId() {

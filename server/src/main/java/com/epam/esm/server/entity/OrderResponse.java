@@ -1,0 +1,87 @@
+package com.epam.esm.server.entity;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.Objects;
+
+public class OrderResponse {
+
+    private Long orderId;
+    private Long userId;
+    private Long certificateId;
+    private BigDecimal price;
+    private LocalDateTime createDate;
+
+    public Long getOrderId() {
+        return orderId;
+    }
+
+    public OrderResponse setOrderId(Long orderId) {
+        this.orderId = orderId;
+        return this;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public OrderResponse setUserId(Long userId) {
+        this.userId = userId;
+        return this;
+    }
+
+    public Long getCertificateId() {
+        return certificateId;
+    }
+
+    public OrderResponse setCertificateId(Long certificateId) {
+        this.certificateId = certificateId;
+        return this;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public OrderResponse setPrice(BigDecimal price) {
+        this.price = price;
+        return this;
+    }
+
+    public LocalDateTime getCreateDate() {
+        return createDate;
+    }
+
+    public OrderResponse setCreateDate(LocalDateTime createDate) {
+        this.createDate = createDate;
+        return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        OrderResponse that = (OrderResponse) o;
+        return Objects.equals(orderId, that.orderId)
+                && Objects.equals(userId, that.userId)
+                && Objects.equals(certificateId, that.certificateId)
+                && Objects.equals(price, that.price)
+                && Objects.equals(createDate, that.createDate);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(orderId, userId, certificateId, price, createDate);
+    }
+
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName() + "{" +
+                "orderId=" + orderId +
+                ", userId=" + userId +
+                ", certificateId=" + certificateId +
+                ", price=" + price +
+                ", createDate=" + createDate +
+                '}';
+    }
+}
