@@ -1,5 +1,6 @@
-package com.epam.esm.server;
+package com.epam.esm.server.controller;
 
+import com.epam.esm.server.mapper.TagMapper;
 import com.epam.esm.server.entity.TagRequest;
 import com.epam.esm.server.entity.TagResponse;
 import com.epam.esm.service.TagService;

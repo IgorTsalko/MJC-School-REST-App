@@ -1,10 +1,8 @@
 package com.epam.esm.repository;
 
-import com.epam.esm.common.Certificate;
-import com.epam.esm.common.Tag;
+import com.epam.esm.common.entity.Tag;
 
 import java.util.List;
-import java.util.Map;
 
 public interface TagRepository {
 
@@ -22,15 +20,6 @@ public interface TagRepository {
      * @return certain <code>Tag</code>
      */
     Tag getTag(Long id);
-
-    /**
-     * Retrieves certificate connections with matching tags
-     * for appropriate list of <code>Certificates</code>
-     *
-     * @param certificates list of <code>Certificate</code> entities for which tags are needed
-     * @return <code>Certificates</code> map with matching tags
-     */
-    Map<Long, List<Tag>> getCertificatesTags(List<Certificate> certificates);
 
     /**
      * Retrieves certificate connections with matching tags for appropriate <code>Certificate</code>

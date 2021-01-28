@@ -1,8 +1,8 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.common.Certificate;
+import com.epam.esm.common.entity.Certificate;
 import com.epam.esm.common.SearchParams;
-import com.epam.esm.common.Tag;
+import com.epam.esm.common.entity.Tag;
 import com.epam.esm.repository.CertificateRepository;
 import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.CertificateService;
@@ -51,7 +51,8 @@ public class CertificateServiceImpl implements CertificateService {
             tags = tagRepository.createNonExistentTags(tags);
             certificate.setTags(tags);
         }
-        return certificateRepository.upsert(id, certificate);
+        return certificateRepository.upsert(id, certificate)
+                .setTags(tagRepository.getCertificateTags(id));
     }
 
     @Transactional
@@ -61,7 +62,7 @@ public class CertificateServiceImpl implements CertificateService {
             tags = tagRepository.createNonExistentTags(tags);
             certificate.setTags(tags);
         }
-        return certificateRepository.get(id)
+        return certificateRepository.update(id, certificate)
                 .setTags(tagRepository.getCertificateTags(id));
     }
 

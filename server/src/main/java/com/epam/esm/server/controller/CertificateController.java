@@ -1,7 +1,8 @@
-package com.epam.esm.server;
+package com.epam.esm.server.controller;
 
-import com.epam.esm.common.Certificate;
+import com.epam.esm.common.entity.Certificate;
 import com.epam.esm.common.SearchParams;
+import com.epam.esm.server.mapper.CertificateMapper;
 import com.epam.esm.server.entity.CertificateCreateRequest;
 import com.epam.esm.server.entity.CertificateUpdateRequest;
 import com.epam.esm.server.entity.CertificateResponse;

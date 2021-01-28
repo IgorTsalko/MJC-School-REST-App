@@ -1,8 +1,7 @@
 package com.epam.esm.repository;
 
-import com.epam.esm.common.Certificate;
+import com.epam.esm.common.entity.Certificate;
 import com.epam.esm.common.SearchParams;
-import com.epam.esm.common.Tag;
 
 import java.util.List;
 

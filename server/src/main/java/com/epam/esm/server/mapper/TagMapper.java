@@ -1,6 +1,6 @@
-package com.epam.esm.server;
+package com.epam.esm.server.mapper;
 
-import com.epam.esm.common.Tag;
+import com.epam.esm.common.entity.Tag;
 import com.epam.esm.server.entity.TagRequest;
 import com.epam.esm.server.entity.TagResponse;
 
