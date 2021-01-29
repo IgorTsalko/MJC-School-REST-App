@@ -6,11 +6,13 @@ import java.util.List;
 
 public interface OrderRepository {
 
-    List<Order> getAll();
+    List<Order> getAll(Integer page, Integer limit);
 
     Order get(Long id);
 
-    List<Order> getUserOrders(Long userId);
+    List<Order> getAllUserOrders(Long userId);
+
+    List<Order> getUserOrders(Long userId, Integer page, Integer limit);
 
     Order createUserOrder(Order order);
 }

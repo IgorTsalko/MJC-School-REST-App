@@ -11,7 +11,7 @@ public interface TagRepository {
      *
      * @return list of <code>Tags</code>
      */
-    List<Tag> getAll();
+    List<Tag> getAll(Integer page, Integer limit);
 
     /**
      * Retrieve certain <code>Tag</code> for appropriate id.

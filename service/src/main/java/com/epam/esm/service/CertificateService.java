@@ -14,7 +14,7 @@ public interface CertificateService {
      * @param params the object that contains parameters for retrieve <code>Certificates</code>
      * @return list of appropriate <code>Certificates</code>
      */
-    List<Certificate> getAll(CertificateSearchParams params);
+    List<Certificate> getAll(CertificateSearchParams params, Integer page, Integer limit);
 
     /**
      * Retrieve certain <code>Certificate</code> for appropriate id.

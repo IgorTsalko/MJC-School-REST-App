@@ -8,6 +8,8 @@ import com.epam.esm.server.entity.CertificateUpdateRequest;
 import com.epam.esm.server.entity.CertificateResponse;
 import com.epam.esm.server.mapper.SearchParamsMapper;
 import com.epam.esm.service.CertificateService;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -15,11 +17,15 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 @RestController
-@RequestMapping("certificates")
+@RequestMapping("/certificates")
 @Validated
 public class CertificateController {
 
@@ -37,9 +43,40 @@ public class CertificateController {
      * @return list of appropriate <code>Certificates</code>
      */
     @GetMapping
-    public List<CertificateResponse> getAll(@Valid CertificateSearchParamsRequest params) {
-        return certificateService.getAll(SearchParamsMapper.convertToEntity(params))
-                .stream().map(CertificateMapper::convertToResponse).collect(Collectors.toList());
+    public CollectionModel<CertificateResponse> getAll(
+            @Valid CertificateSearchParamsRequest params, @RequestParam(required = false) @Positive Integer page,
+            @RequestParam(required = false, defaultValue = "${page.limit-default}") @Positive Integer limit) {
+        List<CertificateResponse> certificates = certificateService
+                .getAll(SearchParamsMapper.convertToEntity(params), page, limit)
+                .stream().map(CertificateMapper::convertToResponse)
+                .collect(Collectors.toList());
+        certificates.forEach(c -> {
+            c.getTags().forEach(t -> t.add(linkTo(methodOn(TagController.class).get(t.getId())).withSelfRel()));
+            c.add(linkTo(methodOn(CertificateController.class).get(c.getId())).withSelfRel());
+        });
+
+        List<Link> links = new ArrayList<>();
+        if (page == null) {
+            links.add(linkTo(methodOn(CertificateController.class)
+                    .getAll(null, null, null)).withSelfRel().expand());
+        } else {
+            links.add(linkTo(methodOn(CertificateController.class)
+                    .getAll(params, page, limit)).withSelfRel());
+        }
+
+        links.add(linkTo(methodOn(CertificateController.class)
+                .getAll(params, 1, limit)).withRel("first"));
+
+        if (page != null) {
+            links.add(linkTo(methodOn(CertificateController.class)
+                    .getAll(params,page + 1, limit)).withRel("next"));
+            if (page > 1) {
+                links.add(linkTo(methodOn(CertificateController.class)
+                        .getAll(params, page - 1, limit)).withRel("previous"));
+            }
+        }
+
+        return CollectionModel.of(certificates, links);
     }
 
     /**
@@ -50,7 +87,9 @@ public class CertificateController {
      */
     @GetMapping("/{id}")
     public CertificateResponse get(@PathVariable @Positive Long id) {
-        return CertificateMapper.convertToResponse(certificateService.get(id));
+        CertificateResponse certificateResponse = CertificateMapper.convertToResponse(certificateService.get(id));
+        certificateResponse.add(linkTo(methodOn(CertificateController.class).get(id)).withSelfRel());
+        return certificateResponse;
     }
 
     /**
@@ -62,7 +101,10 @@ public class CertificateController {
     @PostMapping
     public ResponseEntity<CertificateResponse> create(@RequestBody @Valid CertificateCreateRequest request) {
         Certificate certificate = certificateService.create(CertificateMapper.convertToEntity(request));
-        return new ResponseEntity<>(CertificateMapper.convertToResponse(certificate), HttpStatus.CREATED);
+        CertificateResponse certificateResponse = CertificateMapper.convertToResponse(certificate);
+        certificateResponse.add(linkTo(methodOn(CertificateController.class).create(request)).withSelfRel());
+
+        return new ResponseEntity<>(certificateResponse, HttpStatus.CREATED);
     }
 
     /**
@@ -77,7 +119,9 @@ public class CertificateController {
     public ResponseEntity<CertificateResponse> put(
             @PathVariable @Positive Long id, @RequestBody @Valid CertificateCreateRequest request) {
         Certificate certificate = certificateService.put(id, CertificateMapper.convertToEntity(request));
-        return ResponseEntity.ok(CertificateMapper.convertToResponse(certificate));
+        CertificateResponse certificateResponse = CertificateMapper.convertToResponse(certificate);
+        certificateResponse.add(linkTo(methodOn(CertificateController.class).put(id, request)).withSelfRel());
+        return ResponseEntity.ok(certificateResponse);
     }
 
     /**
@@ -91,7 +135,9 @@ public class CertificateController {
     public ResponseEntity<CertificateResponse> partialUpdate(
             @PathVariable @Positive Long id, @RequestBody @Valid CertificateUpdateRequest request) {
         Certificate certificate = certificateService.update(id, CertificateMapper.convertToEntity(request));
-        return ResponseEntity.ok(CertificateMapper.convertToResponse(certificate));
+        CertificateResponse certificateResponse = CertificateMapper.convertToResponse(certificate);
+        certificateResponse.add(linkTo(methodOn(CertificateController.class).partialUpdate(id, request)).withSelfRel());
+        return ResponseEntity.ok(certificateResponse);
     }
 
     /**

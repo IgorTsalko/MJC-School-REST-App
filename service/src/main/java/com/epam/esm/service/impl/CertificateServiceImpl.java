@@ -25,8 +25,8 @@ public class CertificateServiceImpl implements CertificateService {
     }
 
     @Override
-    public List<Certificate> getAll(CertificateSearchParams params) {
-        return certificateRepository.getAll(params);
+    public List<Certificate> getAll(CertificateSearchParams params, Integer page, Integer limit) {
+        return certificateRepository.getAll(params, page, limit);
     }
 
     @Override

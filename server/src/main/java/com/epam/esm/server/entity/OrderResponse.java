@@ -1,15 +1,19 @@
 package com.epam.esm.server.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import org.springframework.hateoas.RepresentationModel;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class OrderResponse {
+public class OrderResponse extends RepresentationModel<OrderResponse> {
 
     private Long orderId;
     private Long userId;
     private Long certificateId;
     private BigDecimal price;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createDate;
 
     public Long getOrderId() {

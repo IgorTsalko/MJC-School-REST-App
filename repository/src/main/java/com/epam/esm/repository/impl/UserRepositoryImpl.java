@@ -19,8 +19,12 @@ public class UserRepositoryImpl implements UserRepository {
     private EntityManager entityManager;
 
     @Override
-    public List<User> getAll() {
-        return entityManager.createQuery(JPQL_SELECT_ALL, User.class).getResultList();
+    public List<User> getAll(Integer page, Integer limit) {
+        int firstResult = page == null ? 0 : (page - 1) * limit;
+        return entityManager.createQuery(JPQL_SELECT_ALL, User.class)
+                .setFirstResult(firstResult)
+                .setMaxResults(limit)
+                .getResultList();
     }
 
     @Override

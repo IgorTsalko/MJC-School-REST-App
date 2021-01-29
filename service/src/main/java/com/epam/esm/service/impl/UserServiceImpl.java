@@ -28,19 +28,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getAll() {
-        return userRepository.getAll();
+    public List<User> getAll(Integer page, Integer limit) {
+        return userRepository.getAll(page, limit);
     }
 
     @Override
     public User get(Long id) {
         return userRepository.get(id)
-                .setOrders(orderRepository.getUserOrders(id));
+                .setOrders(orderRepository.getAllUserOrders(id));
     }
 
     @Override
-    public List<Order> getUserOrders(Long id) {
-        return orderRepository.getUserOrders(id);
+    public List<Order> getUserOrders(Long id, Integer page, Integer limit) {
+        return orderRepository.getUserOrders(id, page, limit);
     }
 
     @Transactional

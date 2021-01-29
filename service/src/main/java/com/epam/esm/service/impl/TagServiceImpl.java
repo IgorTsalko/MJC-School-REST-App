@@ -18,8 +18,8 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    public List<Tag> getAll() {
-        return tagRepository.getAll();
+    public List<Tag> getAll(Integer page, Integer limit) {
+        return tagRepository.getAll(page, limit);
     }
 
     @Override
