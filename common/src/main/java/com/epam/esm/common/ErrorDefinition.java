@@ -5,7 +5,9 @@ import org.springframework.http.HttpStatus;
 public enum ErrorDefinition {
 
     CERTIFICATE_NOT_FOUND(40401, "certificate.not-found", HttpStatus.NOT_FOUND),
-    TAG_NOT_FOUND(40402, "tag.not-found", HttpStatus.NOT_FOUND);
+    TAG_NOT_FOUND(40402, "tag.not-found", HttpStatus.NOT_FOUND),
+    USER_NOT_FOUND(40402, "user.not-found", HttpStatus.NOT_FOUND),
+    ORDER_NOT_FOUND(40402, "order.not-found", HttpStatus.NOT_FOUND);
 
     private final int errorCode;
     private final String errorMessageTemplate;

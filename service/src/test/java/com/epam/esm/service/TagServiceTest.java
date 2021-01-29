@@ -28,38 +28,38 @@ public class TagServiceTest {
                 new Tag().setId(1L).setName("incredible"),
                 new Tag().setId(2L).setName("travel")
         );
-        when(tagRepository.getAllTags()).thenReturn(expTags);
+        when(tagRepository.getAll()).thenReturn(expTags);
         List<Tag> actualTags = tagService.getAll();
 
         assertEquals(expTags, actualTags);
-        verify(tagRepository, only()).getAllTags();
+        verify(tagRepository, only()).getAll();
     }
 
     @Test
     public void getTagById() {
         Tag expTag = new Tag().setId(1L).setName("incredible");
-        when(tagRepository.getTag(anyLong())).thenReturn(expTag);
+        when(tagRepository.get(anyLong())).thenReturn(expTag);
 
         Tag actualTag = tagService.get(1L);
 
         assertEquals(expTag, actualTag);
-        verify(tagRepository, only()).getTag(anyLong());
+        verify(tagRepository, only()).get(anyLong());
     }
 
     @Test
     public void createNewTag(@Mock Tag tag) {
         Tag expTag = new Tag().setId(1L).setName("incredible");
-        when(tagRepository.createNewTag(tag)).thenReturn(expTag);
+        when(tagRepository.create(tag)).thenReturn(expTag);
 
         Tag actualTag = tagService.create(tag);
 
         assertEquals(expTag, actualTag);
-        verify(tagRepository, only()).createNewTag(tag);
+        verify(tagRepository, only()).create(tag);
     }
 
     @Test
     public void deleteTag() {
         tagService.delete(anyLong());
-        verify(tagRepository, only()).deleteTag(anyLong());
+        verify(tagRepository, only()).delete(anyLong());
     }
 }

@@ -13,18 +13,18 @@ import java.util.stream.Collectors;
 @Repository
 public class TagRepositoryImpl implements TagRepository {
 
-    private static final String JPQL_SELECT_ALL = "FROM Tag";
+    private static final String JPQL_SELECT_ALL = "from Tag";
     private static final String JPQL_SELECT_BY_NAME = "from Tag where name in (:names)";
     private static final String JPQL_SELECT_CERTIFICATE_TAGS = "select c.tags from Certificate c where c.id=:id";
 
     @PersistenceContext
     private EntityManager entityManager;
 
-    public List<Tag> getAllTags() {
+    public List<Tag> getAll() {
         return entityManager.createQuery(JPQL_SELECT_ALL, Tag.class).getResultList();
     }
 
-    public Tag getTag(Long id) {
+    public Tag get(Long id) {
         Tag tag = entityManager.find(Tag.class, id);
         if (tag == null) {
             throw new EntityNotFoundException(ErrorDefinition.TAG_NOT_FOUND, id);
@@ -39,20 +39,20 @@ public class TagRepositoryImpl implements TagRepository {
                 .getResultList();
     }
 
-    public Tag createNewTag(Tag tag) {
+    public Tag create(Tag tag) {
         entityManager.persist(tag);
         return tag;
     }
 
-    private List<Tag> getTagsByName(List<Tag> tags) {
+    private List<Tag> getByNames(List<Tag> tags) {
         List<String> names = tags.stream().map(Tag::getName).collect(Collectors.toList());
         return entityManager.createQuery(JPQL_SELECT_BY_NAME, Tag.class)
                 .setParameter("names", names)
                 .getResultList();
     }
 
-    public List<Tag> createNonExistentTags(List<Tag> tags) {
-        List<Tag> existingTags = getTagsByName(tags);
+    public List<Tag> createNonExistent(List<Tag> tags) {
+        List<Tag> existingTags = getByNames(tags);
         List<Tag> nonexistentTags = tags.stream()
                 .filter(exist -> existingTags
                         .stream()
@@ -62,10 +62,10 @@ public class TagRepositoryImpl implements TagRepository {
         nonexistentTags.stream().distinct().collect(Collectors.toList())
                 .forEach(t -> entityManager.persist(t));
 
-        return getTagsByName(tags);
+        return getByNames(tags);
     }
 
-    public void deleteTag(Long id) {
+    public void delete(Long id) {
         Tag tag = entityManager.find(Tag.class, id);
         if (tag == null) {
             throw new EntityNotFoundException(ErrorDefinition.TAG_NOT_FOUND, id);

@@ -88,14 +88,14 @@ public class CertificateServiceTest {
         List<Tag> tags = getMockTagsWithoutId();
         cert.setTags(tags);
 
-        when(tagRepository.createNonExistentTags(anyList())).thenReturn(expTags);
+        when(tagRepository.createNonExistent(anyList())).thenReturn(expTags);
         when(tagRepository.getCertificateTags(anyLong())).thenReturn(expTags);
         when(certificateRepository.update(1L, certMock)).thenReturn(cert);
         Certificate actualCert = certificateService.update(1L, certMock);
 
         assertEquals(expCert, actualCert);
 
-        verify(tagRepository).createNonExistentTags(anyList());
+        verify(tagRepository).createNonExistent(anyList());
         verify(tagRepository).getCertificateTags(anyLong());
         verify(certificateRepository).update(1L, certMock);
         verifyNoMoreInteractions(certificateRepository, tagRepository);

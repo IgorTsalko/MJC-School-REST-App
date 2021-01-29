@@ -38,7 +38,7 @@ public class CertificateServiceImpl implements CertificateService {
     public Certificate create(Certificate certificate) {
         List<Tag> tags = certificate.getTags();
         if (!CollectionUtils.isEmpty(tags)) {
-            tags = tagRepository.createNonExistentTags(tags);
+            tags = tagRepository.createNonExistent(tags);
             certificate.setTags(tags);
         }
         return certificateRepository.create(certificate);
@@ -48,7 +48,7 @@ public class CertificateServiceImpl implements CertificateService {
     public Certificate put(Long id, Certificate certificate) {
         List<Tag> tags = certificate.getTags();
         if (!CollectionUtils.isEmpty(tags)) {
-            tags = tagRepository.createNonExistentTags(tags);
+            tags = tagRepository.createNonExistent(tags);
             certificate.setTags(tags);
         }
         return certificateRepository.upsert(id, certificate)
@@ -59,7 +59,7 @@ public class CertificateServiceImpl implements CertificateService {
     public Certificate update(Long id, Certificate certificate) {
         List<Tag> tags = certificate.getTags();
         if (tags != null) {
-            tags = tagRepository.createNonExistentTags(tags);
+            tags = tagRepository.createNonExistent(tags);
             certificate.setTags(tags);
         }
         return certificateRepository.update(id, certificate)
