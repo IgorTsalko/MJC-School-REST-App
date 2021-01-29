@@ -12,4 +12,6 @@ public interface UserService {
     User get(Long id);
 
     List<Order> getUserOrders(Long id);
+
+    Order createUserOrder(Long id, Order order);
 }

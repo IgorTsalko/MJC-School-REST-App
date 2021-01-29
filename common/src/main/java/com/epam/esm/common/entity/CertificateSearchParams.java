@@ -1,79 +1,76 @@
-package com.epam.esm.common;
+package com.epam.esm.common.entity;
 
-import javax.validation.constraints.Size;
+import java.util.List;
 import java.util.Objects;
 
-public class SearchParams {
+public class CertificateSearchParams {
 
-    @Size(min = 2, max = 50)
     private String name;
-    @Size(min = 2, max = 250)
     private String description;
-    @Size(min = 2, max = 50)
-    private String tag;
-    @Size(min = 2, max = 20)
+    private List<String> tags;
     private String sort;
-    private SortOrder sort_order;
+    private SortOrder sortOrder;
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public CertificateSearchParams setName(String name) {
         this.name = name;
+        return this;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
+    public CertificateSearchParams setDescription(String description) {
         this.description = description;
+        return this;
     }
 
-    public String getTag() {
-        return tag;
+    public List<String> getTags() {
+        return tags;
     }
 
-    public void setTag(String tag) {
-        this.tag = tag;
+    public CertificateSearchParams setTags(List<String> tags) {
+        this.tags = tags;
+        return this;
     }
 
     public String getSort() {
         return sort;
     }
 
-    public void setSort(String sort) {
+    public CertificateSearchParams setSort(String sort) {
         this.sort = sort;
+        return this;
     }
 
     public SortOrder getSortOrder() {
-        return sort_order;
+        return sortOrder;
     }
 
-    public void setSort_order(SortOrder sort_order) {
-        this.sort_order = sort_order;
-    }
-
-    public enum SortOrder {
-        DESC, ASC
+    public CertificateSearchParams setSortOrder(SortOrder sortOrder) {
+        this.sortOrder = sortOrder;
+        return this;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        SearchParams that = (SearchParams) o;
+        CertificateSearchParams that = (CertificateSearchParams) o;
         return Objects.equals(name, that.name)
                 && Objects.equals(description, that.description)
-                && Objects.equals(tag, that.tag)
+                && Objects.equals(tags, that.tags)
                 && Objects.equals(sort, that.sort)
-                && Objects.equals(sort_order, that.sort_order);
+                && Objects.equals(sortOrder, that.sortOrder);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, description, tag, sort, sort_order);
+        return Objects.hash(name, description, tags, sort, sortOrder);
     }
 
     @Override
@@ -81,9 +78,9 @@ public class SearchParams {
         return this.getClass().getSimpleName() + "{" +
                 "name='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", tag='" + tag + '\'' +
+                ", tags='" + tags + '\'' +
                 ", sort='" + sort + '\'' +
-                ", sort_order='" + sort_order + '\'' +
+                ", sort_order=" + sortOrder +
                 '}';
     }
 }

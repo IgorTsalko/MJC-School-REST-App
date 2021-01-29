@@ -5,7 +5,7 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.*;
 
 import com.epam.esm.common.entity.Certificate;
-import com.epam.esm.common.SearchParams;
+import com.epam.esm.common.entity.CertificateSearchParams;
 import com.epam.esm.common.entity.Tag;
 import com.epam.esm.repository.impl.CertificateRepositoryImpl;
 import com.epam.esm.repository.impl.TagRepositoryImpl;
@@ -33,7 +33,7 @@ public class CertificateServiceTest {
     TagRepositoryImpl tagRepository;
 
     @Test
-    public void getAllCertificates(@Mock SearchParams paramsMock) {
+    public void getAllCertificates(@Mock CertificateSearchParams paramsMock) {
         List<Certificate> expCerts = getMockCertificates();
         Map<Long, List<Tag>> expTags = getMockCertificatesTags();
         expCerts.forEach(c -> c.setTags(expTags.get(c.getId())));

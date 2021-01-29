@@ -11,4 +11,6 @@ public interface OrderRepository {
     Order get(Long id);
 
     List<Order> getUserOrders(Long userId);
+
+    Order createUserOrder(Order order);
 }

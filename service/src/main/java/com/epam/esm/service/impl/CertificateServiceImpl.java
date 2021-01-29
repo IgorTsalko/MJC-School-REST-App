@@ -1,7 +1,7 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.common.entity.Certificate;
-import com.epam.esm.common.SearchParams;
+import com.epam.esm.common.entity.CertificateSearchParams;
 import com.epam.esm.common.entity.Tag;
 import com.epam.esm.repository.CertificateRepository;
 import com.epam.esm.repository.TagRepository;
@@ -12,6 +12,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
+@Transactional
 @Service
 public class CertificateServiceImpl implements CertificateService {
 
@@ -23,18 +24,18 @@ public class CertificateServiceImpl implements CertificateService {
         this.tagRepository = tagRepository;
     }
 
-    @Transactional
-    public List<Certificate> getAll(SearchParams params) {
+    @Override
+    public List<Certificate> getAll(CertificateSearchParams params) {
         return certificateRepository.getAll(params);
     }
 
-    @Transactional
+    @Override
     public Certificate get(Long id) {
         return certificateRepository.get(id)
                 .setTags(tagRepository.getCertificateTags(id));
     }
 
-    @Transactional
+    @Override
     public Certificate create(Certificate certificate) {
         List<Tag> tags = certificate.getTags();
         if (!CollectionUtils.isEmpty(tags)) {
@@ -44,7 +45,7 @@ public class CertificateServiceImpl implements CertificateService {
         return certificateRepository.create(certificate);
     }
 
-    @Transactional
+    @Override
     public Certificate put(Long id, Certificate certificate) {
         List<Tag> tags = certificate.getTags();
         if (!CollectionUtils.isEmpty(tags)) {
@@ -55,7 +56,7 @@ public class CertificateServiceImpl implements CertificateService {
                 .setTags(tagRepository.getCertificateTags(id));
     }
 
-    @Transactional
+    @Override
     public Certificate update(Long id, Certificate certificate) {
         List<Tag> tags = certificate.getTags();
         if (tags != null) {
@@ -66,7 +67,7 @@ public class CertificateServiceImpl implements CertificateService {
                 .setTags(tagRepository.getCertificateTags(id));
     }
 
-    @Transactional
+    @Override
     public void delete(Long id) {
         certificateRepository.delete(id);
     }

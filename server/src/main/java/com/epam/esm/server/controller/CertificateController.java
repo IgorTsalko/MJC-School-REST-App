@@ -1,11 +1,12 @@
 package com.epam.esm.server.controller;
 
 import com.epam.esm.common.entity.Certificate;
-import com.epam.esm.common.SearchParams;
+import com.epam.esm.server.entity.CertificateSearchParamsRequest;
 import com.epam.esm.server.mapper.CertificateMapper;
 import com.epam.esm.server.entity.CertificateCreateRequest;
 import com.epam.esm.server.entity.CertificateUpdateRequest;
 import com.epam.esm.server.entity.CertificateResponse;
+import com.epam.esm.server.mapper.SearchParamsMapper;
 import com.epam.esm.service.CertificateService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,8 +37,8 @@ public class CertificateController {
      * @return list of appropriate <code>Certificates</code>
      */
     @GetMapping
-    public List<CertificateResponse> getAll(@Valid SearchParams params) {
-        return certificateService.getAll(params)
+    public List<CertificateResponse> getAll(@Valid CertificateSearchParamsRequest params) {
+        return certificateService.getAll(SearchParamsMapper.convertToEntity(params))
                 .stream().map(CertificateMapper::convertToResponse).collect(Collectors.toList());
     }
 

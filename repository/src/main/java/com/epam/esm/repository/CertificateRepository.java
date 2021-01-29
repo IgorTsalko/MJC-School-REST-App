@@ -1,7 +1,7 @@
 package com.epam.esm.repository;
 
 import com.epam.esm.common.entity.Certificate;
-import com.epam.esm.common.SearchParams;
+import com.epam.esm.common.entity.CertificateSearchParams;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ public interface CertificateRepository {
      * @param params the object that contains parameters for retrieve <code>Certificates</code>
      * @return list of appropriate <code>Certificates</code>
      */
-    List<Certificate> getAll(SearchParams params);
+    List<Certificate> getAll(CertificateSearchParams params);
 
     /**
      * Retrieve certain <code>Certificate</code> for appropriate id.

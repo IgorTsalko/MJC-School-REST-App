@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -38,5 +39,12 @@ public class OrderRepositoryImpl implements OrderRepository {
         return entityManager.createQuery(JPQL_SELECT_ALL_BY_USER_ID, Order.class)
                 .setParameter("id", userId)
                 .getResultList();
+    }
+
+    @Override
+    public Order createUserOrder(Order order) {
+        order.setCreateDate(LocalDateTime.now());
+        entityManager.persist(order);
+        return order;
     }
 }
