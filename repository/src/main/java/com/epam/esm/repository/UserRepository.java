@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface UserRepository {
 
-    List<User> getAll();
+    List<User> getAll(Integer page, Integer limit);
 
     User get(Long id);
 }

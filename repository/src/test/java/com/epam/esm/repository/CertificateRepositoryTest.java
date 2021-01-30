@@ -3,7 +3,8 @@ package com.epam.esm.repository;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.epam.esm.common.entity.Certificate;
-import com.epam.esm.common.SearchParams;
+import com.epam.esm.common.entity.CertificateSearchParams;
+import com.epam.esm.common.entity.SortOrder;
 import com.epam.esm.common.entity.Tag;
 import com.epam.esm.common.exception.EntityNotFoundException;
 import com.epam.esm.repository.config.RepositoryConfigTest;
@@ -39,7 +40,7 @@ public class CertificateRepositoryTest {
     TagRepositoryImpl tagRepository;
 
     @Test
-    public void getAllCertificatesWithEmptyParams(@Mock SearchParams params) {
+    public void getAllCertificatesWithEmptyParams(@Mock CertificateSearchParams params) {
         List<Certificate> expCerts = List.of(
                 new Certificate().setId(1L).setName("Trip").setDescription("Incredible journey. 25 countries. 4 weeks")
                         .setPrice(BigDecimal.valueOf(5600.0)).setDuration(60).setCreateDate(t).setLastUpdateDate(t)
@@ -53,10 +54,10 @@ public class CertificateRepositoryTest {
 
     @Test
     public void getAllCertificatesWithParams() {
-        SearchParams params = new SearchParams();
+        CertificateSearchParams params = new CertificateSearchParams();
         params.setName("sky");
         params.setSort("id");
-        params.setSort_order(SearchParams.SortOrder.DESC);
+        params.setSortOrder(SortOrder.DESC);
 
         List<Certificate> expCerts =
                 List.of(new Certificate().setId(2L).setName("Skydiving").setPrice(BigDecimal.valueOf(250.0))

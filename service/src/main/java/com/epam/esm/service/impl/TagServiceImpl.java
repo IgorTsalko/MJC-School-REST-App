@@ -17,20 +17,24 @@ public class TagServiceImpl implements TagService {
         this.tagRepository = tagRepository;
     }
 
-    public List<Tag> getAll() {
-        return tagRepository.getAll();
+    @Override
+    public List<Tag> getAll(Integer page, Integer limit) {
+        return tagRepository.getAll(page, limit);
     }
 
+    @Override
     public Tag get(Long id) {
         return tagRepository.get(id);
     }
 
     @Transactional
+    @Override
     public Tag create(Tag tag) {
         return tagRepository.create(tag);
     }
 
     @Transactional
+    @Override
     public void delete(Long id) {
         tagRepository.delete(id);
     }

@@ -20,10 +20,16 @@ public class TagRepositoryImpl implements TagRepository {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public List<Tag> getAll() {
-        return entityManager.createQuery(JPQL_SELECT_ALL, Tag.class).getResultList();
+    @Override
+    public List<Tag> getAll(Integer page, Integer limit) {
+        int firstResult = page == null ? 0 : (page - 1) * limit;
+        return entityManager.createQuery(JPQL_SELECT_ALL, Tag.class)
+                .setFirstResult(firstResult)
+                .setMaxResults(limit)
+                .getResultList();
     }
 
+    @Override
     public Tag get(Long id) {
         Tag tag = entityManager.find(Tag.class, id);
         if (tag == null) {
@@ -32,6 +38,7 @@ public class TagRepositoryImpl implements TagRepository {
         return tag;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public List<Tag> getCertificateTags(Long certificateId) {
         return entityManager.createQuery(JPQL_SELECT_CERTIFICATE_TAGS)
@@ -39,6 +46,7 @@ public class TagRepositoryImpl implements TagRepository {
                 .getResultList();
     }
 
+    @Override
     public Tag create(Tag tag) {
         entityManager.persist(tag);
         return tag;
@@ -51,6 +59,7 @@ public class TagRepositoryImpl implements TagRepository {
                 .getResultList();
     }
 
+    @Override
     public List<Tag> createNonExistent(List<Tag> tags) {
         List<Tag> existingTags = getByNames(tags);
         List<Tag> nonexistentTags = tags.stream()
@@ -65,6 +74,7 @@ public class TagRepositoryImpl implements TagRepository {
         return getByNames(tags);
     }
 
+    @Override
     public void delete(Long id) {
         Tag tag = entityManager.find(Tag.class, id);
         if (tag == null) {

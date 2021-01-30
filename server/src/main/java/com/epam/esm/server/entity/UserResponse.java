@@ -1,12 +1,12 @@
 package com.epam.esm.server.entity;
 
-import com.epam.esm.common.entity.Order;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.util.List;
 import java.util.Objects;
 
-public class UserResponse {
+public class UserResponse extends RepresentationModel<UserResponse> {
 
     private Long id;
     private String name;
