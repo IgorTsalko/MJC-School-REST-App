@@ -1,14 +1,19 @@
 package com.epam.esm.common.entity;
 
+import com.epam.esm.common.AuditListener;
+import com.epam.esm.common.AuditablePersist;
+import com.epam.esm.common.AuditableUpdate;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
+@EntityListeners(AuditListener.class)
 @Entity
 @Table(name = "gift_certificate")
-public class Certificate {
+public class Certificate implements AuditableUpdate, AuditablePersist {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -77,18 +82,18 @@ public class Certificate {
         return createDate;
     }
 
-    public Certificate setCreateDate(LocalDateTime createDate) {
+    @Override
+    public void setCreateDate(LocalDateTime createDate) {
         this.createDate = createDate;
-        return this;
     }
 
     public LocalDateTime getLastUpdateDate() {
         return lastUpdateDate;
     }
 
-    public Certificate setLastUpdateDate(LocalDateTime lastUpdateDate) {
+    @Override
+    public void setLastUpdateDate(LocalDateTime lastUpdateDate) {
         this.lastUpdateDate = lastUpdateDate;
-        return this;
     }
 
     public List<Tag> getTags() {

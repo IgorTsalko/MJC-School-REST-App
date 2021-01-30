@@ -12,7 +12,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.*;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Repository
@@ -90,8 +89,6 @@ public class CertificateRepositoryImpl implements CertificateRepository {
 
     @Override
     public Certificate create(Certificate certificate) {
-        certificate.setCreateDate(LocalDateTime.now());
-        certificate.setLastUpdateDate(LocalDateTime.now());
         entityManager.persist(certificate);
         return certificate;
     }
@@ -103,8 +100,6 @@ public class CertificateRepositoryImpl implements CertificateRepository {
             throw new EntityNotFoundException(ErrorDefinition.CERTIFICATE_NOT_FOUND, id);
         }
         certificate.setId(id);
-        certificate.setCreateDate(cert.getCreateDate());
-        certificate.setLastUpdateDate(LocalDateTime.now());
 
         return entityManager.merge(certificate);
     }
@@ -138,7 +133,6 @@ public class CertificateRepositoryImpl implements CertificateRepository {
         if (tags != null) {
             updatedCert.setTags(tags);
         }
-        updatedCert.setLastUpdateDate(LocalDateTime.now());
 
         return updatedCert;
     }

@@ -17,7 +17,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -181,8 +180,6 @@ public class CertificateServiceTest {
                 .setId(1L)
                 .setName("newUpdatedName")
                 .setPrice(BigDecimal.valueOf(120.0))
-                .setDuration(100)
-                .setCreateDate(LocalDateTime.of(2020, 12, 20, 16, 40))
-                .setLastUpdateDate(LocalDateTime.of(2021, 1, 14, 18, 27));
+                .setDuration(100);
     }
 }

@@ -41,13 +41,7 @@ public class CertificateRepositoryTest {
 
     @Test
     public void getAllCertificatesWithEmptyParams(@Mock CertificateSearchParams params) {
-        List<Certificate> expCerts = List.of(
-                new Certificate().setId(1L).setName("Trip").setDescription("Incredible journey. 25 countries. 4 weeks")
-                        .setPrice(BigDecimal.valueOf(5600.0)).setDuration(60).setCreateDate(t).setLastUpdateDate(t)
-                        .setTags(List.of(new Tag().setId(1L).setName("incredible"))),
-                new Certificate().setId(2L).setName("Skydiving").setPrice(BigDecimal.valueOf(250.0)).setDuration(30)
-                        .setCreateDate(t).setLastUpdateDate(t)
-                        .setTags(List.of(new Tag().setId(1L).setName("incredible"), new Tag().setId(2L).setName("travel"))));
+        List<Certificate> expCerts = List.of(getMockCertId1(), getMockCertId2());
         List<Certificate> actualCerts = certificateRepository.getCertificates(params, 1, 20);
         assertEquals(expCerts, actualCerts);
     }
@@ -59,19 +53,14 @@ public class CertificateRepositoryTest {
         params.setSort("id");
         params.setSortOrder(SortOrder.DESC);
 
-        List<Certificate> expCerts =
-                List.of(new Certificate().setId(2L).setName("Skydiving").setPrice(BigDecimal.valueOf(250.0))
-                .setDuration(30).setCreateDate(t).setLastUpdateDate(t)
-                .setTags(List.of(new Tag().setId(1L).setName("incredible"), new Tag().setId(2L).setName("travel"))));
+        List<Certificate> expCerts = List.of(getMockCertId2());
         List<Certificate> actualCerts = certificateRepository.getCertificates(params, 1, 20);
         assertEquals(expCerts, actualCerts);
     }
 
     @Test
     public void getCertificateById() {
-        Certificate expCert = new Certificate().setId(2L).setName("Skydiving").setPrice(BigDecimal.valueOf(250.0))
-                .setDuration(30).setCreateDate(t).setLastUpdateDate(t)
-                .setTags(List.of(new Tag().setId(1L).setName("incredible"), new Tag().setId(2L).setName("travel")));
+        Certificate expCert = getMockCertId2();
         Certificate actualCert = certificateRepository.get(2L).setTags(tagRepository.getCertificateTags(2L));
         assertEquals(expCert, actualCert);
     }
@@ -144,5 +133,24 @@ public class CertificateRepositoryTest {
     @Transactional
     public void deleteCertificateByNotExistentId() {
         assertThrows(EntityNotFoundException.class, () -> certificateRepository.delete(10L));
+    }
+
+    private Certificate getMockCertId1() {
+        Certificate cert = new Certificate().setId(1L).setName("Trip")
+                .setDescription("Incredible journey. 25 countries. 4 weeks")
+                .setPrice(BigDecimal.valueOf(5600.0)).setDuration(60)
+                .setTags(List.of(new Tag().setId(1L).setName("incredible")));
+        cert.setCreateDate(t);
+        cert.setLastUpdateDate(t);
+        return cert;
+    }
+
+    private Certificate getMockCertId2() {
+        Certificate cert = new Certificate().setId(2L).setName("Skydiving")
+                .setPrice(BigDecimal.valueOf(250.0)).setDuration(30)
+                .setTags(List.of(new Tag().setId(1L).setName("incredible"), new Tag().setId(2L).setName("travel")));
+        cert.setCreateDate(t);
+        cert.setLastUpdateDate(t);
+        return cert;
     }
 }

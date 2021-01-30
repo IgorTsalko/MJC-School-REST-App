@@ -38,4 +38,9 @@ public class TagServiceImpl implements TagService {
     public void delete(Long id) {
         tagRepository.delete(id);
     }
+
+    @Override
+    public Tag findMostUsedTagForUserWithHighestCostOfAllOrders() {
+        return tagRepository.findMostUsedTagForUserWithHighestCostOfAllOrders();
+    }
 }

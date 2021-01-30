@@ -1,5 +1,6 @@
 package com.epam.esm.server.controller;
 
+import com.epam.esm.common.entity.Tag;
 import com.epam.esm.server.mapper.TagMapper;
 import com.epam.esm.server.entity.TagRequest;
 import com.epam.esm.server.entity.TagResponse;
@@ -97,5 +98,14 @@ public class TagController {
     public ResponseEntity<Object> delete(@PathVariable @Positive Long id) {
         tagService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/mostUsedTagForUserWithHighestCostOfAllOrders")
+    public ResponseEntity<TagResponse> findMostUsedTagForUserWithHighestCostOfAllOrders() {
+        Tag tag = tagService.findMostUsedTagForUserWithHighestCostOfAllOrders();
+        TagResponse tagResponse = TagMapper.convertToResponse(tag);
+        tagResponse.add(linkTo(methodOn(TagController.class)
+                .findMostUsedTagForUserWithHighestCostOfAllOrders()).withSelfRel());
+        return ResponseEntity.ok(tagResponse);
     }
 }

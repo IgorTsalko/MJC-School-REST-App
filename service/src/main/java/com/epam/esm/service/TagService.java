@@ -35,4 +35,6 @@ public interface TagService {
      * @param id specific tag's identifier
      */
     void delete(Long id);
+
+    Tag findMostUsedTagForUserWithHighestCostOfAllOrders();
 }

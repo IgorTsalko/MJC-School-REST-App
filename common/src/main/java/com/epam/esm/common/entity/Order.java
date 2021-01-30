@@ -1,5 +1,7 @@
 package com.epam.esm.common.entity;
 
+import com.epam.esm.common.AuditablePersist;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -7,7 +9,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "\"order\"")
-public class Order {
+public class Order implements AuditablePersist {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -61,9 +63,9 @@ public class Order {
         return createDate;
     }
 
-    public Order setCreateDate(LocalDateTime createDate) {
+    @Override
+    public void setCreateDate(LocalDateTime createDate) {
         this.createDate = createDate;
-        return this;
     }
 
     @Override
