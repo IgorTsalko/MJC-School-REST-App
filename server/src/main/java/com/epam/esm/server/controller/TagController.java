@@ -11,7 +11,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,27 +38,24 @@ public class TagController {
      * @return list of <code>Tags</code>
      */
     @GetMapping
-    public CollectionModel<TagResponse> getAll(@RequestParam(required = false) @Positive Integer page,
-            @RequestParam(required = false, defaultValue = "${page.limit-default}") @Positive Integer limit) {
-        List<TagResponse> tags = tagService.getAll(page, limit)
+    public CollectionModel<TagResponse> getTags(
+            @RequestParam(required = false, defaultValue = "0") @PositiveOrZero int page,
+            @RequestParam(required = false, defaultValue = "${page.limit-default}") @Min(0) @Max(50) int limit) {
+        int pageNumber = page == 0 ? 1 : page;
+        List<TagResponse> tags = tagService.getTags(pageNumber, limit)
                 .stream().map(TagMapper::convertToResponse)
                 .collect(Collectors.toList());
         tags.forEach(t -> t.add(linkTo(methodOn(TagController.class).get(t.getId())).withSelfRel()));
 
         List<Link> links = new ArrayList<>();
-        if (page == null) {
-            links.add(linkTo(methodOn(TagController.class).getAll(null, null)).withSelfRel().expand());
-        } else {
-            links.add(linkTo(methodOn(TagController.class).getAll(page, limit)).withSelfRel());
+        links.add(linkTo(methodOn(TagController.class).getTags(page, limit)).withSelfRel());
+        links.add(linkTo(methodOn(TagController.class).getTags(1, limit)).withRel("first"));
+
+        if (page > 0 && tags.size() == limit) {
+            links.add(linkTo(methodOn(TagController.class).getTags(page + 1, limit)).withRel("next"));
         }
-
-        links.add(linkTo(methodOn(TagController.class).getAll(1, limit)).withRel("first"));
-
-        if (page != null) {
-            links.add(linkTo(methodOn(TagController.class).getAll(page + 1, limit)).withRel("next"));
-            if (page > 1) {
-                links.add(linkTo(methodOn(TagController.class).getAll(page - 1, limit)).withRel("previous"));
-            }
+        if (page > 1) {
+            links.add(linkTo(methodOn(TagController.class).getTags(page - 1, limit)).withRel("previous"));
         }
 
         return CollectionModel.of(tags, links);

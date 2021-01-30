@@ -29,7 +29,7 @@ public class TagRepositoryTest {
     @Test
     public void getAllTags() {
         List<Tag> expTags = getMockTags();
-        List<Tag> actualTags = tagRepository.getAll();
+        List<Tag> actualTags = tagRepository.getTags(1, 20);
         assertEquals(expTags, actualTags);
     }
 
@@ -76,7 +76,7 @@ public class TagRepositoryTest {
                 new Tag().setName("someNewTag2")
         );
         tagRepository.createNonExistent(tags);
-        List<Tag> actualTags = tagRepository.getAll();
+        List<Tag> actualTags = tagRepository.getTags(1, 20);
         assertEquals(expTags, actualTags);
     }
 
@@ -87,7 +87,7 @@ public class TagRepositoryTest {
                 new Tag().setId(2L).setName("travel")
         );
         tagRepository.delete(1L);
-        List<Tag> actualTags = tagRepository.getAll();
+        List<Tag> actualTags = tagRepository.getTags(1, 20);
         assertEquals(expTags, actualTags);
     }
 

@@ -41,11 +41,11 @@ public class CertificateServiceTest {
         List<Certificate> certs = getMockCertificates();
         Map<Long, List<Tag>> tags = getMockCertificatesTags();
         certs.forEach(c -> c.setTags(tags.get(c.getId())));
-        when(certificateRepository.getAll(paramsMock)).thenReturn(certs);
-        List<Certificate> actualCerts = certificateService.getAll(paramsMock);
+        when(certificateRepository.getCertificates(paramsMock, 1, 20)).thenReturn(certs);
+        List<Certificate> actualCerts = certificateService.getCertificates(paramsMock, 1, 20);
 
         assertEquals(expCerts, actualCerts);
-        verify(certificateRepository, only()).getAll(paramsMock);
+        verify(certificateRepository, only()).getCertificates(paramsMock, 1, 20);
     }
 
     @Test

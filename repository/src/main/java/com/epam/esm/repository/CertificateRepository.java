@@ -14,7 +14,7 @@ public interface CertificateRepository {
      * @param params the object that contains parameters for retrieve <code>Certificates</code>
      * @return list of appropriate <code>Certificates</code>
      */
-    List<Certificate> getAll(CertificateSearchParams params, Integer page, Integer limit);
+    List<Certificate> getCertificates(CertificateSearchParams params, int page, int limit);
 
     /**
      * Retrieve certain <code>Certificate</code> for appropriate id.

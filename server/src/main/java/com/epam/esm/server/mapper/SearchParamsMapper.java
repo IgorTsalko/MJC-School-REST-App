@@ -4,6 +4,7 @@ import com.epam.esm.common.entity.CertificateSearchParams;
 import com.epam.esm.server.entity.CertificateSearchParamsRequest;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SearchParamsMapper {
 
@@ -15,7 +16,10 @@ public class SearchParamsMapper {
                 .setSortOrder(searchParamsRequest.getSortOrder());
 
         if (searchParamsRequest.getTags() != null) {
-            searchParams.setTags(List.of(searchParamsRequest.getTags().split("\\s*,\\s*")));
+            List<String> tags = List.of(searchParamsRequest.getTags().split(","));
+            tags = tags.stream().map(String::trim).collect(Collectors.toList());
+            System.out.println(tags);
+            searchParams.setTags(tags);
         }
 
         return searchParams;

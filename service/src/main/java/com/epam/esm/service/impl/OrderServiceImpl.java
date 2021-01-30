@@ -17,8 +17,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> getAll(Integer page, Integer limit) {
-        return orderRepository.getAll(page, limit);
+    public List<Order> getOrders(int page, int limit) {
+        return orderRepository.getOrders(page, limit);
     }
 
     @Override

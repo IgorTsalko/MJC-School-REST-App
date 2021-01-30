@@ -57,21 +57,21 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(exceptionResponse, HttpStatus.CONFLICT);
     }
 
-//    @ExceptionHandler(InvalidDataAccessResourceUsageException.class)
-//    protected ResponseEntity<Object> handleDataAccess(InvalidDataAccessResourceUsageException ex, Locale locale) {
-//        ExceptionResponse exceptionResponse = new ExceptionResponse()
-//                .setErrorCode(40001)
-//                .setDetails(List.of(messageSource.getMessage("bad-request", null, locale)));
-//        return new ResponseEntity<>(exceptionResponse, HttpStatus.CONFLICT);
-//    }
+    @ExceptionHandler(InvalidDataAccessResourceUsageException.class)
+    protected ResponseEntity<Object> handleDataAccess(InvalidDataAccessResourceUsageException ex, Locale locale) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse()
+                .setErrorCode(40001)
+                .setDetails(List.of(messageSource.getMessage("bad-request", null, locale)));
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.CONFLICT);
+    }
 
-//    @ExceptionHandler(DataAccessException.class)
-//    protected ResponseEntity<Object> handleDataAccess(DataAccessException ex, Locale locale) {
-//        ExceptionResponse exceptionResponse = new ExceptionResponse()
-//                .setErrorCode(40002)
-//                .setDetails(List.of(messageSource.getMessage("database-exception", null, locale)));
-//        return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
-//    }
+   @ExceptionHandler(DataAccessException.class)
+   protected ResponseEntity<Object> handleDataAccess(DataAccessException ex, Locale locale) {
+       ExceptionResponse exceptionResponse = new ExceptionResponse()
+               .setErrorCode(40002)
+               .setDetails(List.of(messageSource.getMessage("database-exception", null, locale)));
+       return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+   }
 
     @ExceptionHandler(ConstraintViolationException.class)
     protected ResponseEntity<Object> handleConstraintViolation(ConstraintViolationException ex) {
@@ -88,14 +88,14 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
 
-//    @ExceptionHandler(Throwable.class)
-//    protected ResponseEntity<Object> handleThrowable(Throwable throwable, Locale locale) {
-//        ExceptionResponse exceptionResponse = new ExceptionResponse()
-//                .setErrorCode(50001)
-//                .setDetails(List.of(messageSource.getMessage("server-error", null, locale)));
-//
-//        return new ResponseEntity<>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
-//    }
+   @ExceptionHandler(Throwable.class)
+   protected ResponseEntity<Object> handleThrowable(Throwable throwable, Locale locale) {
+       ExceptionResponse exceptionResponse = new ExceptionResponse()
+               .setErrorCode(50001)
+               .setDetails(List.of(messageSource.getMessage("server-error", null, locale)));
+
+       return new ResponseEntity<>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+   }
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(

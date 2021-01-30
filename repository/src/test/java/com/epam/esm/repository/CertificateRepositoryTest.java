@@ -48,7 +48,7 @@ public class CertificateRepositoryTest {
                 new Certificate().setId(2L).setName("Skydiving").setPrice(BigDecimal.valueOf(250.0)).setDuration(30)
                         .setCreateDate(t).setLastUpdateDate(t)
                         .setTags(List.of(new Tag().setId(1L).setName("incredible"), new Tag().setId(2L).setName("travel"))));
-        List<Certificate> actualCerts = certificateRepository.getAll(params);
+        List<Certificate> actualCerts = certificateRepository.getCertificates(params, 1, 20);
         assertEquals(expCerts, actualCerts);
     }
 
@@ -63,7 +63,7 @@ public class CertificateRepositoryTest {
                 List.of(new Certificate().setId(2L).setName("Skydiving").setPrice(BigDecimal.valueOf(250.0))
                 .setDuration(30).setCreateDate(t).setLastUpdateDate(t)
                 .setTags(List.of(new Tag().setId(1L).setName("incredible"), new Tag().setId(2L).setName("travel"))));
-        List<Certificate> actualCerts = certificateRepository.getAll(params);
+        List<Certificate> actualCerts = certificateRepository.getCertificates(params, 1, 20);
         assertEquals(expCerts, actualCerts);
     }
 

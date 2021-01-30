@@ -24,8 +24,7 @@ public class CertificateRepositoryImpl implements CertificateRepository {
     private EntityManager entityManager;
 
     @Override
-    public List<Certificate> getAll(CertificateSearchParams params, Integer page, Integer limit) {
-        int firstResult = page == null ? 0 : (page - 1) * limit;
+    public List<Certificate> getCertificates(CertificateSearchParams params, int page, int limit) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Certificate> criteriaQuery = cb.createQuery(Certificate.class);
         Root<Certificate> certificates = criteriaQuery.from(Certificate.class);
@@ -75,7 +74,7 @@ public class CertificateRepositoryImpl implements CertificateRepository {
 
         certificates.fetch("tags", JoinType.LEFT);
         return entityManager.createQuery(criteriaQuery)
-                .setFirstResult(firstResult)
+                .setFirstResult((page - 1) * limit)
                 .setMaxResults(limit)
                 .getResultList();
     }

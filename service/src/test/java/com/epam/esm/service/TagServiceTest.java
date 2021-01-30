@@ -28,11 +28,11 @@ public class TagServiceTest {
                 new Tag().setId(1L).setName("incredible"),
                 new Tag().setId(2L).setName("travel")
         );
-        when(tagRepository.getAll()).thenReturn(expTags);
-        List<Tag> actualTags = tagService.getAll();
+        when(tagRepository.getTags(1, 20)).thenReturn(expTags);
+        List<Tag> actualTags = tagService.getTags(1, 20);
 
         assertEquals(expTags, actualTags);
-        verify(tagRepository, only()).getAll();
+        verify(tagRepository, only()).getTags(1, 20);
     }
 
     @Test

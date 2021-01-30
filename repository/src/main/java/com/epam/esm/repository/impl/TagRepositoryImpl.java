@@ -21,10 +21,9 @@ public class TagRepositoryImpl implements TagRepository {
     private EntityManager entityManager;
 
     @Override
-    public List<Tag> getAll(Integer page, Integer limit) {
-        int firstResult = page == null ? 0 : (page - 1) * limit;
+    public List<Tag> getTags(int page, int limit) {
         return entityManager.createQuery(JPQL_SELECT_ALL, Tag.class)
-                .setFirstResult(firstResult)
+                .setFirstResult((page - 1) * limit)
                 .setMaxResults(limit)
                 .getResultList();
     }
