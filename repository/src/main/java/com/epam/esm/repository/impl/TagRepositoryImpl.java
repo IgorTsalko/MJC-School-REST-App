@@ -14,11 +14,11 @@ import java.util.stream.Collectors;
 public class TagRepositoryImpl implements TagRepository {
 
     private static final String JPQL_SELECT_ALL = "from Tag";
-    private static final String JPQL_SELECT_BY_NAME = "from Tag where name in (:names)";
+    private static final String JPQL_SELECT_BY_NAME = "from Tag where title in (:titles)";
     private static final String JPQL_SELECT_CERTIFICATE_TAGS = "select c.tags from Certificate c where c.id=:id";
 
     private static final String SQL_FIND_MOST_USED_TAG_FOR_USER_WITH_HIGHEST_COST_OF_ALL_ORDERS =
-            "select t.id, t.name, count(*) as tag_count " +
+            "select t.id, t.title, count(*) as tag_count " +
                     "from \"user\" u " +
                     "         join \"order\" o on u.id = o.user_id " +
                     "         join gift_certificate gc on gc.id = o.certificate_id " +
@@ -74,9 +74,9 @@ public class TagRepositoryImpl implements TagRepository {
     }
 
     private List<Tag> getByNames(List<Tag> tags) {
-        List<String> names = tags.stream().map(Tag::getName).collect(Collectors.toList());
+        List<String> names = tags.stream().map(Tag::getTitle).collect(Collectors.toList());
         return entityManager.createQuery(JPQL_SELECT_BY_NAME, Tag.class)
-                .setParameter("names", names)
+                .setParameter("titles", names)
                 .getResultList();
     }
 
@@ -86,7 +86,7 @@ public class TagRepositoryImpl implements TagRepository {
         List<Tag> nonexistentTags = tags.stream()
                 .filter(exist -> existingTags
                         .stream()
-                        .noneMatch(t -> t.getName().equals(exist.getName())))
+                        .noneMatch(t -> t.getTitle().equals(exist.getTitle())))
                 .collect(Collectors.toList());
 
         nonexistentTags.stream().distinct().collect(Collectors.toList())

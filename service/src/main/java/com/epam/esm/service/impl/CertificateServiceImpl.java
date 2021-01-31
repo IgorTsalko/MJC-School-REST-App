@@ -53,7 +53,7 @@ public class CertificateServiceImpl implements CertificateService {
             tags = tagRepository.createNonExistent(tags);
             certificate.setTags(tags);
         }
-        return certificateRepository.upsert(id, certificate)
+        return certificateRepository.put(id, certificate)
                 .setTags(tagRepository.getCertificateTags(id));
     }
 

@@ -10,7 +10,7 @@ public class SearchParamsMapper {
 
     public static CertificateSearchParams convertToEntity(CertificateSearchParamsRequest searchParamsRequest) {
         CertificateSearchParams searchParams = new CertificateSearchParams()
-                .setName(searchParamsRequest.getName())
+                .setTitle(searchParamsRequest.getTitle())
                 .setDescription(searchParamsRequest.getDescription())
                 .setSort(searchParamsRequest.getSort())
                 .setSortOrder(searchParamsRequest.getSortOrder());
@@ -18,7 +18,6 @@ public class SearchParamsMapper {
         if (searchParamsRequest.getTags() != null) {
             List<String> tags = List.of(searchParamsRequest.getTags().split(","));
             tags = tags.stream().map(String::trim).collect(Collectors.toList());
-            System.out.println(tags);
             searchParams.setTags(tags);
         }
 

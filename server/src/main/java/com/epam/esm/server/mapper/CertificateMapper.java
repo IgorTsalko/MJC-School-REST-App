@@ -11,7 +11,7 @@ public class CertificateMapper {
     public static CertificateResponse convertToResponse(Certificate certificate) {
         CertificateResponse certificateResponse = new CertificateResponse()
                 .setId(certificate.getId())
-                .setName(certificate.getName())
+                .setTitle(certificate.getTitle())
                 .setDescription(certificate.getDescription())
                 .setPrice(certificate.getPrice())
                 .setDuration(certificate.getDuration())
@@ -28,7 +28,7 @@ public class CertificateMapper {
     public static Certificate convertToEntity(CertificateUpdateRequest certificateUpdateRequest) {
         return createCertificate(
                 certificateUpdateRequest.getId(),
-                certificateUpdateRequest.getName(),
+                certificateUpdateRequest.getTitle(),
                 certificateUpdateRequest.getDescription(),
                 certificateUpdateRequest.getPrice(),
                 certificateUpdateRequest.getDuration(),
@@ -38,7 +38,7 @@ public class CertificateMapper {
     public static Certificate convertToEntity(CertificateCreateRequest certificateCreateRequest) {
         return createCertificate(
                 certificateCreateRequest.getId(),
-                certificateCreateRequest.getName(),
+                certificateCreateRequest.getTitle(),
                 certificateCreateRequest.getDescription(),
                 certificateCreateRequest.getPrice(),
                 certificateCreateRequest.getDuration(),
@@ -56,7 +56,7 @@ public class CertificateMapper {
 
         Certificate certificate = new Certificate()
                 .setId(id)
-                .setName(name)
+                .setTitle(name)
                 .setDescription(description)
                 .setPrice(price)
                 .setDuration(duration);

@@ -1,7 +1,6 @@
 package com.epam.esm.common.entity;
 
 import com.epam.esm.common.AuditListener;
-import com.epam.esm.common.AuditablePersist;
 import com.epam.esm.common.AuditableUpdate;
 
 import javax.persistence.*;
@@ -13,12 +12,12 @@ import java.util.Objects;
 @EntityListeners(AuditListener.class)
 @Entity
 @Table(name = "gift_certificate")
-public class Certificate implements AuditableUpdate, AuditablePersist {
+public class Certificate implements AuditableUpdate {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
+    private String title;
     private String description;
     private BigDecimal price;
     private Integer duration;
@@ -42,12 +41,12 @@ public class Certificate implements AuditableUpdate, AuditablePersist {
         return this;
     }
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
-    public Certificate setName(String name) {
-        this.name = name;
+    public Certificate setTitle(String name) {
+        this.title = name;
         return this;
     }
 
@@ -111,7 +110,7 @@ public class Certificate implements AuditableUpdate, AuditablePersist {
         if (o == null || getClass() != o.getClass()) return false;
         Certificate that = (Certificate) o;
         return Objects.equals(id, that.id)
-                && Objects.equals(name, that.name)
+                && Objects.equals(title, that.title)
                 && Objects.equals(description, that.description)
                 && Objects.equals(price, that.price)
                 && Objects.equals(duration, that.duration)
@@ -122,14 +121,14 @@ public class Certificate implements AuditableUpdate, AuditablePersist {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, price, duration, createDate, lastUpdateDate, tags);
+        return Objects.hash(id, title, description, price, duration, createDate, lastUpdateDate, tags);
     }
 
     @Override
     public String toString() {
         return this.getClass().getSimpleName() + "{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
+                ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", price=" + price +
                 ", duration=" + duration +

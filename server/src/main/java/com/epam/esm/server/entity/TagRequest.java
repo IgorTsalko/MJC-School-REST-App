@@ -11,7 +11,7 @@ public class TagRequest {
     private Long id;
     @NotNull
     @Size(min = 2, max = 50)
-    private String name;
+    private String title;
 
     public Long getId() {
         return id;
@@ -21,12 +21,12 @@ public class TagRequest {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     @Override
@@ -34,19 +34,19 @@ public class TagRequest {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TagRequest that = (TagRequest) o;
-        return Objects.equals(id, that.id) && Objects.equals(name, that.name);
+        return Objects.equals(id, that.id) && Objects.equals(title, that.title);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name);
+        return Objects.hash(id, title);
     }
 
     @Override
     public String toString() {
         return this.getClass().getSimpleName() + "{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
+                ", title='" + title + '\'' +
                 '}';
     }
 }

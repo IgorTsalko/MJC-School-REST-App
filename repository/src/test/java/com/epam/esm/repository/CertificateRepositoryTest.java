@@ -49,7 +49,7 @@ public class CertificateRepositoryTest {
     @Test
     public void getAllCertificatesWithParams() {
         CertificateSearchParams params = new CertificateSearchParams();
-        params.setName("sky");
+        params.setTitle("sky");
         params.setSort("id");
         params.setSortOrder(SortOrder.DESC);
 
@@ -75,12 +75,12 @@ public class CertificateRepositoryTest {
     public void createNewCertificate() {
         Certificate expCert = new Certificate()
                 .setId(3L)
-                .setName("NewCertificate")
+                .setTitle("NewCertificate")
                 .setPrice(BigDecimal.valueOf(178.0))
                 .setDuration(14);
 
         Certificate cert = new Certificate()
-                .setName("NewCertificate")
+                .setTitle("NewCertificate")
                 .setPrice(BigDecimal.valueOf(178.0))
                 .setDuration(14);
 
@@ -96,14 +96,14 @@ public class CertificateRepositoryTest {
     public void updateCertificate() {
         Certificate expCert = new Certificate()
                 .setId(2L)
-                .setName("Skydiving-2")
+                .setTitle("Skydiving-2")
                 .setDescription("New cool description")
                 .setPrice(BigDecimal.valueOf(357.0))
                 .setDuration(14)
-                .setTags(List.of(new Tag().setId(1L).setName("incredible"), new Tag().setId(2L).setName("travel")));
+                .setTags(List.of(new Tag().setId(1L).setTitle("incredible"), new Tag().setId(2L).setTitle("travel")));
 
         Certificate cert = new Certificate()
-                .setName("Skydiving-2")
+                .setTitle("Skydiving-2")
                 .setDescription("New cool description")
                 .setPrice(BigDecimal.valueOf(357.0))
                 .setDuration(14);
@@ -136,19 +136,19 @@ public class CertificateRepositoryTest {
     }
 
     private Certificate getMockCertId1() {
-        Certificate cert = new Certificate().setId(1L).setName("Trip")
+        Certificate cert = new Certificate().setId(1L).setTitle("Trip")
                 .setDescription("Incredible journey. 25 countries. 4 weeks")
                 .setPrice(BigDecimal.valueOf(5600.0)).setDuration(60)
-                .setTags(List.of(new Tag().setId(1L).setName("incredible")));
+                .setTags(List.of(new Tag().setId(1L).setTitle("incredible")));
         cert.setCreateDate(t);
         cert.setLastUpdateDate(t);
         return cert;
     }
 
     private Certificate getMockCertId2() {
-        Certificate cert = new Certificate().setId(2L).setName("Skydiving")
+        Certificate cert = new Certificate().setId(2L).setTitle("Skydiving")
                 .setPrice(BigDecimal.valueOf(250.0)).setDuration(30)
-                .setTags(List.of(new Tag().setId(1L).setName("incredible"), new Tag().setId(2L).setName("travel")));
+                .setTags(List.of(new Tag().setId(1L).setTitle("incredible"), new Tag().setId(2L).setTitle("travel")));
         cert.setCreateDate(t);
         cert.setLastUpdateDate(t);
         return cert;

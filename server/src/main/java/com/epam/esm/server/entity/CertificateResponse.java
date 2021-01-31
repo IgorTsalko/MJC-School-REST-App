@@ -12,7 +12,7 @@ import java.util.Objects;
 public class CertificateResponse extends RepresentationModel<CertificateResponse> {
 
     private Long id;
-    private String name;
+    private String title;
     private String description;
     private BigDecimal price;
     private Integer duration;
@@ -32,12 +32,12 @@ public class CertificateResponse extends RepresentationModel<CertificateResponse
         return this;
     }
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
-    public CertificateResponse setName(String name) {
-        this.name = name;
+    public CertificateResponse setTitle(String title) {
+        this.title = title;
         return this;
     }
 
@@ -101,7 +101,7 @@ public class CertificateResponse extends RepresentationModel<CertificateResponse
         if (o == null || getClass() != o.getClass()) return false;
         CertificateResponse that = (CertificateResponse) o;
         return Objects.equals(id, that.id)
-                && Objects.equals(name, that.name)
+                && Objects.equals(title, that.title)
                 && Objects.equals(description, that.description)
                 && Objects.equals(price, that.price)
                 && Objects.equals(duration, that.duration)
@@ -112,14 +112,14 @@ public class CertificateResponse extends RepresentationModel<CertificateResponse
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, price, duration, tags, createDate, lastUpdateDate);
+        return Objects.hash(id, title, description, price, duration, tags, createDate, lastUpdateDate);
     }
 
     @Override
     public String toString() {
         return this.getClass().getSimpleName() + "{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
+                ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", price=" + price +
                 ", duration=" + duration +

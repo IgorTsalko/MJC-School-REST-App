@@ -89,6 +89,8 @@ public class CertificateController {
     @GetMapping("/{id}")
     public CertificateResponse get(@PathVariable @Positive Long id) {
         CertificateResponse certificateResponse = CertificateMapper.convertToResponse(certificateService.get(id));
+        certificateResponse.getTags()
+                .forEach(t -> t.add(linkTo(methodOn(TagController.class).get(t.getId())).withSelfRel()));
         certificateResponse.add(linkTo(methodOn(CertificateController.class).get(id)).withSelfRel());
         return certificateResponse;
     }
@@ -103,8 +105,9 @@ public class CertificateController {
     public ResponseEntity<CertificateResponse> create(@RequestBody @Valid CertificateCreateRequest request) {
         Certificate certificate = certificateService.create(CertificateMapper.convertToEntity(request));
         CertificateResponse certificateResponse = CertificateMapper.convertToResponse(certificate);
+        certificateResponse.getTags()
+                .forEach(t -> t.add(linkTo(methodOn(TagController.class).get(t.getId())).withSelfRel()));
         certificateResponse.add(linkTo(methodOn(CertificateController.class).create(request)).withSelfRel());
-
         return new ResponseEntity<>(certificateResponse, HttpStatus.CREATED);
     }
 
@@ -121,6 +124,8 @@ public class CertificateController {
             @PathVariable @Positive Long id, @RequestBody @Valid CertificateCreateRequest request) {
         Certificate certificate = certificateService.put(id, CertificateMapper.convertToEntity(request));
         CertificateResponse certificateResponse = CertificateMapper.convertToResponse(certificate);
+        certificateResponse.getTags()
+                .forEach(t -> t.add(linkTo(methodOn(TagController.class).get(t.getId())).withSelfRel()));
         certificateResponse.add(linkTo(methodOn(CertificateController.class).put(id, request)).withSelfRel());
         return ResponseEntity.ok(certificateResponse);
     }
@@ -137,12 +142,14 @@ public class CertificateController {
             @PathVariable @Positive Long id, @RequestBody @Valid CertificateUpdateRequest request) {
         Certificate certificate = certificateService.update(id, CertificateMapper.convertToEntity(request));
         CertificateResponse certificateResponse = CertificateMapper.convertToResponse(certificate);
+        certificateResponse.getTags()
+                .forEach(t -> t.add(linkTo(methodOn(TagController.class).get(t.getId())).withSelfRel()));
         certificateResponse.add(linkTo(methodOn(CertificateController.class).partialUpdate(id, request)).withSelfRel());
         return ResponseEntity.ok(certificateResponse);
     }
 
     /**
-     * Delete certain <code>Certificate</code>
+     * Delete <code>Certificate</code> by certain id
      *
      * @param id specific certificate's identifier
      * @return successful status code

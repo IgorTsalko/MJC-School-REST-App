@@ -8,13 +8,17 @@ public class UserMapper {
     public static UserResponse convertToResponse(User user) {
         return new UserResponse()
                 .setId(user.getId())
-                .setName(user.getName())
+                .setFirstName(user.getFirstName())
+                .setLastName(user.getLastName())
+                .setEmail(user.getEmail())
                 .setOrders(OrderMapper.convertToResponse(user.getOrders()));
     }
 
     public static UserResponse convertToResponseWithoutOrders(User user) {
         return new UserResponse()
                 .setId(user.getId())
-                .setName(user.getName());
+                .setFirstName(user.getFirstName())
+                .setLastName(user.getLastName())
+                .setEmail(user.getEmail());
     }
 }

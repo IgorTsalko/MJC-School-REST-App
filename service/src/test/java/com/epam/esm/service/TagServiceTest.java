@@ -25,8 +25,8 @@ public class TagServiceTest {
     @Test
     public void getAllTags() {
         List<Tag> expTags = List.of(
-                new Tag().setId(1L).setName("incredible"),
-                new Tag().setId(2L).setName("travel")
+                new Tag().setId(1L).setTitle("incredible"),
+                new Tag().setId(2L).setTitle("travel")
         );
         when(tagRepository.getTags(1, 20)).thenReturn(expTags);
         List<Tag> actualTags = tagService.getTags(1, 20);
@@ -37,7 +37,7 @@ public class TagServiceTest {
 
     @Test
     public void getTagById() {
-        Tag expTag = new Tag().setId(1L).setName("incredible");
+        Tag expTag = new Tag().setId(1L).setTitle("incredible");
         when(tagRepository.get(anyLong())).thenReturn(expTag);
 
         Tag actualTag = tagService.get(1L);
@@ -48,7 +48,7 @@ public class TagServiceTest {
 
     @Test
     public void createNewTag(@Mock Tag tag) {
-        Tag expTag = new Tag().setId(1L).setName("incredible");
+        Tag expTag = new Tag().setId(1L).setTitle("incredible");
         when(tagRepository.create(tag)).thenReturn(expTag);
 
         Tag actualTag = tagService.create(tag);

@@ -49,10 +49,10 @@ public class CertificateServiceTest {
 
     @Test
     public void getCertificateById() {
-        Certificate expCert = new Certificate().setId(2L).setName("Spa");
+        Certificate expCert = new Certificate().setId(2L).setTitle("Spa");
         List<Tag> tags = getMockTags();
         expCert.setTags(tags);
-        Certificate cert = new Certificate().setId(2L).setName("Spa");
+        Certificate cert = new Certificate().setId(2L).setTitle("Spa");
 
         when(tagRepository.getCertificateTags(anyLong())).thenReturn(tags);
         when(certificateRepository.get(anyLong())).thenReturn(cert);
@@ -65,7 +65,7 @@ public class CertificateServiceTest {
 
     @Test
     public void createNewCertificateWithoutTags(@Mock Certificate certMock) {
-        Certificate expCert = new Certificate().setId(2L).setName("Spa");
+        Certificate expCert = new Certificate().setId(2L).setTitle("Spa");
         List<Tag> expTags = getMockTagsWithoutId();
         expCert.setTags(expTags);
 
@@ -148,37 +148,37 @@ public class CertificateServiceTest {
 
     private List<Certificate> getMockCertificates() {
         return List.of(
-                new Certificate().setId(1L).setName("Trip around the world"),
-                new Certificate().setId(2L).setName("Spa"),
-                new Certificate().setId(5L).setName("Sailing")
+                new Certificate().setId(1L).setTitle("Trip around the world"),
+                new Certificate().setId(2L).setTitle("Spa"),
+                new Certificate().setId(5L).setTitle("Sailing")
         );
     }
 
     private Map<Long, List<Tag>> getMockCertificatesTags() {
         return Map.of(
-                1L, List.of(new Tag().setId(1L).setName("incredible"), new Tag().setId(3L).setName("pleasure")),
-                5L, List.of(new Tag().setId(1L).setName("incredible"), new Tag().setId(4L).setName("jump"))
+                1L, List.of(new Tag().setId(1L).setTitle("incredible"), new Tag().setId(3L).setTitle("pleasure")),
+                5L, List.of(new Tag().setId(1L).setTitle("incredible"), new Tag().setId(4L).setTitle("jump"))
         );
     }
 
     private List<Tag> getMockTags() {
         return List.of(
-                new Tag().setId(1L).setName("incredible"),
-                new Tag().setId(2L).setName("pleasure")
+                new Tag().setId(1L).setTitle("incredible"),
+                new Tag().setId(2L).setTitle("pleasure")
         );
     }
 
     private List<Tag> getMockTagsWithoutId() {
         return List.of(
-                new Tag().setName("incredible"),
-                new Tag().setName("pleasure")
+                new Tag().setTitle("incredible"),
+                new Tag().setTitle("pleasure")
         );
     }
 
     private Certificate getMockCertificate() {
         return new Certificate()
                 .setId(1L)
-                .setName("newUpdatedName")
+                .setTitle("newUpdatedName")
                 .setPrice(BigDecimal.valueOf(120.0))
                 .setDuration(100);
     }

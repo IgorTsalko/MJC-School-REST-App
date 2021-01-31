@@ -105,6 +105,8 @@ public class UserController {
         Order order = userService.createUserOrder(userId, OrderMapper.convertToEntity(request));
         OrderResponse orderResponse = OrderMapper.convertToResponse(order);
         orderResponse.add(linkTo(methodOn(UserController.class).createUserOrder(userId, request)).withSelfRel());
+        orderResponse.add(linkTo(methodOn(CertificateController.class)
+                .get(orderResponse.getCertificateId())).withRel("certificate"));
         return new ResponseEntity<>(orderResponse, HttpStatus.CREATED);
     }
 }

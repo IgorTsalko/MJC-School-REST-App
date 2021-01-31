@@ -35,7 +35,7 @@ public class TagRepositoryTest {
 
     @Test
     public void getTagById() {
-        Tag expTag = new Tag().setId(2L).setName("travel");
+        Tag expTag = new Tag().setId(2L).setTitle("travel");
         Tag actualTag = tagRepository.get(2L);
         assertEquals(expTag, actualTag);
     }
@@ -55,8 +55,8 @@ public class TagRepositoryTest {
     @Test
     @Transactional
     public void createNewTag() {
-        Tag expTag = new Tag().setId(3L).setName("NewTag");
-        Tag newTag = new Tag().setName("NewTag");
+        Tag expTag = new Tag().setId(3L).setTitle("NewTag");
+        Tag newTag = new Tag().setTitle("NewTag");
         Tag actualTag = tagRepository.create(newTag);
         assertEquals(expTag, actualTag);
     }
@@ -65,15 +65,15 @@ public class TagRepositoryTest {
     @Transactional
     public void createNonExistentTags() {
         List<Tag> expTags = List.of(
-                new Tag().setId(1L).setName("incredible"),
-                new Tag().setId(2L).setName("travel"),
-                new Tag().setId(3L).setName("someNewTag1"),
-                new Tag().setId(4L).setName("someNewTag2")
+                new Tag().setId(1L).setTitle("incredible"),
+                new Tag().setId(2L).setTitle("travel"),
+                new Tag().setId(3L).setTitle("someNewTag1"),
+                new Tag().setId(4L).setTitle("someNewTag2")
         );
         List<Tag> tags = List.of(
-                new Tag().setName("incredible"),
-                new Tag().setName("someNewTag1"),
-                new Tag().setName("someNewTag2")
+                new Tag().setTitle("incredible"),
+                new Tag().setTitle("someNewTag1"),
+                new Tag().setTitle("someNewTag2")
         );
         tagRepository.createNonExistent(tags);
         List<Tag> actualTags = tagRepository.getTags(1, 20);
@@ -84,7 +84,7 @@ public class TagRepositoryTest {
     @Transactional
     public void deleteTagById() {
         List<Tag> expTags = List.of(
-                new Tag().setId(2L).setName("travel")
+                new Tag().setId(2L).setTitle("travel")
         );
         tagRepository.delete(1L);
         List<Tag> actualTags = tagRepository.getTags(1, 20);
@@ -99,8 +99,8 @@ public class TagRepositoryTest {
 
     private List<Tag> getMockTags() {
         return List.of(
-                new Tag().setId(1L).setName("incredible"),
-                new Tag().setId(2L).setName("travel")
+                new Tag().setId(1L).setTitle("incredible"),
+                new Tag().setId(2L).setTitle("travel")
         );
     }
 }

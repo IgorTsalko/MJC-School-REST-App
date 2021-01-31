@@ -11,7 +11,7 @@ public class CertificateUpdateRequest {
     @Positive
     private Long id;
     @Size(min = 2, max = 50)
-    private String name;
+    private String title;
     @Size(min = 3, max = 250)
     private String description;
     @DecimalMin(value = "1.00")
@@ -29,12 +29,12 @@ public class CertificateUpdateRequest {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getDescription() {
@@ -75,7 +75,7 @@ public class CertificateUpdateRequest {
         if (o == null || getClass() != o.getClass()) return false;
         CertificateUpdateRequest that = (CertificateUpdateRequest) o;
         return Objects.equals(id, that.id)
-                && Objects.equals(name, that.name)
+                && Objects.equals(title, that.title)
                 && Objects.equals(description, that.description)
                 && Objects.equals(price, that.price)
                 && Objects.equals(duration, that.duration)
@@ -84,14 +84,14 @@ public class CertificateUpdateRequest {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, price, duration, tags);
+        return Objects.hash(id, title, description, price, duration, tags);
     }
 
     @Override
     public String toString() {
         return this.getClass().getSimpleName() + "{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
+                ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", price=" + price +
                 ", duration=" + duration +

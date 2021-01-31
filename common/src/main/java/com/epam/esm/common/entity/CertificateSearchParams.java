@@ -5,18 +5,18 @@ import java.util.Objects;
 
 public class CertificateSearchParams {
 
-    private String name;
+    private String title;
     private String description;
     private List<String> tags;
     private String sort;
     private SortOrder sortOrder;
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
-    public CertificateSearchParams setName(String name) {
-        this.name = name;
+    public CertificateSearchParams setTitle(String title) {
+        this.title = title;
         return this;
     }
 
@@ -61,7 +61,7 @@ public class CertificateSearchParams {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CertificateSearchParams that = (CertificateSearchParams) o;
-        return Objects.equals(name, that.name)
+        return Objects.equals(title, that.title)
                 && Objects.equals(description, that.description)
                 && Objects.equals(tags, that.tags)
                 && Objects.equals(sort, that.sort)
@@ -70,13 +70,13 @@ public class CertificateSearchParams {
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, description, tags, sort, sortOrder);
+        return Objects.hash(title, description, tags, sort, sortOrder);
     }
 
     @Override
     public String toString() {
         return this.getClass().getSimpleName() + "{" +
-                "name='" + name + '\'' +
+                "title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", tags='" + tags + '\'' +
                 ", sort='" + sort + '\'' +

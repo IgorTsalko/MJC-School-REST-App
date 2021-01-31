@@ -13,11 +13,12 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.*;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Repository
 public class CertificateRepositoryImpl implements CertificateRepository {
 
-    private static final String JPQL_SELECT_TAGS_BY_NAME = "from Tag t where t.name in (:names)";
+    private static final String JPQL_SELECT_TAGS_BY_NAME = "from Tag t where t.title in (:titles)";
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -27,12 +28,25 @@ public class CertificateRepositoryImpl implements CertificateRepository {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Certificate> criteriaQuery = cb.createQuery(Certificate.class);
         Root<Certificate> certificates = criteriaQuery.from(Certificate.class);
+        certificates.fetch("tags", JoinType.LEFT);
+
+        List<Long> filteredCertificateIds = getFilteredCertificateIds(params, page, limit);
+        criteriaQuery.distinct(true).where(certificates.get("id").in(filteredCertificateIds));
+        setSorting(params, cb, criteriaQuery, certificates);
+
+        return entityManager.createQuery(criteriaQuery).getResultList();
+    }
+
+    private List<Long> getFilteredCertificateIds(CertificateSearchParams params, int page, int limit) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Certificate> criteriaQuery = cb.createQuery(Certificate.class);
+        Root<Certificate> certificates = criteriaQuery.from(Certificate.class);
         ArrayList<Predicate> predicates = new ArrayList<>();
 
-        if (params.getName() != null) {
+        if (params.getTitle() != null) {
             predicates.add(cb.like(cb.lower(
-                    certificates.get("name")),
-                    params.getName().toLowerCase() + "%"));
+                    certificates.get("title")),
+                    params.getTitle().toLowerCase() + "%"));
         }
         if (params.getDescription() != null) {
             predicates.add(cb.like(cb.lower(
@@ -40,25 +54,36 @@ public class CertificateRepositoryImpl implements CertificateRepository {
                     params.getDescription().toLowerCase() + "%"));
         }
 
-        Predicate[] allPredicates = new Predicate[predicates.size()];
-        predicates.toArray(allPredicates);
-        criteriaQuery = criteriaQuery.distinct(true).where(allPredicates);
-        criteriaQuery = criteriaQuery.where(allPredicates);
-
         if (params.getTags() != null) {
             List<Tag> tags = entityManager
                     .createQuery(JPQL_SELECT_TAGS_BY_NAME, Tag.class)
-                    .setParameter("names", params.getTags())
+                    .setParameter("titles", params.getTags())
                     .getResultList();
-
-            List<Predicate> tagPredicates = new ArrayList<>();
-            tags.forEach(t -> tagPredicates.add(cb.isMember(t, certificates.get("tags"))));
-            Predicate[] tagArrayPredicates = new Predicate[tagPredicates.size()];
-            tagPredicates.toArray(tagArrayPredicates);
-
-            criteriaQuery = criteriaQuery.select(certificates).where(cb.and(tagArrayPredicates));
+            if (tags.size() != params.getTags().size()) {
+                return new ArrayList<>();
+            }
+            tags.forEach(t -> predicates.add(cb.isMember(t, certificates.get("tags"))));
         }
 
+        Predicate[] allPredicates = new Predicate[predicates.size()];
+        predicates.toArray(allPredicates);
+        criteriaQuery = criteriaQuery.distinct(true).where(allPredicates);
+        setSorting(params, cb, criteriaQuery, certificates);
+
+        return entityManager
+                .createQuery(criteriaQuery)
+                .setFirstResult((page - 1) * limit)
+                .setMaxResults(limit)
+                .getResultList()
+                .stream()
+                .map(Certificate::getId)
+                .collect(Collectors.toList());
+    }
+
+    private void setSorting(CertificateSearchParams params,
+                            CriteriaBuilder cb,
+                            CriteriaQuery<Certificate> criteriaQuery,
+                            Root<Certificate> certificates) {
         if (params.getSort() != null) {
             if (params.getSortOrder() != null) {
                 if (params.getSortOrder().name().equals("DESC")) {
@@ -70,12 +95,6 @@ public class CertificateRepositoryImpl implements CertificateRepository {
                 criteriaQuery.orderBy(cb.asc(certificates.get(params.getSort())));
             }
         }
-
-        certificates.fetch("tags", JoinType.LEFT);
-        return entityManager.createQuery(criteriaQuery)
-                .setFirstResult((page - 1) * limit)
-                .setMaxResults(limit)
-                .getResultList();
     }
 
     @Override
@@ -94,12 +113,13 @@ public class CertificateRepositoryImpl implements CertificateRepository {
     }
 
     @Override
-    public Certificate upsert(Long id, Certificate certificate) {
+    public Certificate put(Long id, Certificate certificate) {
         Certificate cert = entityManager.find(Certificate.class, id);
         if (cert == null) {
             throw new EntityNotFoundException(ErrorDefinition.CERTIFICATE_NOT_FOUND, id);
         }
         certificate.setId(id);
+        certificate.setCreateDate(cert.getCreateDate());
 
         return entityManager.merge(certificate);
     }
@@ -112,14 +132,14 @@ public class CertificateRepositoryImpl implements CertificateRepository {
             throw new EntityNotFoundException(ErrorDefinition.CERTIFICATE_NOT_FOUND, id);
         }
 
-        String name = certificate.getName();
+        String name = certificate.getTitle();
         String description = certificate.getDescription();
         BigDecimal price = certificate.getPrice();
         Integer duration = certificate.getDuration();
         List<Tag> tags = certificate.getTags();
 
         if (name != null) {
-            updatedCert.setName(name);
+            updatedCert.setTitle(name);
         }
         if (description != null) {
             updatedCert.setDescription(description);

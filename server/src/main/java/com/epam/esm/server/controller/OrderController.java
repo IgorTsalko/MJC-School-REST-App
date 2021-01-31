@@ -58,6 +58,10 @@ public class OrderController {
     public ResponseEntity<OrderResponse> get(@PathVariable @Positive Long id) {
         OrderResponse orderResponse = OrderMapper.convertToResponse(orderService.get(id));
         orderResponse.add(linkTo(methodOn(OrderController.class).get(id)).withSelfRel());
+        orderResponse.add(linkTo(methodOn(UserController.class)
+                .get(orderResponse.getUserId())).withRel("user"));
+        orderResponse.add(linkTo(methodOn(CertificateController.class)
+                .get(orderResponse.getCertificateId())).withRel("certificate"));
         return ResponseEntity.ok(orderResponse);
     }
 }

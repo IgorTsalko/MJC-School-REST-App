@@ -7,9 +7,9 @@ import java.util.Objects;
 
 public class CertificateSearchParamsRequest {
 
-    @Size(min = 2, max = 50)
-    private String name;
-    @Size(min = 2, max = 250)
+    @Size(min = 1, max = 255)
+    private String title;
+    @Size(min = 1, max = 250)
     private String description;
     @Size(min = 2)
     private String tags;
@@ -17,12 +17,12 @@ public class CertificateSearchParamsRequest {
     private String sort;
     private SortOrder sortOrder;
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getDescription() {
@@ -62,7 +62,7 @@ public class CertificateSearchParamsRequest {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CertificateSearchParamsRequest that = (CertificateSearchParamsRequest) o;
-        return Objects.equals(name, that.name)
+        return Objects.equals(title, that.title)
                 && Objects.equals(description, that.description)
                 && Objects.equals(tags, that.tags)
                 && Objects.equals(sort, that.sort)
@@ -71,13 +71,13 @@ public class CertificateSearchParamsRequest {
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, description, tags, sort, sortOrder);
+        return Objects.hash(title, description, tags, sort, sortOrder);
     }
 
     @Override
     public String toString() {
         return this.getClass().getSimpleName() + "{" +
-                "name='" + name + '\'' +
+                "title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", tags='" + tags + '\'' +
                 ", sort='" + sort + '\'' +
