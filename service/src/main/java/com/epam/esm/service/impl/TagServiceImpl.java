@@ -18,8 +18,8 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    public List<Tag> getAll(Integer page, Integer limit) {
-        return tagRepository.getAll(page, limit);
+    public List<Tag> getTags(int page, int limit) {
+        return tagRepository.getTags(page, limit);
     }
 
     @Override
@@ -37,5 +37,10 @@ public class TagServiceImpl implements TagService {
     @Override
     public void delete(Long id) {
         tagRepository.delete(id);
+    }
+
+    @Override
+    public Tag findMostUsedTagForUserWithHighestCostOfAllOrders() {
+        return tagRepository.findMostUsedTagForUserWithHighestCostOfAllOrders();
     }
 }

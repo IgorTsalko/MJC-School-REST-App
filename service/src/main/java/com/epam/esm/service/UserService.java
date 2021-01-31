@@ -7,11 +7,11 @@ import java.util.List;
 
 public interface UserService {
 
-    List<User> getAll(Integer page, Integer limit);
+    List<User> getUsers(int page, int limit);
 
     User get(Long id);
 
-    List<Order> getUserOrders(Long id, Integer page, Integer limit);
+    List<Order> getUserOrders(Long id, int page, int limit);
 
     Order createUserOrder(Long id, Order order);
 }

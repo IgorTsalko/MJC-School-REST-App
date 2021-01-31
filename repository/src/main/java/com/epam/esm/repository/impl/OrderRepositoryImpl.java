@@ -21,10 +21,9 @@ public class OrderRepositoryImpl implements OrderRepository {
     private static final String JPQL_SELECT_ALL_BY_USER_ID = "from Order o where o.userId=:id";
 
     @Override
-    public List<Order> getAll(Integer page, Integer limit) {
-        int firstResult = page == null ? 0 : (page - 1) * limit;
+    public List<Order> getOrders(int page, int limit) {
         return entityManager.createQuery(JPQL_SELECT_ALL, Order.class)
-                .setFirstResult(firstResult)
+                .setFirstResult((page - 1) * limit)
                 .setMaxResults(limit)
                 .getResultList();
     }
@@ -46,11 +45,10 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public List<Order> getUserOrders(Long userId, Integer page, Integer limit) {
-        int firstResult = page == null ? 0 : (page - 1) * limit;
+    public List<Order> getUserOrders(Long userId, int page, int limit) {
         return entityManager.createQuery(JPQL_SELECT_ALL_BY_USER_ID, Order.class)
                 .setParameter("id", userId)
-                .setFirstResult(firstResult)
+                .setFirstResult((page - 1) * limit)
                 .setMaxResults(limit)
                 .getResultList();
     }

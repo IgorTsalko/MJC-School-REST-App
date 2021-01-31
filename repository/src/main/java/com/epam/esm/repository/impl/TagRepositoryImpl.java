@@ -17,14 +17,35 @@ public class TagRepositoryImpl implements TagRepository {
     private static final String JPQL_SELECT_BY_NAME = "from Tag where name in (:names)";
     private static final String JPQL_SELECT_CERTIFICATE_TAGS = "select c.tags from Certificate c where c.id=:id";
 
+    private static final String SQL_FIND_MOST_USED_TAG_FOR_USER_WITH_HIGHEST_COST_OF_ALL_ORDERS =
+            "select t.id, t.name, count(*) as tag_count " +
+                    "from \"user\" u " +
+                    "         join \"order\" o on u.id = o.user_id " +
+                    "         join gift_certificate gc on gc.id = o.certificate_id " +
+                    "         join gift_certificate_tag gct on gc.id = gct.gift_certificate_id " +
+                    "         join tag t on t.id = gct.tag_id " +
+                    "where u.id = (select id " +
+                    "              from ( " +
+                    "                       select id, max(max_sum) as max_price " +
+                    "                       from (select id, sum(price) as max_sum " +
+                    "                             from \"user\" " +
+                    "                                      join \"order\" o on \"user\".id = o.user_id " +
+                    "                             group by id) max_sums " +
+                    "                       group by id " +
+                    "                       order by max_price desc " +
+                    "                       limit 1 " +
+                    "                   ) max_cost_user_id) " +
+                    "group by t.id " +
+                    "order by tag_count desc " +
+                    "limit 1";
+
     @PersistenceContext
     private EntityManager entityManager;
 
     @Override
-    public List<Tag> getAll(Integer page, Integer limit) {
-        int firstResult = page == null ? 0 : (page - 1) * limit;
+    public List<Tag> getTags(int page, int limit) {
         return entityManager.createQuery(JPQL_SELECT_ALL, Tag.class)
-                .setFirstResult(firstResult)
+                .setFirstResult((page - 1) * limit)
                 .setMaxResults(limit)
                 .getResultList();
     }
@@ -81,5 +102,12 @@ public class TagRepositoryImpl implements TagRepository {
             throw new EntityNotFoundException(ErrorDefinition.TAG_NOT_FOUND, id);
         }
         entityManager.remove(tag);
+    }
+
+    @Override
+    public Tag findMostUsedTagForUserWithHighestCostOfAllOrders() {
+        return (Tag) entityManager.createNativeQuery(
+                SQL_FIND_MOST_USED_TAG_FOR_USER_WITH_HIGHEST_COST_OF_ALL_ORDERS, Tag.class)
+                .getSingleResult();
     }
 }

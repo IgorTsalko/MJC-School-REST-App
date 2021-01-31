@@ -28,8 +28,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getAll(Integer page, Integer limit) {
-        return userRepository.getAll(page, limit);
+    public List<User> getUsers(int page, int limit) {
+        return userRepository.getUsers(page, limit);
     }
 
     @Override
@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<Order> getUserOrders(Long id, Integer page, Integer limit) {
+    public List<Order> getUserOrders(Long id, int page, int limit) {
         return orderRepository.getUserOrders(id, page, limit);
     }
 

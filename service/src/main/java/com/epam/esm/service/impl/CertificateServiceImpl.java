@@ -25,8 +25,8 @@ public class CertificateServiceImpl implements CertificateService {
     }
 
     @Override
-    public List<Certificate> getAll(CertificateSearchParams params, Integer page, Integer limit) {
-        return certificateRepository.getAll(params, page, limit);
+    public List<Certificate> getCertificates(CertificateSearchParams params, int page, int limit) {
+        return certificateRepository.getCertificates(params, page, limit);
     }
 
     @Override
@@ -45,6 +45,7 @@ public class CertificateServiceImpl implements CertificateService {
         return certificateRepository.create(certificate);
     }
 
+    @Transactional
     @Override
     public Certificate put(Long id, Certificate certificate) {
         List<Tag> tags = certificate.getTags();

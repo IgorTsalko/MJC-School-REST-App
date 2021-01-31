@@ -11,7 +11,7 @@ public interface TagService {
      *
      * @return list of <code>Tags</code>
      */
-    List<Tag> getAll(Integer page, Integer limit);
+    List<Tag> getTags(int page, int limit);
 
     /**
      * Retrieve certain <code>Tag</code> for appropriate id.
@@ -35,4 +35,6 @@ public interface TagService {
      * @param id specific tag's identifier
      */
     void delete(Long id);
+
+    Tag findMostUsedTagForUserWithHighestCostOfAllOrders();
 }

@@ -15,7 +15,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,30 +38,27 @@ public class UserController {
     }
 
     @GetMapping
-    public CollectionModel<UserResponse> getAll(
-            @RequestParam(required = false) @Positive Integer page,
-            @RequestParam(required = false, defaultValue = "${page.limit-default}") @Positive Integer limit) {
-        List<UserResponse> users = userService.getAll(page, limit)
+    public CollectionModel<UserResponse> getUsers(
+            @RequestParam(required = false, defaultValue = "0") @PositiveOrZero int page,
+            @RequestParam(required = false, defaultValue = "${page.limit-default}") @Min(0) @Max(50) int limit) {
+        int pageNumber = page == 0 ? 1 : page;
+        List<UserResponse> users = userService.getUsers(pageNumber, limit)
                 .stream().map(UserMapper::convertToResponseWithoutOrders).collect(Collectors.toList());
         users.forEach(u -> {
             u.add(linkTo(methodOn(UserController.class).get(u.getId())).withSelfRel());
-            u.add(linkTo(methodOn(UserController.class).getUserOrders(u.getId(), null, null)).withRel("allOrders").expand());
+            u.add(linkTo(methodOn(UserController.class)
+                    .getUserOrders(u.getId(), page, limit)).withRel("allOrders").expand());
         });
 
         List<Link> links = new ArrayList<>();
-        if (page == null) {
-            links.add(linkTo(methodOn(UserController.class).getAll(null, null)).withSelfRel().expand());
-        } else {
-            links.add(linkTo(methodOn(UserController.class).getAll(page, limit)).withSelfRel());
+        links.add(linkTo(methodOn(UserController.class).getUsers(page, limit)).withSelfRel().expand());
+        links.add(linkTo(methodOn(UserController.class).getUsers(1, limit)).withRel("first"));
+
+        if (page > 0 && users.size() == limit) {
+            links.add(linkTo(methodOn(UserController.class).getUsers(page + 1, limit)).withRel("next"));
         }
-
-        links.add(linkTo(methodOn(UserController.class).getAll(1, limit)).withRel("first"));
-
-        if (page != null) {
-            links.add(linkTo(methodOn(UserController.class).getAll(page + 1, limit)).withRel("next"));
-            if (page > 1) {
-                links.add(linkTo(methodOn(UserController.class).getAll(page - 1, limit)).withRel("previous"));
-            }
+        if (page > 1) {
+            links.add(linkTo(methodOn(UserController.class).getUsers(page - 1, limit)).withRel("previous"));
         }
 
         return CollectionModel.of(users, links);
@@ -69,32 +69,31 @@ public class UserController {
         UserResponse userResponse = UserMapper.convertToResponse(userService.get(id));
         userResponse.add(linkTo(methodOn(UserController.class).get(id)).withSelfRel());
         userResponse.add(linkTo(methodOn(UserController.class)
-                .getUserOrders(id, null, null)).withRel("allOrders").expand());
+                .getUserOrders(id, 1, 20)).withRel("allOrders").expand());
+        userResponse.getOrders()
+                .forEach(o -> o.add(linkTo(methodOn(OrderController.class).get(o.getOrderId())).withSelfRel()));
         return ResponseEntity.ok(userResponse);
     }
 
     @GetMapping("/{id}/orders")
     public CollectionModel<OrderResponse> getUserOrders(
-            @PathVariable @Positive Long id, @RequestParam(required = false) @Positive Integer page,
-            @RequestParam(required = false, defaultValue = "${page.limit-default}") @Positive Integer limit) {
-        List<OrderResponse> userOrders = userService.getUserOrders(id, page, limit)
+            @PathVariable @Positive Long id,
+            @RequestParam(required = false, defaultValue = "0") @PositiveOrZero int page,
+            @RequestParam(required = false, defaultValue = "${page.limit-default}") @Min(0) @Max(50) int limit) {
+        int pageNumber = page == 0 ? 1 : page;
+        List<OrderResponse> userOrders = userService.getUserOrders(id, pageNumber, limit)
                 .stream().map(OrderMapper::convertToResponse).collect(Collectors.toList());
         userOrders.forEach(o -> o.add(linkTo(methodOn(OrderController.class).get(o.getOrderId())).withSelfRel()));
 
         List<Link> links = new ArrayList<>();
-        if (page == null) {
-            links.add(linkTo(methodOn(UserController.class).getAll(null, null)).withSelfRel().expand());
-        } else {
-            links.add(linkTo(methodOn(UserController.class).getAll(page, limit)).withSelfRel());
+        links.add(linkTo(methodOn(UserController.class).getUsers(page, limit)).withSelfRel().expand());
+        links.add(linkTo(methodOn(UserController.class).getUsers(1, limit)).withRel("first"));
+
+        if (page > 0 && userOrders.size() == limit) {
+            links.add(linkTo(methodOn(UserController.class).getUsers(page + 1, limit)).withRel("next"));
         }
-
-        links.add(linkTo(methodOn(UserController.class).getAll(1, limit)).withRel("first"));
-
-        if (page != null) {
-            links.add(linkTo(methodOn(UserController.class).getAll(page + 1, limit)).withRel("next"));
-            if (page > 1) {
-                links.add(linkTo(methodOn(UserController.class).getAll(page - 1, limit)).withRel("previous"));
-            }
+        if (page > 1) {
+            links.add(linkTo(methodOn(UserController.class).getUsers(page - 1, limit)).withRel("previous"));
         }
 
         return CollectionModel.of(userOrders, links);
