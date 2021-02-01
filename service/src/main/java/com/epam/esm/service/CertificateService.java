@@ -9,9 +9,13 @@ public interface CertificateService {
 
     /**
      * Retrieve <code>Certificates</code> for appropriate parameters.
-     * If there are no parameters then return all <code>Certificates</code>
+     * If there are no any parameters then return some <code>Certificates</code>
+     * in an amount equal to the <code>limit</code> for page number <code>page</code>
      *
-     * @param params the object that contains parameters for retrieve <code>Certificates</code>
+     * @param params the object that contains filtering or sorting parameters
+     *               for retrieve <code>Certificates</code>
+     * @param page number of page
+     * @param limit number of entities in the response
      * @return list of appropriate <code>Certificates</code>
      */
     List<Certificate> getCertificates(CertificateSearchParams params, int page, int limit);
@@ -52,7 +56,7 @@ public interface CertificateService {
     Certificate update(Long id, Certificate certificate);
 
     /**
-     * Delete certain <code>Certificate</code>
+     * Delete <code>Certificate</code> by certain id
      *
      * @param id specific certificate's identifier
      */

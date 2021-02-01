@@ -40,10 +40,14 @@ public class CertificateController {
     }
 
     /**
-     * Retrieve <code>Certificates</code> for appropriate parameters.
-     * If there are no parameters then return all <code>Certificates</code>
+     * Retrieve <code>Certificates</code> for appropriate parameters in an amount
+     * equal to the <code>limit</code> for page number <code>page</code>.
+     * If there are no any parameters then return some <code>Certificates</code>
      *
-     * @param params the object that contains parameters for retrieve <code>Certificates</code>
+     * @param params the object that contains filtering or sorting parameters
+     *               for retrieve <code>Certificates</code>
+     * @param page number of page
+     * @param limit number of entities in the response
      * @return list of appropriate <code>Certificates</code>
      */
     @GetMapping
@@ -152,7 +156,7 @@ public class CertificateController {
      * Delete <code>Certificate</code> by certain id
      *
      * @param id specific certificate's identifier
-     * @return successful status code
+     * @return successful status code <code>NO_CONTENT 204</code>
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> delete(@PathVariable @Positive Long id) {

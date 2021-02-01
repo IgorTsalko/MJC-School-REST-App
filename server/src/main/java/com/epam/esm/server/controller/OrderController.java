@@ -31,6 +31,14 @@ public class OrderController {
         this.orderService = orderService;
     }
 
+    /**
+     * Retrieve list of <code>Orders</code> for appropriate id in an amount equal to
+     * the <code>limit</code> for page number <code>page</code>
+     *
+     * @param page number of page
+     * @param limit number of entities in the response
+     * @return list of <code>Orders</code>
+     */
     @GetMapping
     public CollectionModel<OrderResponse> getOrders(
             @RequestParam(required = false, defaultValue = "0") @PositiveOrZero int page,
@@ -54,6 +62,12 @@ public class OrderController {
         return CollectionModel.of(orders, links);
     }
 
+    /**
+     * Retrieve <code>Order</code> by certain id
+     *
+     * @param id specific order's identifier
+     * @return certain <code>Order</code>
+     */
     @GetMapping("/{id}")
     public ResponseEntity<OrderResponse> get(@PathVariable @Positive Long id) {
         OrderResponse orderResponse = OrderMapper.convertToResponse(orderService.get(id));

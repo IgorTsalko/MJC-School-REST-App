@@ -37,6 +37,14 @@ public class UserController {
         this.userService = userService;
     }
 
+    /**
+     * Retrieve <code>Users</code> for appropriate parameters in an amount
+     * equal to the <code>limit</code> for page number <code>page</code>.
+     *
+     * @param page number of page
+     * @param limit number of entities in the response
+     * @return list of <code>Users</code>
+     */
     @GetMapping
     public CollectionModel<UserResponse> getUsers(
             @RequestParam(required = false, defaultValue = "0") @PositiveOrZero int page,
@@ -64,6 +72,12 @@ public class UserController {
         return CollectionModel.of(users, links);
     }
 
+    /**
+     * Retrieve <code>User</code> by certain id
+     *
+     * @param id specific user's identifier
+     * @return certain <code>User</code>
+     */
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse> get(@PathVariable @Positive Long id) {
         UserResponse userResponse = UserMapper.convertToResponse(userService.get(id));
@@ -75,6 +89,15 @@ public class UserController {
         return ResponseEntity.ok(userResponse);
     }
 
+    /**
+     * Retrieve list of <code>Orders</code> for certain <code>User</code> in an amount equal to
+     * the <code>limit</code> for page number <code>page</code>
+     *
+     * @param id specific user's identifier
+     * @param page number of page
+     * @param limit number of entities in the response
+     * @return list of <code>Orders</code> for certain <code>User</code>
+     */
     @GetMapping("/{id}/orders")
     public CollectionModel<OrderResponse> getUserOrders(
             @PathVariable @Positive Long id,
@@ -99,12 +122,19 @@ public class UserController {
         return CollectionModel.of(userOrders, links);
     }
 
+    /**
+     * Persist new <code>Order</code> for certain <code>User</code>
+     *
+     * @param orderRequest the object that contains data about new
+     *              <code>Order</code> for certain <code>User</code>
+     * @return created <code>Order</code>
+     */
     @PostMapping("/{userId}/orders")
     public ResponseEntity<OrderResponse> createUserOrder(
-            @PathVariable @Positive Long userId, @RequestBody @Valid OrderRequest request) {
-        Order order = userService.createUserOrder(userId, OrderMapper.convertToEntity(request));
+            @PathVariable @Positive Long userId, @RequestBody @Valid OrderRequest orderRequest) {
+        Order order = userService.createUserOrder(userId, OrderMapper.convertToEntity(orderRequest));
         OrderResponse orderResponse = OrderMapper.convertToResponse(order);
-        orderResponse.add(linkTo(methodOn(UserController.class).createUserOrder(userId, request)).withSelfRel());
+        orderResponse.add(linkTo(methodOn(UserController.class).createUserOrder(userId, orderRequest)).withSelfRel());
         orderResponse.add(linkTo(methodOn(CertificateController.class)
                 .get(orderResponse.getCertificateId())).withRel("certificate"));
         return new ResponseEntity<>(orderResponse, HttpStatus.CREATED);

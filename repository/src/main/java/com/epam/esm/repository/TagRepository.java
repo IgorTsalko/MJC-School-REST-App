@@ -7,8 +7,11 @@ import java.util.List;
 public interface TagRepository {
 
     /**
-     * Retrieve all <code>Tags</code>.
+     * Retrieve all <code>Tags</code> in an amount equal to the
+     * <code>limit</code> for page number <code>page</code>.
      *
+     * @param page number of page
+     * @param limit number of entities in the response
      * @return list of <code>Tags</code>
      */
     List<Tag> getTags(int page, int limit);
@@ -51,5 +54,11 @@ public interface TagRepository {
      */
     void delete(Long id);
 
+    /**
+     * Find the most widely used <code>Tag</code> of a user with the highest
+     * cost of all orders
+     *
+     * @return found <code>Tag</code>
+     */
     Tag findMostUsedTagForUserWithHighestCostOfAllOrders();
 }
