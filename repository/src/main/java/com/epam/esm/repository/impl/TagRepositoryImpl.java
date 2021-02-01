@@ -18,25 +18,20 @@ public class TagRepositoryImpl implements TagRepository {
     private static final String JPQL_SELECT_CERTIFICATE_TAGS = "select c.tags from Certificate c where c.id=:id";
 
     private static final String SQL_FIND_MOST_USED_TAG_FOR_USER_WITH_HIGHEST_COST_OF_ALL_ORDERS =
-            "select t.id, t.title, count(*) as tag_count " +
+            "select t.id, t.title " +
                     "from \"user\" u " +
                     "         join \"order\" o on u.id = o.user_id " +
                     "         join gift_certificate gc on gc.id = o.certificate_id " +
-                    "         join gift_certificate_tag gct on gc.id = gct.gift_certificate_id " +
-                    "         join tag t on t.id = gct.tag_id " +
+                    "         left join gift_certificate_tag gct on gc.id = gct.gift_certificate_id " +
+                    "         left join tag t on t.id = gct.tag_id " +
                     "where u.id = (select id " +
-                    "              from ( " +
-                    "                       select id, max(max_sum) as max_price " +
-                    "                       from (select id, sum(price) as max_sum " +
-                    "                             from \"user\" " +
-                    "                                      join \"order\" o on \"user\".id = o.user_id " +
-                    "                             group by id) max_sums " +
-                    "                       group by id " +
-                    "                       order by max_price desc " +
-                    "                       limit 1 " +
-                    "                   ) max_cost_user_id) " +
+                    "              from \"user\" " +
+                    "                       join \"order\" o on \"user\".id = o.user_id " +
+                    "              group by id " +
+                    "              order by sum(price) desc " +
+                    "              limit 1) " +
                     "group by t.id " +
-                    "order by tag_count desc " +
+                    "order by count(*) desc " +
                     "limit 1";
 
     @PersistenceContext
