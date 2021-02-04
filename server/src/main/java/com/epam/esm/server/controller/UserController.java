@@ -48,14 +48,14 @@ public class UserController {
     @GetMapping
     public CollectionModel<UserResponse> getUsers(
             @RequestParam(required = false, defaultValue = "0") @PositiveOrZero int page,
-            @RequestParam(required = false, defaultValue = "${page.limit-default}") @Min(0) @Max(50) int limit) {
+            @RequestParam(required = false, defaultValue = "${page.limit-default}") @Min(1) @Max(50) int limit) {
         int pageNumber = page == 0 ? 1 : page;
         List<UserResponse> users = userService.getUsers(pageNumber, limit)
                 .stream().map(UserMapper::convertToResponseWithoutOrders).collect(Collectors.toList());
         users.forEach(u -> {
             u.add(linkTo(methodOn(UserController.class).get(u.getId())).withSelfRel());
             u.add(linkTo(methodOn(UserController.class)
-                    .getUserOrders(u.getId(), page, limit)).withRel("allOrders").expand());
+                    .getUserOrders(u.getId(), 1, 20)).withRel("allOrders").expand());
         });
 
         List<Link> links = new ArrayList<>();
@@ -85,7 +85,11 @@ public class UserController {
         userResponse.add(linkTo(methodOn(UserController.class)
                 .getUserOrders(id, 1, 20)).withRel("allOrders").expand());
         userResponse.getOrders()
-                .forEach(o -> o.add(linkTo(methodOn(OrderController.class).get(o.getOrderId())).withSelfRel()));
+                .forEach(o -> {
+                    o.add(linkTo(methodOn(OrderController.class).get(o.getOrderId())).withSelfRel());
+                    o.add(linkTo(methodOn(UserController.class).get(o.getUserId())).withRel("user"));
+                    o.add(linkTo(methodOn(CertificateController.class).get(o.getCertificateId())).withRel("certificate"));
+                });
         return ResponseEntity.ok(userResponse);
     }
 
@@ -102,11 +106,15 @@ public class UserController {
     public CollectionModel<OrderResponse> getUserOrders(
             @PathVariable @Positive Long id,
             @RequestParam(required = false, defaultValue = "0") @PositiveOrZero int page,
-            @RequestParam(required = false, defaultValue = "${page.limit-default}") @Min(0) @Max(50) int limit) {
+            @RequestParam(required = false, defaultValue = "${page.limit-default}") @Min(1) @Max(50) int limit) {
         int pageNumber = page == 0 ? 1 : page;
         List<OrderResponse> userOrders = userService.getUserOrders(id, pageNumber, limit)
                 .stream().map(OrderMapper::convertToResponse).collect(Collectors.toList());
-        userOrders.forEach(o -> o.add(linkTo(methodOn(OrderController.class).get(o.getOrderId())).withSelfRel()));
+        userOrders.forEach(o -> {
+            o.add(linkTo(methodOn(OrderController.class).get(o.getOrderId())).withSelfRel());
+            o.add(linkTo(methodOn(UserController.class).get(o.getUserId())).withRel("user"));
+            o.add(linkTo(methodOn(CertificateController.class).get(o.getCertificateId())).withRel("certificate"));
+        });
 
         List<Link> links = new ArrayList<>();
         links.add(linkTo(methodOn(UserController.class).getUsers(page, limit)).withSelfRel().expand());

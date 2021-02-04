@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
+@Transactional
 public class TagServiceImpl implements TagService {
 
     private final TagRepository tagRepository;
@@ -27,13 +28,11 @@ public class TagServiceImpl implements TagService {
         return tagRepository.get(id);
     }
 
-    @Transactional
     @Override
     public Tag create(Tag tag) {
         return tagRepository.create(tag);
     }
 
-    @Transactional
     @Override
     public void delete(Long id) {
         tagRepository.delete(id);

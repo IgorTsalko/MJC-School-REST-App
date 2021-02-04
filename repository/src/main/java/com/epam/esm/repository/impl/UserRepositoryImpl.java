@@ -13,7 +13,8 @@ import java.util.List;
 @Repository
 public class UserRepositoryImpl implements UserRepository {
 
-    private static final String JPQL_SELECT_ALL = "from User";
+    private static final String JPQL_SELECT_ALL = "from User u order by u.id";
+    private static final String JPQL_SELECT_BY_ID = "select distinct u from User u left join fetch u.orders where u.id=:id";
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -28,10 +29,10 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User get(Long id) {
-        User user = entityManager.find(User.class, id);
-        if (user == null) {
-            throw new EntityNotFoundException(ErrorDefinition.USER_NOT_FOUND, id);
-        }
-        return user;
+        return entityManager.createQuery(JPQL_SELECT_BY_ID, User.class)
+                .setParameter("id", id)
+                .getResultStream()
+                .findAny()
+                .orElseThrow(() -> new EntityNotFoundException(ErrorDefinition.USER_NOT_FOUND, id));
     }
 }

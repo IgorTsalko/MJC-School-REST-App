@@ -1,7 +1,6 @@
 package com.epam.esm.server.entity;
 
-import com.epam.esm.common.entity.SortOrder;
-
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.Objects;
 
@@ -13,9 +12,8 @@ public class CertificateSearchParamsRequest {
     private String description;
     @Size(min = 2)
     private String tags;
-    @Size(min = 2, max = 20)
-    private String sort;
-    private SortOrder sortOrder;
+    @Pattern(regexp = "((id|title|description|price|duration|create_date)+:?(asc\\b|desc\\b)?,?)+")
+    private String sorting;
 
     public String getTitle() {
         return title;
@@ -41,20 +39,12 @@ public class CertificateSearchParamsRequest {
         this.tags = tags;
     }
 
-    public String getSort() {
-        return sort;
+    public String getSorting() {
+        return sorting;
     }
 
-    public void setSort(String sort) {
-        this.sort = sort;
-    }
-
-    public SortOrder getSortOrder() {
-        return sortOrder;
-    }
-
-    public void setSortOrder(SortOrder sortOrder) {
-        this.sortOrder = sortOrder;
+    public void setSorting(String sorting) {
+        this.sorting = sorting;
     }
 
     @Override
@@ -65,13 +55,12 @@ public class CertificateSearchParamsRequest {
         return Objects.equals(title, that.title)
                 && Objects.equals(description, that.description)
                 && Objects.equals(tags, that.tags)
-                && Objects.equals(sort, that.sort)
-                && sortOrder == that.sortOrder;
+                && Objects.equals(sorting, that.sorting);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(title, description, tags, sort, sortOrder);
+        return Objects.hash(title, description, tags, sorting);
     }
 
     @Override
@@ -80,8 +69,7 @@ public class CertificateSearchParamsRequest {
                 "title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", tags='" + tags + '\'' +
-                ", sort='" + sort + '\'' +
-                ", sortOrder=" + sortOrder +
+                ", sorting='" + sorting + '\'' +
                 '}';
     }
 }

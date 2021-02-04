@@ -42,11 +42,15 @@ public class OrderController {
     @GetMapping
     public CollectionModel<OrderResponse> getOrders(
             @RequestParam(required = false, defaultValue = "0") @PositiveOrZero int page,
-            @RequestParam(required = false, defaultValue = "${page.limit-default}") @Min(0) @Max(50) int limit) {
+            @RequestParam(required = false, defaultValue = "${page.limit-default}") @Min(1) @Max(50) int limit) {
         int pageNumber = page == 0 ? 1 : page;
         List<OrderResponse> orders = orderService.getOrders(pageNumber, limit)
                 .stream().map(OrderMapper::convertToResponse).collect(Collectors.toList());
-        orders.forEach(o -> o.add(linkTo(methodOn(OrderController.class).get(o.getOrderId())).withSelfRel()));
+        orders.forEach(o -> {
+            o.add(linkTo(methodOn(OrderController.class).get(o.getOrderId())).withSelfRel());
+            o.add(linkTo(methodOn(UserController.class).get(o.getUserId())).withRel("user"));
+            o.add(linkTo(methodOn(CertificateController.class).get(o.getCertificateId())).withRel("certificate"));
+        });
 
         List<Link> links = new ArrayList<>();
         links.add(linkTo(methodOn(OrderController.class).getOrders(page, limit)).withSelfRel());

@@ -1,4 +1,4 @@
-package com.epam.esm.common.entity;
+package com.epam.esm.common.sorting;
 
 public enum SortOrder {
 

@@ -4,7 +4,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.epam.esm.common.entity.Certificate;
 import com.epam.esm.common.entity.CertificateSearchParams;
-import com.epam.esm.common.entity.SortOrder;
+import com.epam.esm.common.sorting.CertificateColumn;
+import com.epam.esm.common.sorting.CertificateSorting;
+import com.epam.esm.common.sorting.SortOrder;
 import com.epam.esm.common.entity.Tag;
 import com.epam.esm.common.exception.EntityNotFoundException;
 import com.epam.esm.repository.config.RepositoryConfigTest;
@@ -50,8 +52,11 @@ public class CertificateRepositoryTest {
     public void getAllCertificatesWithParams() {
         CertificateSearchParams params = new CertificateSearchParams();
         params.setTitle("sky");
-        params.setSort("id");
-        params.setSortOrder(SortOrder.DESC);
+        params.setSorting(List.of(
+                new CertificateSorting()
+                        .setColumn(CertificateColumn.ID)
+                        .setSortOrder(SortOrder.DESC))
+        );
 
         List<Certificate> expCerts = List.of(getMockCertId2());
         List<Certificate> actualCerts = certificateRepository.getCertificates(params, 1, 20);

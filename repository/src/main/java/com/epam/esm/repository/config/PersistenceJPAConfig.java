@@ -36,9 +36,7 @@ public class PersistenceJPAConfig {
     @Bean
     @Profile("prod")
     public HibernateJpaVendorAdapter vendorAdapterProd() {
-        HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
-        vendorAdapter.setShowSql(true);
-        return vendorAdapter;
+        return new HibernateJpaVendorAdapter();
     }
 
     @Bean

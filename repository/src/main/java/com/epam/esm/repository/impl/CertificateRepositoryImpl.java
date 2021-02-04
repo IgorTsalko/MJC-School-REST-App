@@ -5,8 +5,11 @@ import com.epam.esm.common.entity.CertificateSearchParams;
 import com.epam.esm.common.ErrorDefinition;
 import com.epam.esm.common.entity.Tag;
 import com.epam.esm.common.exception.EntityNotFoundException;
+import com.epam.esm.common.sorting.CertificateSorting;
+import com.epam.esm.common.sorting.SortOrder;
 import com.epam.esm.repository.CertificateRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.CollectionUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -18,6 +21,8 @@ import java.util.stream.Collectors;
 @Repository
 public class CertificateRepositoryImpl implements CertificateRepository {
 
+    private static final String JPQL_SELECT_CERTIFICATE_BY_ID
+            = "select distinct c from Certificate c left join fetch c.tags where c.id=:id";
     private static final String JPQL_SELECT_TAGS_BY_NAME = "from Tag t where t.title in (:titles)";
 
     @PersistenceContext
@@ -54,12 +59,12 @@ public class CertificateRepositoryImpl implements CertificateRepository {
                     params.getDescription().toLowerCase() + "%"));
         }
 
-        if (params.getTags() != null) {
+        if (params.getTagTitles() != null) {
             List<Tag> tags = entityManager
                     .createQuery(JPQL_SELECT_TAGS_BY_NAME, Tag.class)
-                    .setParameter("titles", params.getTags())
+                    .setParameter("titles", params.getTagTitles())
                     .getResultList();
-            if (tags.size() != params.getTags().size()) {
+            if (tags.size() != params.getTagTitles().size()) {
                 return new ArrayList<>();
             }
             tags.forEach(t -> predicates.add(cb.isMember(t, certificates.get("tags"))));
@@ -84,26 +89,28 @@ public class CertificateRepositoryImpl implements CertificateRepository {
                             CriteriaBuilder cb,
                             CriteriaQuery<Certificate> criteriaQuery,
                             Root<Certificate> certificates) {
-        if (params.getSort() != null) {
-            if (params.getSortOrder() != null) {
-                if (params.getSortOrder().name().equals("DESC")) {
-                    criteriaQuery.orderBy(cb.desc(certificates.get(params.getSort())));
-                } else if (params.getSortOrder().name().equals("ASC")) {
-                    criteriaQuery.orderBy(cb.asc(certificates.get(params.getSort())));
+        if (!CollectionUtils.isEmpty(params.getSorting())) {
+            List<Order> orderBy = new ArrayList<>();
+            for (CertificateSorting sorting : params.getSorting()) {
+                if (sorting.getSortOrder().equals(SortOrder.DESC)) {
+                    orderBy.add(cb.desc(certificates.get(sorting.getColumn().getColumnTitle())));
+                } else {
+                    orderBy.add(cb.asc(certificates.get(sorting.getColumn().getColumnTitle())));
                 }
-            } else {
-                criteriaQuery.orderBy(cb.asc(certificates.get(params.getSort())));
             }
+            criteriaQuery.orderBy(orderBy);
+        } else {
+            criteriaQuery.orderBy(cb.asc(certificates.get("id")));
         }
     }
 
     @Override
     public Certificate get(Long id) {
-        Certificate certificate = entityManager.find(Certificate.class, id);
-        if (certificate == null) {
-            throw new EntityNotFoundException(ErrorDefinition.CERTIFICATE_NOT_FOUND, id);
-        }
-        return certificate;
+        return entityManager.createQuery(JPQL_SELECT_CERTIFICATE_BY_ID, Certificate.class)
+                .setParameter("id", id)
+                .getResultStream()
+                .findFirst()
+                .orElseThrow(() -> new EntityNotFoundException(ErrorDefinition.CERTIFICATE_NOT_FOUND, id));
     }
 
     @Override
@@ -126,20 +133,19 @@ public class CertificateRepositoryImpl implements CertificateRepository {
 
     @Override
     public Certificate update(Long id, Certificate certificate) {
-        Certificate updatedCert = entityManager.find(Certificate.class, id);
+        Certificate updatedCert = entityManager.createQuery(JPQL_SELECT_CERTIFICATE_BY_ID, Certificate.class)
+                .setParameter("id", id)
+                .getResultStream()
+                .findFirst()
+                .orElseThrow(() -> new EntityNotFoundException(ErrorDefinition.CERTIFICATE_NOT_FOUND, id));
 
-        if (updatedCert == null) {
-            throw new EntityNotFoundException(ErrorDefinition.CERTIFICATE_NOT_FOUND, id);
-        }
-
-        String name = certificate.getTitle();
+        String title = certificate.getTitle();
         String description = certificate.getDescription();
         BigDecimal price = certificate.getPrice();
         Integer duration = certificate.getDuration();
-        List<Tag> tags = certificate.getTags();
 
-        if (name != null) {
-            updatedCert.setTitle(name);
+        if (title != null) {
+            updatedCert.setTitle(title);
         }
         if (description != null) {
             updatedCert.setDescription(description);
@@ -149,9 +155,6 @@ public class CertificateRepositoryImpl implements CertificateRepository {
         }
         if (duration != null) {
             updatedCert.setDuration(duration);
-        }
-        if (tags != null) {
-            updatedCert.setTags(tags);
         }
 
         return updatedCert;

@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
+@Transactional
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -34,8 +35,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User get(Long id) {
-        return userRepository.get(id)
-                .setOrders(orderRepository.getAllUserOrders(id));
+        return userRepository.get(id);
     }
 
     @Override
@@ -43,7 +43,6 @@ public class UserServiceImpl implements UserService {
         return orderRepository.getUserOrders(id, page, limit);
     }
 
-    @Transactional
     @Override
     public Order createUserOrder(Long userId, Order order) {
         Certificate certificate = certificateRepository.get(order.getCertificateId());

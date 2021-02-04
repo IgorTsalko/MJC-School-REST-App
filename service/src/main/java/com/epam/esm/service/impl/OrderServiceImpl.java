@@ -4,10 +4,12 @@ import com.epam.esm.common.entity.Order;
 import com.epam.esm.repository.OrderRepository;
 import com.epam.esm.service.OrderService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;

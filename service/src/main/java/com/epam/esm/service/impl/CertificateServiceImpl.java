@@ -12,8 +12,8 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
-@Transactional
 @Service
+@Transactional
 public class CertificateServiceImpl implements CertificateService {
 
     private final CertificateRepository certificateRepository;
@@ -31,8 +31,7 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Override
     public Certificate get(Long id) {
-        return certificateRepository.get(id)
-                .setTags(tagRepository.getCertificateTags(id));
+        return certificateRepository.get(id);
     }
 
     @Override
@@ -45,7 +44,6 @@ public class CertificateServiceImpl implements CertificateService {
         return certificateRepository.create(certificate);
     }
 
-    @Transactional
     @Override
     public Certificate put(Long id, Certificate certificate) {
         List<Tag> tags = certificate.getTags();
@@ -53,19 +51,19 @@ public class CertificateServiceImpl implements CertificateService {
             tags = tagRepository.createNonExistent(tags);
             certificate.setTags(tags);
         }
-        return certificateRepository.put(id, certificate)
-                .setTags(tagRepository.getCertificateTags(id));
+        return certificateRepository.put(id, certificate);
     }
 
     @Override
     public Certificate update(Long id, Certificate certificate) {
-        List<Tag> tags = certificate.getTags();
-        if (tags != null) {
-            tags = tagRepository.createNonExistent(tags);
-            certificate.setTags(tags);
+        Certificate updatedCertificate = certificateRepository.update(id, certificate);
+
+        if (certificate.getTags() != null) {
+            List<Tag> tags = tagRepository.createNonExistent(certificate.getTags());
+            updatedCertificate.setTags(tags);
         }
-        return certificateRepository.update(id, certificate)
-                .setTags(tagRepository.getCertificateTags(id));
+
+        return updatedCertificate;
     }
 
     @Override

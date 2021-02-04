@@ -1,5 +1,7 @@
 package com.epam.esm.common.entity;
 
+import com.epam.esm.common.sorting.CertificateSorting;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -7,9 +9,8 @@ public class CertificateSearchParams {
 
     private String title;
     private String description;
-    private List<String> tags;
-    private String sort;
-    private SortOrder sortOrder;
+    private List<String> tagTitles;
+    private List<CertificateSorting> sorting;
 
     public String getTitle() {
         return title;
@@ -29,30 +30,21 @@ public class CertificateSearchParams {
         return this;
     }
 
-    public List<String> getTags() {
-        return tags;
+    public List<String> getTagTitles() {
+        return tagTitles;
     }
 
-    public CertificateSearchParams setTags(List<String> tags) {
-        this.tags = tags;
+    public CertificateSearchParams setTagTitles(List<String> tagTitles) {
+        this.tagTitles = tagTitles;
         return this;
     }
 
-    public String getSort() {
-        return sort;
+    public List<CertificateSorting> getSorting() {
+        return sorting;
     }
 
-    public CertificateSearchParams setSort(String sort) {
-        this.sort = sort;
-        return this;
-    }
-
-    public SortOrder getSortOrder() {
-        return sortOrder;
-    }
-
-    public CertificateSearchParams setSortOrder(SortOrder sortOrder) {
-        this.sortOrder = sortOrder;
+    public CertificateSearchParams setSorting(List<CertificateSorting> sorting) {
+        this.sorting = sorting;
         return this;
     }
 
@@ -63,14 +55,13 @@ public class CertificateSearchParams {
         CertificateSearchParams that = (CertificateSearchParams) o;
         return Objects.equals(title, that.title)
                 && Objects.equals(description, that.description)
-                && Objects.equals(tags, that.tags)
-                && Objects.equals(sort, that.sort)
-                && Objects.equals(sortOrder, that.sortOrder);
+                && Objects.equals(tagTitles, that.tagTitles)
+                && Objects.equals(sorting, that.sorting);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(title, description, tags, sort, sortOrder);
+        return Objects.hash(title, description, tagTitles, sorting);
     }
 
     @Override
@@ -78,9 +69,8 @@ public class CertificateSearchParams {
         return this.getClass().getSimpleName() + "{" +
                 "title='" + title + '\'' +
                 ", description='" + description + '\'' +
-                ", tags='" + tags + '\'' +
-                ", sort='" + sort + '\'' +
-                ", sort_order=" + sortOrder +
+                ", tags=" + tagTitles +
+                ", sorting=" + sorting +
                 '}';
     }
 }

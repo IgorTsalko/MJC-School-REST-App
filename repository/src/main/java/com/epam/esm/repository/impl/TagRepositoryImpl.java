@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 @Repository
 public class TagRepositoryImpl implements TagRepository {
 
-    private static final String JPQL_SELECT_ALL = "from Tag";
+    private static final String JPQL_SELECT_ALL = "from Tag t order by t.id";
     private static final String JPQL_SELECT_BY_NAME = "from Tag where title in (:titles)";
     private static final String JPQL_SELECT_CERTIFICATE_TAGS = "select c.tags from Certificate c where c.id=:id";
 
@@ -24,12 +24,7 @@ public class TagRepositoryImpl implements TagRepository {
                     "         join gift_certificate gc on gc.id = o.certificate_id " +
                     "         left join gift_certificate_tag gct on gc.id = gct.gift_certificate_id " +
                     "         left join tag t on t.id = gct.tag_id " +
-                    "where u.id = (select id " +
-                    "              from \"user\" " +
-                    "                       join \"order\" o on \"user\".id = o.user_id " +
-                    "              group by id " +
-                    "              order by sum(price) desc " +
-                    "              limit 1) " +
+                    "where u.id = (select user_id from \"order\" group by user_id order by sum(price) desc limit 1) " +
                     "group by t.id " +
                     "order by count(*) desc " +
                     "limit 1";

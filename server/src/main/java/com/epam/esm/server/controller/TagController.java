@@ -44,7 +44,7 @@ public class TagController {
     @GetMapping
     public CollectionModel<TagResponse> getTags(
             @RequestParam(required = false, defaultValue = "0") @PositiveOrZero int page,
-            @RequestParam(required = false, defaultValue = "${page.limit-default}") @Min(0) @Max(50) int limit) {
+            @RequestParam(required = false, defaultValue = "${page.limit-default}") @Min(1) @Max(50) int limit) {
         int pageNumber = page == 0 ? 1 : page;
         List<TagResponse> tags = tagService.getTags(pageNumber, limit)
                 .stream().map(TagMapper::convertToResponse)
@@ -86,7 +86,8 @@ public class TagController {
      */
     @PostMapping
     public ResponseEntity<TagResponse> create(@RequestBody @Valid TagRequest tagRequest) {
-        TagResponse tagResponse = TagMapper.convertToResponse(tagService.create(TagMapper.convertToEntity(tagRequest)));
+        Tag tag = tagService.create(TagMapper.convertToEntity(tagRequest));
+        TagResponse tagResponse = TagMapper.convertToResponse(tag);
         tagResponse.add(linkTo(methodOn(TagController.class).create(tagRequest)).withSelfRel());
         return ResponseEntity.ok(tagResponse);
     }

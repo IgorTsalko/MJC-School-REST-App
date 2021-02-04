@@ -25,14 +25,6 @@ public interface OrderRepository {
     Order get(Long id);
 
     /**
-     * Retrieve list of all <code>Orders</code> for certain <code>User</code>
-     *
-     * @param userId specific user's identifier
-     * @return list of <code>Orders</code> for certain <code>User</code>
-     */
-    List<Order> getAllUserOrders(Long userId);
-
-    /**
      * Retrieve list of <code>Orders</code> for certain <code>User</code> in an amount equal to
      * the <code>limit</code> for page number <code>page</code>
      *

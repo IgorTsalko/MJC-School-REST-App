@@ -17,8 +17,8 @@ public class OrderRepositoryImpl implements OrderRepository {
     @PersistenceContext
     private EntityManager entityManager;
 
-    private static final String JPQL_SELECT_ALL = "from Order";
-    private static final String JPQL_SELECT_ALL_BY_USER_ID = "from Order o where o.userId=:id";
+    private static final String JPQL_SELECT_ALL = "from Order o order by o.id";
+    private static final String JPQL_SELECT_ALL_BY_USER_ID = "from Order o where o.userId=:id order by o.id";
 
     @Override
     public List<Order> getOrders(int page, int limit) {
@@ -35,13 +35,6 @@ public class OrderRepositoryImpl implements OrderRepository {
             throw new EntityNotFoundException(ErrorDefinition.ORDER_NOT_FOUND, id);
         }
         return order;
-    }
-
-    @Override
-    public List<Order> getAllUserOrders(Long userId) {
-        return entityManager.createQuery(JPQL_SELECT_ALL_BY_USER_ID, Order.class)
-                .setParameter("id", userId)
-                .getResultList();
     }
 
     @Override
