@@ -1,20 +1,35 @@
-package com.epam.esm.common;
+package com.epam.esm.common.entity;
 
+import com.epam.esm.common.AuditListener;
+import com.epam.esm.common.AuditableUpdate;
+
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
-public class Certificate {
+@EntityListeners(AuditListener.class)
+@Entity
+@Table(name = "gift_certificate")
+public class Certificate implements AuditableUpdate {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
+    private String title;
     private String description;
     private BigDecimal price;
     private Integer duration;
+    @Column(name = "create_date", updatable = false)
     private LocalDateTime createDate;
+    @Column(name = "last_update_date")
     private LocalDateTime lastUpdateDate;
-
+    @ManyToMany
+    @JoinTable(name = "gift_certificate_tag",
+            joinColumns = @JoinColumn(name = "gift_certificate_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
     private List<Tag> tags;
 
     public Long getId() {
@@ -26,12 +41,12 @@ public class Certificate {
         return this;
     }
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
-    public Certificate setName(String name) {
-        this.name = name;
+    public Certificate setTitle(String name) {
+        this.title = name;
         return this;
     }
 
@@ -66,18 +81,18 @@ public class Certificate {
         return createDate;
     }
 
-    public Certificate setCreateDate(LocalDateTime createDate) {
+    @Override
+    public void setCreateDate(LocalDateTime createDate) {
         this.createDate = createDate;
-        return this;
     }
 
     public LocalDateTime getLastUpdateDate() {
         return lastUpdateDate;
     }
 
-    public Certificate setLastUpdateDate(LocalDateTime lastUpdateDate) {
+    @Override
+    public void setLastUpdateDate(LocalDateTime lastUpdateDate) {
         this.lastUpdateDate = lastUpdateDate;
-        return this;
     }
 
     public List<Tag> getTags() {
@@ -89,22 +104,13 @@ public class Certificate {
         return this;
     }
 
-    public boolean isEmpty() {
-        return id == null
-                && name == null
-                && description == null
-                && price == null
-                && duration == null
-                && tags == null;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Certificate that = (Certificate) o;
         return Objects.equals(id, that.id)
-                && Objects.equals(name, that.name)
+                && Objects.equals(title, that.title)
                 && Objects.equals(description, that.description)
                 && Objects.equals(price, that.price)
                 && Objects.equals(duration, that.duration)
@@ -115,14 +121,14 @@ public class Certificate {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, price, duration, createDate, lastUpdateDate, tags);
+        return Objects.hash(id, title, description, price, duration, createDate, lastUpdateDate, tags);
     }
 
     @Override
     public String toString() {
         return this.getClass().getSimpleName() + "{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
+                ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", price=" + price +
                 ", duration=" + duration +

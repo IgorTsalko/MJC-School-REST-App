@@ -3,7 +3,7 @@ package com.epam.esm.service;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import com.epam.esm.common.Tag;
+import com.epam.esm.common.entity.Tag;
 import com.epam.esm.repository.impl.TagRepositoryImpl;
 import com.epam.esm.service.impl.TagServiceImpl;
 import org.junit.jupiter.api.Test;
@@ -25,41 +25,41 @@ public class TagServiceTest {
     @Test
     public void getAllTags() {
         List<Tag> expTags = List.of(
-                new Tag().setId(1L).setName("incredible"),
-                new Tag().setId(2L).setName("travel")
+                new Tag().setId(1L).setTitle("incredible"),
+                new Tag().setId(2L).setTitle("travel")
         );
-        when(tagRepository.getAllTags()).thenReturn(expTags);
-        List<Tag> actualTags = tagService.getAll();
+        when(tagRepository.getTags(1, 20)).thenReturn(expTags);
+        List<Tag> actualTags = tagService.getTags(1, 20);
 
         assertEquals(expTags, actualTags);
-        verify(tagRepository, only()).getAllTags();
+        verify(tagRepository, only()).getTags(1, 20);
     }
 
     @Test
     public void getTagById() {
-        Tag expTag = new Tag().setId(1L).setName("incredible");
-        when(tagRepository.getTag(anyLong())).thenReturn(expTag);
+        Tag expTag = new Tag().setId(1L).setTitle("incredible");
+        when(tagRepository.get(anyLong())).thenReturn(expTag);
 
         Tag actualTag = tagService.get(1L);
 
         assertEquals(expTag, actualTag);
-        verify(tagRepository, only()).getTag(anyLong());
+        verify(tagRepository, only()).get(anyLong());
     }
 
     @Test
     public void createNewTag(@Mock Tag tag) {
-        Tag expTag = new Tag().setId(1L).setName("incredible");
-        when(tagRepository.createNewTag(tag)).thenReturn(expTag);
+        Tag expTag = new Tag().setId(1L).setTitle("incredible");
+        when(tagRepository.create(tag)).thenReturn(expTag);
 
         Tag actualTag = tagService.create(tag);
 
         assertEquals(expTag, actualTag);
-        verify(tagRepository, only()).createNewTag(tag);
+        verify(tagRepository, only()).create(tag);
     }
 
     @Test
     public void deleteTag() {
         tagService.delete(anyLong());
-        verify(tagRepository, only()).deleteTag(anyLong());
+        verify(tagRepository, only()).delete(anyLong());
     }
 }

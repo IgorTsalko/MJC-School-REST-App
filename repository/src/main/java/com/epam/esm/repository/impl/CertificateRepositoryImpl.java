@@ -1,181 +1,171 @@
 package com.epam.esm.repository.impl;
 
-import com.epam.esm.common.Certificate;
-import com.epam.esm.common.SearchParams;
+import com.epam.esm.common.entity.Certificate;
+import com.epam.esm.common.entity.CertificateSearchParams;
 import com.epam.esm.common.ErrorDefinition;
-import com.epam.esm.common.Tag;
+import com.epam.esm.common.entity.Tag;
 import com.epam.esm.common.exception.EntityNotFoundException;
+import com.epam.esm.common.sorting.CertificateSorting;
+import com.epam.esm.common.sorting.SortOrder;
 import com.epam.esm.repository.CertificateRepository;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.CollectionUtils;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.*;
 import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
 public class CertificateRepositoryImpl implements CertificateRepository {
 
-    private static final String RETRIEVE_CERTIFICATES =
-            "SELECT gift_certificate_id AS id, cert.name, description, price, duration, create_date, last_update_date" +
-                    " FROM gift_certificate cert JOIN gift_certificate_tag gct ON cert.id = gct.gift_certificate_id " +
-                    "JOIN tag ON gct.tag_id = tag.id";
-    private static final String CERTIFICATE_GROUP_BY
-            = " GROUP BY gift_certificate_id, cert.name, description, price, duration, create_date, last_update_date";
-    private static final String RETRIEVE_CERTIFICATE_BY_ID = "SELECT * FROM gift_certificate WHERE id=?";
-    private static final String SAVE_NEW_CERTIFICATE =
-            "INSERT INTO gift_certificate(name, description, price, duration, create_date, last_update_date) " +
-                    "VALUES(:name, :description, :price, :duration, :create_date, :last_update_date)";
-    private static final String UPSERT =
-            "INSERT INTO gift_certificate(id, name, description, price, duration, create_date, last_update_date) " +
-                    "VALUES(:id, :name, :description, :price, :duration, :create_date, :last_update_date) " +
-                    "ON CONFLICT (id) DO UPDATE SET name=:name, description=:description, price=:price, " +
-                    "duration=:duration, last_update_date=:last_update_date";
-    private static final String UPDATE_CERTIFICATE = "UPDATE gift_certificate SET";
-    private static final String DELETE_CERTIFICATE = "DELETE FROM gift_certificate WHERE id=?";
-    private static final String DELETE_CERTIFICATE_TAG_CONNECTIONS =
-            "DELETE FROM gift_certificate_tag WHERE gift_certificate_id=?";
-    private static final String ADD_CERTIFICATE_TAG_CONNECTIONS = "INSERT INTO gift_certificate_tag VALUES(?, ?)";
+    private static final String JPQL_SELECT_CERTIFICATE_BY_ID
+            = "select distinct c from Certificate c left join fetch c.tags where c.id=:id";
+    private static final String JPQL_SELECT_TAGS_BY_NAME = "from Tag t where t.title in (:titles)";
 
-    private final JdbcTemplate jdbcTemplate;
-    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    @PersistenceContext
+    private EntityManager entityManager;
 
-    public CertificateRepositoryImpl(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-        this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
+    @Override
+    public List<Certificate> getCertificates(CertificateSearchParams params, int page, int limit) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Certificate> criteriaQuery = cb.createQuery(Certificate.class);
+        Root<Certificate> certificates = criteriaQuery.from(Certificate.class);
+        certificates.fetch("tags", JoinType.LEFT);
+
+        List<Long> filteredCertificateIds = getFilteredCertificateIds(params, page, limit);
+        criteriaQuery.distinct(true).where(certificates.get("id").in(filteredCertificateIds));
+        setSorting(params, cb, criteriaQuery, certificates);
+
+        return entityManager.createQuery(criteriaQuery).getResultList();
     }
 
-    public List<Certificate> getAll(SearchParams params) {
-        StringBuilder retrieveCertificatesSql = new StringBuilder(RETRIEVE_CERTIFICATES);
+    private List<Long> getFilteredCertificateIds(CertificateSearchParams params, int page, int limit) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Certificate> criteriaQuery = cb.createQuery(Certificate.class);
+        Root<Certificate> certificates = criteriaQuery.from(Certificate.class);
+        ArrayList<Predicate> predicates = new ArrayList<>();
 
-        if (params.getName() != null || params.getDescription() != null || params.getTag() != null) {
-            retrieveCertificatesSql.append(" WHERE ");
-            List<String> conditions = new ArrayList<>();
-            if (params.getName() != null) {
-                conditions.add("cert.name ~* '^" + params.getName());
-            }
-            if (params.getDescription() != null) {
-                conditions.add("description ~* '^" + params.getDescription());
-            }
-            if (params.getTag() != null) {
-                conditions.add("tag.name='" + params.getTag());
-            }
-            retrieveCertificatesSql.append(String.join("' AND ", conditions)).append("'");
+        if (params.getTitle() != null) {
+            predicates.add(cb.like(cb.lower(
+                    certificates.get("title")),
+                    params.getTitle().toLowerCase() + "%"));
         }
-        retrieveCertificatesSql.append(CERTIFICATE_GROUP_BY);
-        System.out.println(retrieveCertificatesSql);
-
-        if (params.getSort() != null) {
-            retrieveCertificatesSql
-                    .append(" ORDER BY ").append(params.getSort());
-            if (params.getSort_order() != null) {
-                retrieveCertificatesSql.append(" ").append(params.getSort_order());
-            }
+        if (params.getDescription() != null) {
+            predicates.add(cb.like(cb.lower(
+                    certificates.get("description")),
+                    params.getDescription().toLowerCase() + "%"));
         }
 
-        return jdbcTemplate
-                .query(retrieveCertificatesSql.toString(), BeanPropertyRowMapper.newInstance(Certificate.class));
+        if (params.getTagTitles() != null) {
+            List<Tag> tags = entityManager
+                    .createQuery(JPQL_SELECT_TAGS_BY_NAME, Tag.class)
+                    .setParameter("titles", params.getTagTitles())
+                    .getResultList();
+            if (tags.size() != params.getTagTitles().size()) {
+                return new ArrayList<>();
+            }
+            tags.forEach(t -> predicates.add(cb.isMember(t, certificates.get("tags"))));
+        }
+
+        Predicate[] allPredicates = new Predicate[predicates.size()];
+        predicates.toArray(allPredicates);
+        criteriaQuery = criteriaQuery.distinct(true).where(allPredicates);
+        setSorting(params, cb, criteriaQuery, certificates);
+
+        return entityManager
+                .createQuery(criteriaQuery)
+                .setFirstResult((page - 1) * limit)
+                .setMaxResults(limit)
+                .getResultList()
+                .stream()
+                .map(Certificate::getId)
+                .collect(Collectors.toList());
     }
 
+    private void setSorting(CertificateSearchParams params,
+                            CriteriaBuilder cb,
+                            CriteriaQuery<Certificate> criteriaQuery,
+                            Root<Certificate> certificates) {
+        if (!CollectionUtils.isEmpty(params.getSorting())) {
+            List<Order> orderBy = new ArrayList<>();
+            for (CertificateSorting sorting : params.getSorting()) {
+                if (sorting.getSortOrder().equals(SortOrder.DESC)) {
+                    orderBy.add(cb.desc(certificates.get(sorting.getColumn().getColumnTitle())));
+                } else {
+                    orderBy.add(cb.asc(certificates.get(sorting.getColumn().getColumnTitle())));
+                }
+            }
+            criteriaQuery.orderBy(orderBy);
+        } else {
+            criteriaQuery.orderBy(cb.asc(certificates.get("id")));
+        }
+    }
+
+    @Override
     public Certificate get(Long id) {
-        return jdbcTemplate.query(RETRIEVE_CERTIFICATE_BY_ID, BeanPropertyRowMapper.newInstance(Certificate.class), id)
-                .stream().findAny()
+        return entityManager.createQuery(JPQL_SELECT_CERTIFICATE_BY_ID, Certificate.class)
+                .setParameter("id", id)
+                .getResultStream()
+                .findFirst()
                 .orElseThrow(() -> new EntityNotFoundException(ErrorDefinition.CERTIFICATE_NOT_FOUND, id));
     }
 
+    @Override
     public Certificate create(Certificate certificate) {
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-        certificate.setCreateDate(LocalDateTime.now());
-        certificate.setLastUpdateDate(LocalDateTime.now());
-        MapSqlParameterSource params = new MapSqlParameterSource()
-                .addValue("name", certificate.getName())
-                .addValue("description", certificate.getDescription())
-                .addValue("price", certificate.getPrice())
-                .addValue("duration", certificate.getDuration())
-                .addValue("create_date", certificate.getCreateDate())
-                .addValue("last_update_date", certificate.getLastUpdateDate());
-
-        namedParameterJdbcTemplate.update(SAVE_NEW_CERTIFICATE, params, keyHolder);
-
-        return certificate.setId(((Number) keyHolder.getKeys().get("id")).longValue());
+        entityManager.persist(certificate);
+        return certificate;
     }
 
-    public Certificate upsert(Long id, Certificate certificate) {
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-        certificate.setCreateDate(LocalDateTime.now());
-        certificate.setLastUpdateDate(LocalDateTime.now());
-        MapSqlParameterSource params = new MapSqlParameterSource()
-                .addValue("id", id)
-                .addValue("name", certificate.getName())
-                .addValue("description", certificate.getDescription())
-                .addValue("price", certificate.getPrice())
-                .addValue("duration", certificate.getDuration())
-                .addValue("create_date", certificate.getCreateDate())
-                .addValue("last_update_date", certificate.getLastUpdateDate());
+    @Override
+    public Certificate put(Long id, Certificate certificate) {
+        Certificate cert = entityManager.find(Certificate.class, id);
+        if (cert == null) {
+            throw new EntityNotFoundException(ErrorDefinition.CERTIFICATE_NOT_FOUND, id);
+        }
+        certificate.setId(id);
+        certificate.setCreateDate(cert.getCreateDate());
 
-        namedParameterJdbcTemplate.update(UPSERT, params, keyHolder);
-
-        return certificate.setId(((Number) keyHolder.getKeys().get("id")).longValue());
+        return entityManager.merge(certificate);
     }
 
+    @Override
     public Certificate update(Long id, Certificate certificate) {
-        MapSqlParameterSource params = new MapSqlParameterSource();
-        StringBuilder updateCertificateSql = new StringBuilder(UPDATE_CERTIFICATE);
-        if (certificate.getName() != null) {
-            updateCertificateSql.append(" name=:name,");
-            params.addValue("name", certificate.getName());
-        }
-        if (certificate.getDescription() != null) {
-            updateCertificateSql.append(" description=:description,");
-            params.addValue("description", certificate.getDescription());
-        }
-        if (certificate.getPrice() != null) {
-            updateCertificateSql.append(" price=:price,");
-            params.addValue("price", certificate.getPrice());
-        }
-        if (certificate.getDuration() != null) {
-            updateCertificateSql.append(" duration=:duration,");
-            params.addValue("duration", certificate.getDuration());
-        }
-        updateCertificateSql.append(" last_update_date=:now WHERE id=:id");
-        LocalDateTime now = LocalDateTime.now();
-        params.addValue("now", now).addValue("id", id);
+        Certificate updatedCert = entityManager.createQuery(JPQL_SELECT_CERTIFICATE_BY_ID, Certificate.class)
+                .setParameter("id", id)
+                .getResultStream()
+                .findFirst()
+                .orElseThrow(() -> new EntityNotFoundException(ErrorDefinition.CERTIFICATE_NOT_FOUND, id));
 
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-        if (namedParameterJdbcTemplate.update(updateCertificateSql.toString(), params, keyHolder) == 0) {
-            throw new EntityNotFoundException(ErrorDefinition.CERTIFICATE_NOT_FOUND, id);
+        String title = certificate.getTitle();
+        String description = certificate.getDescription();
+        BigDecimal price = certificate.getPrice();
+        Integer duration = certificate.getDuration();
+
+        if (title != null) {
+            updatedCert.setTitle(title);
+        }
+        if (description != null) {
+            updatedCert.setDescription(description);
+        }
+        if (price != null) {
+            updatedCert.setPrice(price);
+        }
+        if (duration != null) {
+            updatedCert.setDuration(duration);
         }
 
-        return certificate
-                .setId(id)
-                .setName((String) keyHolder.getKeys().get("name"))
-                .setDescription((String) keyHolder.getKeys().get("description"))
-                .setPrice((BigDecimal) keyHolder.getKeys().get("price"))
-                .setDuration((Integer) keyHolder.getKeys().get("duration"))
-                .setCreateDate(((Timestamp) keyHolder.getKeys().get("create_date")).toLocalDateTime())
-                .setLastUpdateDate(now);
+        return updatedCert;
     }
 
+    @Override
     public void delete(Long id) {
-        if (jdbcTemplate.update(DELETE_CERTIFICATE, id) == 0) {
+        Certificate certificate = entityManager.find(Certificate.class, id);
+        if (certificate == null) {
             throw new EntityNotFoundException(ErrorDefinition.CERTIFICATE_NOT_FOUND, id);
         }
-    }
-
-    public void addCertificateTagConnections(Long id, List<Tag> tags) {
-        List<Object[]> params = tags.stream().map(tag -> new Object[]{id, tag.getId()})
-                .collect(Collectors.toList());
-        jdbcTemplate.batchUpdate(ADD_CERTIFICATE_TAG_CONNECTIONS, params);
-    }
-
-    public void deleteCertificateTagConnections(Long id) {
-        jdbcTemplate.update(DELETE_CERTIFICATE_TAG_CONNECTIONS, id);
+        entityManager.remove(certificate);
     }
 }

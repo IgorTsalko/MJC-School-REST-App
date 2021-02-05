@@ -1,12 +1,10 @@
 /build
-/server/out
-/repository/out
-.idea
+*/build
 /.gradle
+*/.gradle
 /gradle
-/server/build
-/service/build
-/repository/build
-/common/build
+*/gradle
+/.idea
+*/out
 gradlew.bat
 gradlew*

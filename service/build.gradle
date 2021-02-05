@@ -1,11 +1,26 @@
-version '0.1'
+plugins {
+    id "org.springframework.boot" version "${springBootVersion}"
+    id "io.spring.dependency-management" version "${springDependencyManagementVersion}"
+}
 
 dependencies {
-    implementation project(':common')
-    implementation project(':repository')
+    implementation project(":common")
+    implementation project(":repository")
 
-    implementation "org.springframework:spring-context:${springVersion}"
     implementation "org.springframework:spring-tx:${springVersion}"
+    implementation "org.springframework.boot:spring-boot-starter:${springBootVersion}"
+    implementation "javax.persistence:javax.persistence-api:2.2"
 
     testImplementation project(':repository')
+    testImplementation("org.springframework.boot:spring-boot-starter-test:${springBootVersion}") {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+}
+
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
 }

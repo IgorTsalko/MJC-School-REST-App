@@ -1,13 +1,15 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.common.Tag;
+import com.epam.esm.common.entity.Tag;
 import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.TagService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional
 public class TagServiceImpl implements TagService {
 
     private final TagRepository tagRepository;
@@ -16,19 +18,28 @@ public class TagServiceImpl implements TagService {
         this.tagRepository = tagRepository;
     }
 
-    public List<Tag> getAll() {
-        return tagRepository.getAllTags();
+    @Override
+    public List<Tag> getTags(int page, int limit) {
+        return tagRepository.getTags(page, limit);
     }
 
+    @Override
     public Tag get(Long id) {
-        return tagRepository.getTag(id);
+        return tagRepository.get(id);
     }
 
+    @Override
     public Tag create(Tag tag) {
-        return tagRepository.createNewTag(tag);
+        return tagRepository.create(tag);
     }
 
+    @Override
     public void delete(Long id) {
-        tagRepository.deleteTag(id);
+        tagRepository.delete(id);
+    }
+
+    @Override
+    public Tag findMostUsedTagForUserWithHighestCostOfAllOrders() {
+        return tagRepository.findMostUsedTagForUserWithHighestCostOfAllOrders();
     }
 }

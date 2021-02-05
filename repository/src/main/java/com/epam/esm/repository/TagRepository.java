@@ -1,19 +1,20 @@
 package com.epam.esm.repository;
 
-import com.epam.esm.common.Certificate;
-import com.epam.esm.common.Tag;
+import com.epam.esm.common.entity.Tag;
 
 import java.util.List;
-import java.util.Map;
 
 public interface TagRepository {
 
     /**
-     * Retrieve all <code>Tags</code>.
+     * Retrieve all <code>Tags</code> in an amount equal to the
+     * <code>limit</code> for page number <code>page</code>.
      *
+     * @param page number of page
+     * @param limit number of entities in the response
      * @return list of <code>Tags</code>
      */
-    List<Tag> getAllTags();
+    List<Tag> getTags(int page, int limit);
 
     /**
      * Retrieve certain <code>Tag</code> for appropriate id.
@@ -21,16 +22,7 @@ public interface TagRepository {
      * @param id specific tag's identifier
      * @return certain <code>Tag</code>
      */
-    Tag getTag(Long id);
-
-    /**
-     * Retrieves certificate connections with matching tags
-     * for appropriate list of <code>Certificates</code>
-     *
-     * @param certificates list of <code>Certificate</code> entities for which tags are needed
-     * @return <code>Certificates</code> map with matching tags
-     */
-    Map<Long, List<Tag>> getCertificatesTags(List<Certificate> certificates);
+    Tag get(Long id);
 
     /**
      * Retrieves certificate connections with matching tags for appropriate <code>Certificate</code>
@@ -41,39 +33,32 @@ public interface TagRepository {
     List<Tag> getCertificateTags(Long certificateId);
 
     /**
-     * Retrieves tags by appropriate names
-     *
-     * @param tagList list of tags
-     * @return list of appropriate tags
-     */
-    List<Tag> getTagsByName(List<Tag> tagList);
-
-    /**
      * Create new <code>Tag</code> and return it
      *
      * @param tag the object that contain properties for new <code>Tag</code>
      * @return created <code>Tag</code>
      */
-    Tag createNewTag(Tag tag);
-
-    /**
-     * Create new tags by tag's names
-     *
-     * @param tags list of tags
-     */
-    void createNewTags(List<Tag> tags);
+    Tag create(Tag tag);
 
     /**
      * Create new tags by tag's names if any tags are not exist
      *
      * @param tags list of tags
      */
-    void createTagsIfNonExist(List<Tag> tags);
+    List<Tag> createNonExistent(List<Tag> tags);
 
     /**
      * Delete certain <code>Tag</code>
      *
      * @param id specific tag's identifier
      */
-    void deleteTag(Long id);
+    void delete(Long id);
+
+    /**
+     * Find the most widely used <code>Tag</code> of a user with the highest
+     * cost of all orders
+     *
+     * @return found <code>Tag</code>
+     */
+    Tag findMostUsedTagForUserWithHighestCostOfAllOrders();
 }

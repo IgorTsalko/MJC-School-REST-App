@@ -1,8 +1,8 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.common.Certificate;
-import com.epam.esm.common.SearchParams;
-import com.epam.esm.common.Tag;
+import com.epam.esm.common.entity.Certificate;
+import com.epam.esm.common.entity.CertificateSearchParams;
+import com.epam.esm.common.entity.Tag;
 import com.epam.esm.repository.CertificateRepository;
 import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.CertificateService;
@@ -11,9 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
-import java.util.Map;
 
 @Service
+@Transactional
 public class CertificateServiceImpl implements CertificateService {
 
     private final CertificateRepository certificateRepository;
@@ -24,73 +24,49 @@ public class CertificateServiceImpl implements CertificateService {
         this.tagRepository = tagRepository;
     }
 
-    @Transactional
-    public List<Certificate> getAll(SearchParams params) {
-        List<Certificate> certificates = certificateRepository.getAll(params);
-        Map<Long, List<Tag>> certificateTags = tagRepository.getCertificatesTags(certificates);
-        certificates.forEach(certificate -> certificate.setTags(certificateTags.get(certificate.getId())));
-        return certificates;
+    @Override
+    public List<Certificate> getCertificates(CertificateSearchParams params, int page, int limit) {
+        return certificateRepository.getCertificates(params, page, limit);
     }
 
-    @Transactional
+    @Override
     public Certificate get(Long id) {
-        return certificateRepository.get(id)
-                .setTags(tagRepository.getCertificateTags(id));
+        return certificateRepository.get(id);
     }
 
-    @Transactional
+    @Override
     public Certificate create(Certificate certificate) {
-        certificate = certificateRepository.create(certificate);
-
         List<Tag> tags = certificate.getTags();
         if (!CollectionUtils.isEmpty(tags)) {
-            tagRepository.createTagsIfNonExist(tags);
-            tags = tagRepository.getTagsByName(tags);
-            certificateRepository.addCertificateTagConnections(certificate.getId(), tags);
+            tags = tagRepository.createNonExistent(tags);
             certificate.setTags(tags);
         }
-
-        return certificate;
+        return certificateRepository.create(certificate);
     }
 
-    @Transactional
-    public Certificate upsert(Long id, Certificate certificate) {
-        certificate = certificateRepository.upsert(id, certificate);
-
+    @Override
+    public Certificate put(Long id, Certificate certificate) {
         List<Tag> tags = certificate.getTags();
         if (!CollectionUtils.isEmpty(tags)) {
-            tagRepository.createTagsIfNonExist(tags);
-            tags = tagRepository.getTagsByName(tags);
-            certificateRepository.addCertificateTagConnections(certificate.getId(), tags);
+            tags = tagRepository.createNonExistent(tags);
             certificate.setTags(tags);
         }
-
-        return certificate;
+        return certificateRepository.put(id, certificate);
     }
 
-    @Transactional
+    @Override
     public Certificate update(Long id, Certificate certificate) {
-        certificate = certificateRepository.update(id, certificate);
+        Certificate updatedCertificate = certificateRepository.update(id, certificate);
 
-        List<Tag> tags = certificate.getTags();
-        if (tags != null) {
-            certificateRepository.deleteCertificateTagConnections(id);
-            if (tags.isEmpty()) {
-                certificate.setTags(null);
-            } else {
-                tagRepository.createTagsIfNonExist(tags);
-                tags = tagRepository.getTagsByName(tags);
-                certificateRepository.addCertificateTagConnections(id, tags);
-                certificate.setTags(tags);
-            }
-        } else {
-            certificate.setTags(tagRepository.getCertificateTags(id));
+        if (certificate.getTags() != null) {
+            List<Tag> tags = tagRepository.createNonExistent(certificate.getTags());
+            updatedCertificate.setTags(tags);
         }
 
-        return certificate;
+        return updatedCertificate;
     }
 
-    @Transactional
+    @Override
     public void delete(Long id) {
         certificateRepository.delete(id);
     }

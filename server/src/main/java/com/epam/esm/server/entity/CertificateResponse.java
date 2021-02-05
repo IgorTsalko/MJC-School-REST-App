@@ -1,27 +1,27 @@
 package com.epam.esm.server.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
-public class CertificateResponse {
+public class CertificateResponse extends RepresentationModel<CertificateResponse> {
 
     private Long id;
-    private String name;
+    private String title;
     private String description;
     private BigDecimal price;
     private Integer duration;
-
-    private List<TagResponse> tags;
-
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createDate = LocalDateTime.now();
-
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime lastUpdateDate = LocalDateTime.now();
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<TagResponse> tags;
 
     public Long getId() {
         return id;
@@ -32,12 +32,12 @@ public class CertificateResponse {
         return this;
     }
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
-    public CertificateResponse setName(String name) {
-        this.name = name;
+    public CertificateResponse setTitle(String title) {
+        this.title = title;
         return this;
     }
 
@@ -101,7 +101,7 @@ public class CertificateResponse {
         if (o == null || getClass() != o.getClass()) return false;
         CertificateResponse that = (CertificateResponse) o;
         return Objects.equals(id, that.id)
-                && Objects.equals(name, that.name)
+                && Objects.equals(title, that.title)
                 && Objects.equals(description, that.description)
                 && Objects.equals(price, that.price)
                 && Objects.equals(duration, that.duration)
@@ -112,20 +112,20 @@ public class CertificateResponse {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, price, duration, tags, createDate, lastUpdateDate);
+        return Objects.hash(id, title, description, price, duration, tags, createDate, lastUpdateDate);
     }
 
     @Override
     public String toString() {
         return this.getClass().getSimpleName() + "{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
+                ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", price=" + price +
                 ", duration=" + duration +
-                ", tag=" + tags +
                 ", createDate=" + createDate +
                 ", lastUpdateDate=" + lastUpdateDate +
+                ", tags=" + tags +
                 '}';
     }
 }
