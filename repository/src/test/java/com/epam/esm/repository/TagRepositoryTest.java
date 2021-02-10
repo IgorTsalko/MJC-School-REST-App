@@ -29,26 +29,26 @@ public class TagRepositoryTest {
     @Test
     public void getAllTags() {
         List<Tag> expTags = getMockTags();
-        List<Tag> actualTags = tagRepository.getTags(1, 20);
+        List<Tag> actualTags = tagRepository.retrieveTags(1, 20);
         assertEquals(expTags, actualTags);
     }
 
     @Test
     public void getTagById() {
         Tag expTag = new Tag().setId(2L).setTitle("travel");
-        Tag actualTag = tagRepository.get(2L);
+        Tag actualTag = tagRepository.findById(2L);
         assertEquals(expTag, actualTag);
     }
 
     @Test
     public void getTagByNonExistentId() {
-        assertThrows(EntityNotFoundException.class, () -> tagRepository.get(10L));
+        assertThrows(EntityNotFoundException.class, () -> tagRepository.findById(10L));
     }
 
     @Test
     public void getCertificateTagsByCertificateId() {
         List<Tag> expTags = getMockTags();
-        List<Tag> actualTags = tagRepository.getCertificateTags(2L);
+        List<Tag> actualTags = tagRepository.retrieveCertificateTags(2L);
         assertEquals(expTags, actualTags);
     }
 
@@ -57,7 +57,7 @@ public class TagRepositoryTest {
     public void createNewTag() {
         Tag expTag = new Tag().setId(3L).setTitle("NewTag");
         Tag newTag = new Tag().setTitle("NewTag");
-        Tag actualTag = tagRepository.create(newTag);
+        Tag actualTag = tagRepository.save(newTag);
         assertEquals(expTag, actualTag);
     }
 
@@ -75,8 +75,8 @@ public class TagRepositoryTest {
                 new Tag().setTitle("someNewTag1"),
                 new Tag().setTitle("someNewTag2")
         );
-        tagRepository.createNonExistent(tags);
-        List<Tag> actualTags = tagRepository.getTags(1, 20);
+        tagRepository.saveNonExistent(tags);
+        List<Tag> actualTags = tagRepository.retrieveTags(1, 20);
         assertEquals(expTags, actualTags);
     }
 
@@ -87,7 +87,7 @@ public class TagRepositoryTest {
                 new Tag().setId(2L).setTitle("travel")
         );
         tagRepository.delete(1L);
-        List<Tag> actualTags = tagRepository.getTags(1, 20);
+        List<Tag> actualTags = tagRepository.retrieveTags(1, 20);
         assertEquals(expTags, actualTags);
     }
 

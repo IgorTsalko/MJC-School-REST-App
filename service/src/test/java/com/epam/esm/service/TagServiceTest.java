@@ -28,33 +28,33 @@ public class TagServiceTest {
                 new Tag().setId(1L).setTitle("incredible"),
                 new Tag().setId(2L).setTitle("travel")
         );
-        when(tagRepository.getTags(1, 20)).thenReturn(expTags);
+        when(tagRepository.retrieveTags(1, 20)).thenReturn(expTags);
         List<Tag> actualTags = tagService.getTags(1, 20);
 
         assertEquals(expTags, actualTags);
-        verify(tagRepository, only()).getTags(1, 20);
+        verify(tagRepository, only()).retrieveTags(1, 20);
     }
 
     @Test
     public void getTagById() {
         Tag expTag = new Tag().setId(1L).setTitle("incredible");
-        when(tagRepository.get(anyLong())).thenReturn(expTag);
+        when(tagRepository.findById(anyLong())).thenReturn(expTag);
 
-        Tag actualTag = tagService.get(1L);
+        Tag actualTag = tagService.findById(1L);
 
         assertEquals(expTag, actualTag);
-        verify(tagRepository, only()).get(anyLong());
+        verify(tagRepository, only()).findById(anyLong());
     }
 
     @Test
     public void createNewTag(@Mock Tag tag) {
         Tag expTag = new Tag().setId(1L).setTitle("incredible");
-        when(tagRepository.create(tag)).thenReturn(expTag);
+        when(tagRepository.save(tag)).thenReturn(expTag);
 
         Tag actualTag = tagService.create(tag);
 
         assertEquals(expTag, actualTag);
-        verify(tagRepository, only()).create(tag);
+        verify(tagRepository, only()).save(tag);
     }
 
     @Test

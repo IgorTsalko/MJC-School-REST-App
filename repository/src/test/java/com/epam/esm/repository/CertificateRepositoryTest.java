@@ -44,7 +44,7 @@ public class CertificateRepositoryTest {
     @Test
     public void getAllCertificatesWithEmptyParams(@Mock CertificateSearchParams params) {
         List<Certificate> expCerts = List.of(getMockCertId1(), getMockCertId2());
-        List<Certificate> actualCerts = certificateRepository.getCertificates(params, 1, 20);
+        List<Certificate> actualCerts = certificateRepository.retrieveCertificates(params, 1, 20);
         assertEquals(expCerts, actualCerts);
     }
 
@@ -59,20 +59,20 @@ public class CertificateRepositoryTest {
         );
 
         List<Certificate> expCerts = List.of(getMockCertId2());
-        List<Certificate> actualCerts = certificateRepository.getCertificates(params, 1, 20);
+        List<Certificate> actualCerts = certificateRepository.retrieveCertificates(params, 1, 20);
         assertEquals(expCerts, actualCerts);
     }
 
     @Test
     public void getCertificateById() {
         Certificate expCert = getMockCertId2();
-        Certificate actualCert = certificateRepository.get(2L).setTags(tagRepository.getCertificateTags(2L));
+        Certificate actualCert = certificateRepository.findById(2L).setTags(tagRepository.retrieveCertificateTags(2L));
         assertEquals(expCert, actualCert);
     }
 
     @Test
     public void getCertificateByNonExistentId() {
-        assertThrows(EntityNotFoundException.class, () -> certificateRepository.get(10L));
+        assertThrows(EntityNotFoundException.class, () -> certificateRepository.findById(10L));
     }
 
     @Test
@@ -89,7 +89,7 @@ public class CertificateRepositoryTest {
                 .setPrice(BigDecimal.valueOf(178.0))
                 .setDuration(14);
 
-        Certificate actualCert = certificateRepository.create(cert);
+        Certificate actualCert = certificateRepository.save(cert);
         expCert.setCreateDate(actualCert.getCreateDate());
         expCert.setLastUpdateDate(actualCert.getLastUpdateDate());
 
@@ -114,7 +114,7 @@ public class CertificateRepositoryTest {
                 .setDuration(14);
 
         certificateRepository.update(2L, cert);
-        Certificate actualCert = certificateRepository.get(2L);
+        Certificate actualCert = certificateRepository.findById(2L);
         expCert.setCreateDate(actualCert.getCreateDate());
         expCert.setLastUpdateDate(actualCert.getLastUpdateDate());
 

@@ -33,7 +33,7 @@ public class TagRepositoryImpl implements TagRepository {
     private EntityManager entityManager;
 
     @Override
-    public List<Tag> getTags(int page, int limit) {
+    public List<Tag> retrieveTags(int page, int limit) {
         return entityManager.createQuery(JPQL_SELECT_ALL, Tag.class)
                 .setFirstResult((page - 1) * limit)
                 .setMaxResults(limit)
@@ -41,7 +41,7 @@ public class TagRepositoryImpl implements TagRepository {
     }
 
     @Override
-    public Tag get(Long id) {
+    public Tag findById(Long id) {
         Tag tag = entityManager.find(Tag.class, id);
         if (tag == null) {
             throw new EntityNotFoundException(ErrorDefinition.TAG_NOT_FOUND, id);
@@ -51,19 +51,19 @@ public class TagRepositoryImpl implements TagRepository {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Tag> getCertificateTags(Long certificateId) {
+    public List<Tag> retrieveCertificateTags(Long certificateId) {
         return entityManager.createQuery(JPQL_SELECT_CERTIFICATE_TAGS)
                 .setParameter("id", certificateId)
                 .getResultList();
     }
 
     @Override
-    public Tag create(Tag tag) {
+    public Tag save(Tag tag) {
         entityManager.persist(tag);
         return tag;
     }
 
-    private List<Tag> getByNames(List<Tag> tags) {
+    private List<Tag> findByName(List<Tag> tags) {
         List<String> names = tags.stream().map(Tag::getTitle).collect(Collectors.toList());
         return entityManager.createQuery(JPQL_SELECT_BY_NAME, Tag.class)
                 .setParameter("titles", names)
@@ -71,8 +71,8 @@ public class TagRepositoryImpl implements TagRepository {
     }
 
     @Override
-    public List<Tag> createNonExistent(List<Tag> tags) {
-        List<Tag> existingTags = getByNames(tags);
+    public List<Tag> saveNonExistent(List<Tag> tags) {
+        List<Tag> existingTags = findByName(tags);
         List<Tag> nonexistentTags = tags.stream()
                 .filter(exist -> existingTags
                         .stream()
@@ -82,7 +82,7 @@ public class TagRepositoryImpl implements TagRepository {
         nonexistentTags.stream().distinct().collect(Collectors.toList())
                 .forEach(t -> entityManager.persist(t));
 
-        return getByNames(tags);
+        return findByName(tags);
     }
 
     @Override

@@ -48,8 +48,8 @@ public class OrderController {
                 .stream().map(OrderMapper::convertToResponse).collect(Collectors.toList());
         orders.forEach(o -> {
             o.add(linkTo(methodOn(OrderController.class).get(o.getOrderId())).withSelfRel());
-            o.add(linkTo(methodOn(UserController.class).get(o.getUserId())).withRel("user"));
-            o.add(linkTo(methodOn(CertificateController.class).get(o.getCertificateId())).withRel("certificate"));
+            o.add(linkTo(methodOn(UserController.class).getById(o.getUserId())).withRel("user"));
+            o.add(linkTo(methodOn(CertificateController.class).getById(o.getCertificateId())).withRel("certificate"));
         });
 
         List<Link> links = new ArrayList<>();
@@ -74,12 +74,12 @@ public class OrderController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<OrderResponse> get(@PathVariable @Positive Long id) {
-        OrderResponse orderResponse = OrderMapper.convertToResponse(orderService.get(id));
+        OrderResponse orderResponse = OrderMapper.convertToResponse(orderService.findById(id));
         orderResponse.add(linkTo(methodOn(OrderController.class).get(id)).withSelfRel());
         orderResponse.add(linkTo(methodOn(UserController.class)
-                .get(orderResponse.getUserId())).withRel("user"));
+                .getById(orderResponse.getUserId())).withRel("user"));
         orderResponse.add(linkTo(methodOn(CertificateController.class)
-                .get(orderResponse.getCertificateId())).withRel("certificate"));
+                .getById(orderResponse.getCertificateId())).withRel("certificate"));
         return ResponseEntity.ok(orderResponse);
     }
 }

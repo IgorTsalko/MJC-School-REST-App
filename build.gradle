@@ -12,11 +12,13 @@ subprojects {
 
     ext {
         springVersion                       = '5.2.12.RELEASE'
-        springBootVersion                   = '2.3.8.RELEASE'
+        starterVersion                      = '2.3.8.RELEASE'
+        springBootPlaginVersion             = '2.3.8.RELEASE'
         hibernateCoreVersion                = '5.4.27.Final'
         springDependencyManagementVersion   = '1.0.11.RELEASE'
         postgresqlVersion                   = '42.2.18'
         javaxValidationVersion              = '2.0.1.Final'
+        persistenceApiVersion               = '2.2'
         h2_dbVersion                        = '1.4.200'
     }
 

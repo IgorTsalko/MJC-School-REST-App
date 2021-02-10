@@ -20,11 +20,11 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<Order> getOrders(int page, int limit) {
-        return orderRepository.getOrders(page, limit);
+        return orderRepository.retrieveOrders(page, limit);
     }
 
     @Override
-    public Order get(Long id) {
-        return orderRepository.get(id);
+    public Order findById(Long id) {
+        return orderRepository.findById(id);
     }
 }

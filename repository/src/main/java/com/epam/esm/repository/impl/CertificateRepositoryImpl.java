@@ -29,7 +29,7 @@ public class CertificateRepositoryImpl implements CertificateRepository {
     private EntityManager entityManager;
 
     @Override
-    public List<Certificate> getCertificates(CertificateSearchParams params, int page, int limit) {
+    public List<Certificate> retrieveCertificates(CertificateSearchParams params, int page, int limit) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Certificate> criteriaQuery = cb.createQuery(Certificate.class);
         Root<Certificate> certificates = criteriaQuery.from(Certificate.class);
@@ -105,7 +105,7 @@ public class CertificateRepositoryImpl implements CertificateRepository {
     }
 
     @Override
-    public Certificate get(Long id) {
+    public Certificate findById(Long id) {
         return entityManager.createQuery(JPQL_SELECT_CERTIFICATE_BY_ID, Certificate.class)
                 .setParameter("id", id)
                 .getResultStream()
@@ -114,13 +114,13 @@ public class CertificateRepositoryImpl implements CertificateRepository {
     }
 
     @Override
-    public Certificate create(Certificate certificate) {
+    public Certificate save(Certificate certificate) {
         entityManager.persist(certificate);
         return certificate;
     }
 
     @Override
-    public Certificate put(Long id, Certificate certificate) {
+    public Certificate replace(Long id, Certificate certificate) {
         Certificate cert = entityManager.find(Certificate.class, id);
         if (cert == null) {
             throw new EntityNotFoundException(ErrorDefinition.CERTIFICATE_NOT_FOUND, id);

@@ -15,12 +15,14 @@ public class UserRepositoryImpl implements UserRepository {
 
     private static final String JPQL_SELECT_ALL = "from User u order by u.id";
     private static final String JPQL_SELECT_BY_ID = "select distinct u from User u left join fetch u.orders where u.id=:id";
+    private static final String JPQL_SELECT_BY_LOGIN
+            = "select distinct u from User u left join fetch u.orders where u.login=:login";
 
     @PersistenceContext
     private EntityManager entityManager;
 
     @Override
-    public List<User> getUsers(int page, int limit) {
+    public List<User> findUsers(int page, int limit) {
         return entityManager.createQuery(JPQL_SELECT_ALL, User.class)
                 .setFirstResult((page - 1) * limit)
                 .setMaxResults(limit)
@@ -28,11 +30,25 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public User get(Long id) {
+    public User findById(Long id) {
         return entityManager.createQuery(JPQL_SELECT_BY_ID, User.class)
                 .setParameter("id", id)
                 .getResultStream()
                 .findAny()
                 .orElseThrow(() -> new EntityNotFoundException(ErrorDefinition.USER_NOT_FOUND, id));
+    }
+
+    @Override
+    public User findByLogin(String login) {
+        return entityManager.createQuery(JPQL_SELECT_BY_LOGIN, User.class)
+                .setParameter("login", login)
+                .getResultStream()
+                .findAny()
+                .orElse(null); //todo: null or exception?
+    }
+
+    @Override
+    public void save(User user) {
+        entityManager.persist(user);
     }
 }

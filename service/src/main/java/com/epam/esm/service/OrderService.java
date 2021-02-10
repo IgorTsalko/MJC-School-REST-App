@@ -22,5 +22,5 @@ public interface OrderService {
      * @param id specific order's identifier
      * @return certain <code>Order</code>
      */
-    Order get(Long id);
+    Order findById(Long id);
 }

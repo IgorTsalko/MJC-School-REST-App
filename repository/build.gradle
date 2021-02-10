@@ -1,5 +1,5 @@
 plugins {
-    id "org.springframework.boot" version "${springBootVersion}"
+    id "org.springframework.boot" version "${springBootPlaginVersion}"
     id "io.spring.dependency-management" version "${springDependencyManagementVersion}"
 }
 
@@ -10,12 +10,12 @@ dependencies {
     implementation "org.hibernate:hibernate-core:${hibernateCoreVersion}"
 
     implementation "org.postgresql:postgresql:${postgresqlVersion}"
-    implementation ("org.springframework.boot:spring-boot-starter-jdbc:${springBootVersion}") {
+    implementation ("org.springframework.boot:spring-boot-starter-jdbc:${starterVersion}") {
         exclude group: 'org.apache.tomcat', module: 'tomcat-jdbc'
     }
 
     testImplementation "com.h2database:h2:${h2_dbVersion}"
-    testImplementation("org.springframework.boot:spring-boot-starter-test:${springBootVersion}") {
+    testImplementation("org.springframework.boot:spring-boot-starter-test:${starterVersion}") {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
 }

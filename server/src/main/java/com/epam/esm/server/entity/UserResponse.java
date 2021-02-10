@@ -12,6 +12,8 @@ public class UserResponse extends RepresentationModel<UserResponse> {
     private String firstName;
     private String lastName;
     private String email;
+    private String login;
+    private String role;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<OrderResponse> orders;
 
@@ -51,6 +53,24 @@ public class UserResponse extends RepresentationModel<UserResponse> {
         return this;
     }
 
+    public String getLogin() {
+        return login;
+    }
+
+    public UserResponse setLogin(String login) {
+        this.login = login;
+        return this;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public UserResponse setRole(String role) {
+        this.role = role;
+        return this;
+    }
+
     public List<OrderResponse> getOrders() {
         return orders;
     }
@@ -70,12 +90,14 @@ public class UserResponse extends RepresentationModel<UserResponse> {
                 && Objects.equals(firstName, that.firstName)
                 && Objects.equals(lastName, that.lastName)
                 && Objects.equals(email, that.email)
+                && Objects.equals(login, that.login)
+                && Objects.equals(role, that.role)
                 && Objects.equals(orders, that.orders);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), id, firstName, lastName, email, orders);
+        return Objects.hash(super.hashCode(), id, firstName, lastName, email, login, role, orders);
     }
 
     @Override
@@ -85,6 +107,8 @@ public class UserResponse extends RepresentationModel<UserResponse> {
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
+                ", login='" + login + '\'' +
+                ", role='" + role + '\'' +
                 ", orders=" + orders +
                 '}';
     }

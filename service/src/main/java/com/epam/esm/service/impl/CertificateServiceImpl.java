@@ -26,32 +26,32 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Override
     public List<Certificate> getCertificates(CertificateSearchParams params, int page, int limit) {
-        return certificateRepository.getCertificates(params, page, limit);
+        return certificateRepository.retrieveCertificates(params, page, limit);
     }
 
     @Override
-    public Certificate get(Long id) {
-        return certificateRepository.get(id);
+    public Certificate findById(Long id) {
+        return certificateRepository.findById(id);
     }
 
     @Override
     public Certificate create(Certificate certificate) {
         List<Tag> tags = certificate.getTags();
         if (!CollectionUtils.isEmpty(tags)) {
-            tags = tagRepository.createNonExistent(tags);
+            tags = tagRepository.saveNonExistent(tags);
             certificate.setTags(tags);
         }
-        return certificateRepository.create(certificate);
+        return certificateRepository.save(certificate);
     }
 
     @Override
-    public Certificate put(Long id, Certificate certificate) {
+    public Certificate replace(Long id, Certificate certificate) {
         List<Tag> tags = certificate.getTags();
         if (!CollectionUtils.isEmpty(tags)) {
-            tags = tagRepository.createNonExistent(tags);
+            tags = tagRepository.saveNonExistent(tags);
             certificate.setTags(tags);
         }
-        return certificateRepository.put(id, certificate);
+        return certificateRepository.replace(id, certificate);
     }
 
     @Override
@@ -59,7 +59,7 @@ public class CertificateServiceImpl implements CertificateService {
         Certificate updatedCertificate = certificateRepository.update(id, certificate);
 
         if (certificate.getTags() != null) {
-            List<Tag> tags = tagRepository.createNonExistent(certificate.getTags());
+            List<Tag> tags = tagRepository.saveNonExistent(certificate.getTags());
             updatedCertificate.setTags(tags);
         }
 

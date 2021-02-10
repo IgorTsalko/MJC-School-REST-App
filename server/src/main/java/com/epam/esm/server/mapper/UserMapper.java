@@ -1,6 +1,7 @@
 package com.epam.esm.server.mapper;
 
 import com.epam.esm.common.entity.User;
+import com.epam.esm.server.entity.UserRequest;
 import com.epam.esm.server.entity.UserResponse;
 
 public class UserMapper {
@@ -11,6 +12,8 @@ public class UserMapper {
                 .setFirstName(user.getFirstName())
                 .setLastName(user.getLastName())
                 .setEmail(user.getEmail())
+                .setLogin(user.getLogin())
+                .setRole(user.getRole().getTitle())
                 .setOrders(OrderMapper.convertToResponse(user.getOrders()));
     }
 
@@ -19,6 +22,17 @@ public class UserMapper {
                 .setId(user.getId())
                 .setFirstName(user.getFirstName())
                 .setLastName(user.getLastName())
-                .setEmail(user.getEmail());
+                .setEmail(user.getEmail())
+                .setLogin(user.getLogin())
+                .setRole(user.getRole().getTitle());
+    }
+
+    public static User convertToEntity(UserRequest userRequest) {
+        return new User()
+                .setFirstName(userRequest.getFirstName())
+                .setLastName(userRequest.getLastName())
+                .setEmail(userRequest.getEmail())
+                .setLogin(userRequest.getEmail())
+                .setPassword(userRequest.getPassword());
     }
 }

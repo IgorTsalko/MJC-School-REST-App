@@ -20,17 +20,17 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public List<Tag> getTags(int page, int limit) {
-        return tagRepository.getTags(page, limit);
+        return tagRepository.retrieveTags(page, limit);
     }
 
     @Override
-    public Tag get(Long id) {
-        return tagRepository.get(id);
+    public Tag findById(Long id) {
+        return tagRepository.findById(id);
     }
 
     @Override
     public Tag create(Tag tag) {
-        return tagRepository.create(tag);
+        return tagRepository.save(tag);
     }
 
     @Override

@@ -1,5 +1,5 @@
 plugins {
-    id "org.springframework.boot" version "${springBootVersion}"
+    id "org.springframework.boot" version "${springBootPlaginVersion}"
     id "io.spring.dependency-management" version "${springDependencyManagementVersion}"
 }
 
@@ -8,11 +8,11 @@ dependencies {
     implementation project(":repository")
 
     implementation "org.springframework:spring-tx:${springVersion}"
-    implementation "org.springframework.boot:spring-boot-starter:${springBootVersion}"
-    implementation "javax.persistence:javax.persistence-api:2.2"
+    implementation "org.springframework.boot:spring-boot-starter:${starterVersion}"
+    implementation "org.springframework.boot:spring-boot-starter-security:${starterVersion}"
 
     testImplementation project(':repository')
-    testImplementation("org.springframework.boot:spring-boot-starter-test:${springBootVersion}") {
+    testImplementation("org.springframework.boot:spring-boot-starter-test:${starterVersion}") {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
 }
