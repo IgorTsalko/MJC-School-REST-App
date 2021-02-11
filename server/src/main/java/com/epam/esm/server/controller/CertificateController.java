@@ -59,8 +59,8 @@ public class CertificateController {
                 .stream().map(CertificateMapper::convertToResponse)
                 .collect(Collectors.toList());
         certificates.forEach(c -> {
-            c.getTags().forEach(t -> t.add(linkTo(methodOn(TagController.class).get(t.getId())).withSelfRel()));
-            c.add(linkTo(methodOn(CertificateController.class).get(c.getId())).withSelfRel());
+            c.getTags().forEach(t -> t.add(linkTo(methodOn(TagController.class).getById(t.getId())).withSelfRel()));
+            c.add(linkTo(methodOn(CertificateController.class).getById(c.getId())).withSelfRel());
         });
 
         List<Link> links = new ArrayList<>();
@@ -88,11 +88,11 @@ public class CertificateController {
      * @return certain <code>Certificate</code>
      */
     @GetMapping("/{id}")
-    public CertificateResponse get(@PathVariable @Positive Long id) {
-        CertificateResponse certificateResponse = CertificateMapper.convertToResponse(certificateService.get(id));
+    public CertificateResponse getById(@PathVariable @Positive Long id) {
+        CertificateResponse certificateResponse = CertificateMapper.convertToResponse(certificateService.findById(id));
         certificateResponse.getTags()
-                .forEach(t -> t.add(linkTo(methodOn(TagController.class).get(t.getId())).withSelfRel()));
-        certificateResponse.add(linkTo(methodOn(CertificateController.class).get(id)).withSelfRel());
+                .forEach(t -> t.add(linkTo(methodOn(TagController.class).getById(t.getId())).withSelfRel()));
+        certificateResponse.add(linkTo(methodOn(CertificateController.class).getById(id)).withSelfRel());
         return certificateResponse;
     }
 
@@ -108,7 +108,7 @@ public class CertificateController {
         CertificateResponse certificateResponse = CertificateMapper.convertToResponse(certificate);
         List<TagResponse> tags = certificateResponse.getTags();
         if (tags != null) {
-            tags.forEach(t -> t.add(linkTo(methodOn(TagController.class).get(t.getId())).withSelfRel()));
+            tags.forEach(t -> t.add(linkTo(methodOn(TagController.class).getById(t.getId())).withSelfRel()));
         }
         certificateResponse.add(linkTo(methodOn(CertificateController.class).create(request)).withSelfRel());
         return new ResponseEntity<>(certificateResponse, HttpStatus.CREATED);
@@ -123,15 +123,15 @@ public class CertificateController {
      * @return updated or created <code>Certificate</code>
      */
     @PutMapping("/{id}")
-    public ResponseEntity<CertificateResponse> put(
+    public ResponseEntity<CertificateResponse> replace(
             @PathVariable @Positive Long id, @RequestBody @Valid CertificateCreateRequest request) {
-        Certificate certificate = certificateService.put(id, CertificateMapper.convertToEntity(request));
+        Certificate certificate = certificateService.replace(id, CertificateMapper.convertToEntity(request));
         CertificateResponse certificateResponse = CertificateMapper.convertToResponse(certificate);
         List<TagResponse> tags = certificateResponse.getTags();
         if (tags != null) {
-            tags.forEach(t -> t.add(linkTo(methodOn(TagController.class).get(t.getId())).withSelfRel()));
+            tags.forEach(t -> t.add(linkTo(methodOn(TagController.class).getById(t.getId())).withSelfRel()));
         }
-        certificateResponse.add(linkTo(methodOn(CertificateController.class).put(id, request)).withSelfRel());
+        certificateResponse.add(linkTo(methodOn(CertificateController.class).replace(id, request)).withSelfRel());
         return ResponseEntity.ok(certificateResponse);
     }
 
@@ -143,15 +143,15 @@ public class CertificateController {
      * @return updated <code>Certificate</code>
      */
     @PatchMapping("/{id}")
-    public ResponseEntity<CertificateResponse> partialUpdate(
+    public ResponseEntity<CertificateResponse> update(
             @PathVariable @Positive Long id, @RequestBody @Valid CertificateUpdateRequest request) {
         Certificate certificate = certificateService.update(id, CertificateMapper.convertToEntity(request));
         CertificateResponse certificateResponse = CertificateMapper.convertToResponse(certificate);
         List<TagResponse> tags = certificateResponse.getTags();
         if (tags != null) {
-            tags.forEach(t -> t.add(linkTo(methodOn(TagController.class).get(t.getId())).withSelfRel()));
+            tags.forEach(t -> t.add(linkTo(methodOn(TagController.class).getById(t.getId())).withSelfRel()));
         }
-        certificateResponse.add(linkTo(methodOn(CertificateController.class).partialUpdate(id, request)).withSelfRel());
+        certificateResponse.add(linkTo(methodOn(CertificateController.class).update(id, request)).withSelfRel());
         return ResponseEntity.ok(certificateResponse);
     }
 

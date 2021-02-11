@@ -14,7 +14,7 @@ public interface OrderRepository {
      * @param limit number of entities in the response
      * @return list of <code>Orders</code>
      */
-    List<Order> getOrders(int page, int limit);
+    List<Order> retrieveOrders(int page, int limit);
 
     /**
      * Retrieve <code>Order</code> by certain id
@@ -22,7 +22,7 @@ public interface OrderRepository {
      * @param id specific order's identifier
      * @return certain <code>Order</code>
      */
-    Order get(Long id);
+    Order findById(Long id);
 
     /**
      * Retrieve list of <code>Orders</code> for certain <code>User</code> in an amount equal to
@@ -33,7 +33,7 @@ public interface OrderRepository {
      * @param limit number of entities in the response
      * @return list of <code>Orders</code> for certain <code>User</code>
      */
-    List<Order> getUserOrders(Long userId, int page, int limit);
+    List<Order> retrieveUserOrders(Long userId, int page, int limit);
 
     /**
      * Persist new <code>Order</code> for certain <code>User</code>
@@ -42,5 +42,5 @@ public interface OrderRepository {
      *              <code>Order</code> for certain <code>User</code>
      * @return created <code>Order</code>
      */
-    Order createUserOrder(Order order);
+    Order save(Order order);
 }

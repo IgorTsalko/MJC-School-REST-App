@@ -8,43 +8,43 @@ import java.util.List;
 public interface CertificateService {
 
     /**
-     * Retrieve <code>Certificates</code> for appropriate parameters.
+     * Retrieve list of {@link Certificate} for appropriate parameters.
      * If there are no any parameters then return some <code>Certificates</code>
      * in an amount equal to the <code>limit</code> for page number <code>page</code>
      *
      * @param params the object that contains filtering or sorting parameters
-     *               for retrieve <code>Certificates</code>
+     *               for retrieve appropriate objects of {@link Certificate}
      * @param page number of page
      * @param limit number of entities in the response
-     * @return list of appropriate <code>Certificates</code>
+     * @return list of appropriate {@link Certificate}
      */
     List<Certificate> getCertificates(CertificateSearchParams params, int page, int limit);
 
     /**
-     * Retrieve certain <code>Certificate</code> for appropriate id.
+     * Retrieve certain {@link Certificate} for appropriate id.
      *
      * @param id specific certificate's identifier
-     * @return certain <code>Certificate</code>
+     * @return certain {@link Certificate}
      */
-    Certificate get(Long id);
+    Certificate findById(Long id);
 
     /**
-     * Create new <code>Certificate</code> and return it
+     * Create new {@link Certificate} and return it
      *
-     * @param certificate the object that contain properties for new <code>Certificate</code>
-     * @return created <code>Certificate</code>
+     * @param certificate the object that contain properties for new {@link Certificate}
+     * @return created {@link Certificate}
      */
     Certificate create(Certificate certificate);
 
     /**
-     * Fully updates a specific <code>Certificate</code> or creates a new one if such not exists
+     * Fully updates a specific {@link Certificate} or creates a new one if such not exists
      *
      * @param id specific certificate's identifier
      * @param certificate the object that contain properties for updating
-     *                    or creating <code>Certificate</code>
-     * @return updated or created <code>Certificate</code>
+     *                    or creating {@link Certificate}
+     * @return updated or created {@link Certificate}
      */
-    Certificate put(Long id, Certificate certificate);
+    Certificate replace(Long id, Certificate certificate);
 
     /**
      * Update certain fields of a certain <code>Certificate</code> and return it

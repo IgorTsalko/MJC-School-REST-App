@@ -23,7 +23,14 @@ public interface UserService {
      * @param id specific user's identifier
      * @return certain <code>User</code>
      */
-    User get(Long id);
+    User findById(Long id);
+
+    /**
+     * Sign up new <code>User</code>
+     *
+     * @param user the object that contain properties for new <code>User</code>
+     */
+    void signUp(User user);
 
     /**
      * Retrieve list of <code>Orders</code> for certain <code>User</code> in an amount equal to

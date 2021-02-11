@@ -14,7 +14,7 @@ public interface UserRepository {
      * @param limit number of entities in the response
      * @return list of <code>Users</code>
      */
-    List<User> getUsers(int page, int limit);
+    List<User> findUsers(int page, int limit);
 
     /**
      * Retrieve <code>User</code> by certain id
@@ -22,5 +22,20 @@ public interface UserRepository {
      * @param id specific user's identifier
      * @return certain <code>User</code>
      */
-    User get(Long id);
+    User findById(Long id);
+
+    /**
+     * Retrieve <code>User</code> by certain login
+     *
+     * @param login specific user's login
+     * @return certain <code>User</code>
+     */
+    User findByLogin(String login);
+
+    /**
+     * Sign up new <code>User</code>
+     *
+     * @param user the object that contain properties for new <code>User</code>
+     */
+    void save(User user);
 }

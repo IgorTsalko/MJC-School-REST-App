@@ -49,7 +49,7 @@ public class TagController {
         List<TagResponse> tags = tagService.getTags(pageNumber, limit)
                 .stream().map(TagMapper::convertToResponse)
                 .collect(Collectors.toList());
-        tags.forEach(t -> t.add(linkTo(methodOn(TagController.class).get(t.getId())).withSelfRel()));
+        tags.forEach(t -> t.add(linkTo(methodOn(TagController.class).getById(t.getId())).withSelfRel()));
 
         List<Link> links = new ArrayList<>();
         links.add(linkTo(methodOn(TagController.class).getTags(page, limit)).withSelfRel());
@@ -72,9 +72,9 @@ public class TagController {
      * @return certain <code>Tag</code>
      */
     @GetMapping("/{id}")
-    public ResponseEntity<TagResponse> get(@PathVariable @Positive Long id) {
-        TagResponse tagResponse = TagMapper.convertToResponse(tagService.get(id));
-        tagResponse.add(linkTo(methodOn(TagController.class).get(id)).withSelfRel());
+    public ResponseEntity<TagResponse> getById(@PathVariable @Positive Long id) {
+        TagResponse tagResponse = TagMapper.convertToResponse(tagService.findById(id));
+        tagResponse.add(linkTo(methodOn(TagController.class).getById(id)).withSelfRel());
         return ResponseEntity.ok(tagResponse);
     }
 

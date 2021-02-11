@@ -18,7 +18,7 @@ public interface CertificateRepository {
      * @param limit number of entities in the response
      * @return list of appropriate <code>Certificates</code>
      */
-    List<Certificate> getCertificates(CertificateSearchParams params, int page, int limit);
+    List<Certificate> retrieveCertificates(CertificateSearchParams params, int page, int limit);
 
     /**
      * Retrieve certain <code>Certificate</code> for appropriate id.
@@ -26,7 +26,7 @@ public interface CertificateRepository {
      * @param id specific certificate's identifier
      * @return certain <code>Certificate</code>
      */
-    Certificate get(Long id);
+    Certificate findById(Long id);
 
     /**
      * Create new <code>Certificate</code> and return it
@@ -34,7 +34,7 @@ public interface CertificateRepository {
      * @param certificate the object that contain properties for new <code>Certificate</code>
      * @return created <code>Certificate</code>
      */
-    Certificate create(Certificate certificate);
+    Certificate save(Certificate certificate);
 
     /**
      * Fully updates a specific <code>Certificate</code> or creates a new one if such not exists
@@ -44,7 +44,7 @@ public interface CertificateRepository {
      *                    or creating <code>Certificate</code>
      * @return updated or created <code>Certificate</code>
      */
-    Certificate put(Long id, Certificate certificate);
+    Certificate replace(Long id, Certificate certificate);
 
     /**
      * Update certain fields of a certain <code>Certificate</code> and return it

@@ -16,9 +16,15 @@ public class User {
     @Column(name = "last_name")
     private String lastName;
     private String email;
+    private String login;
+    private String password;
+
+    @OneToOne
+    @JoinColumn(name = "role", referencedColumnName = "id")
+    private Role role;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn (name="user_id")
+    @JoinColumn(name = "user_id")
     private List<Order> orders;
 
     public Long getId() {
@@ -57,6 +63,33 @@ public class User {
         return this;
     }
 
+    public String getLogin() {
+        return login;
+    }
+
+    public User setLogin(String login) {
+        this.login = login;
+        return this;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public User setRole(Role role) {
+        this.role = role;
+        return this;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public User setPassword(String password) {
+        this.password = password;
+        return this;
+    }
+
     public List<Order> getOrders() {
         return orders;
     }
@@ -75,12 +108,15 @@ public class User {
                 && Objects.equals(firstName, user.firstName)
                 && Objects.equals(lastName, user.lastName)
                 && Objects.equals(email, user.email)
+                && Objects.equals(login, user.login)
+                && Objects.equals(password, user.password)
+                && Objects.equals(role, user.role)
                 && Objects.equals(orders, user.orders);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, firstName, lastName, email, orders);
+        return Objects.hash(id, firstName, lastName, email, login, password, role, orders);
     }
 
     @Override
@@ -90,6 +126,9 @@ public class User {
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
+                ", login='" + login + '\'' +
+                ", password='" + password + '\'' +
+                ", role=" + role +
                 ", orders=" + orders +
                 '}';
     }

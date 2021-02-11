@@ -22,7 +22,7 @@ public interface TagService {
      * @param id specific tag's identifier
      * @return certain <code>Tag</code>
      */
-    Tag get(Long id);
+    Tag findById(Long id);
 
     /**
      * Create new <code>Tag</code> and return it

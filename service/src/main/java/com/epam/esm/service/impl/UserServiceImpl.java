@@ -7,6 +7,7 @@ import com.epam.esm.repository.CertificateRepository;
 import com.epam.esm.repository.OrderRepository;
 import com.epam.esm.repository.UserRepository;
 import com.epam.esm.service.UserService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,35 +20,44 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final OrderRepository orderRepository;
     private final CertificateRepository certificateRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public UserServiceImpl(UserRepository userRepository,
                            OrderRepository orderRepository,
-                           CertificateRepository certificateRepository) {
+                           CertificateRepository certificateRepository,
+                           PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.orderRepository = orderRepository;
         this.certificateRepository = certificateRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public List<User> getUsers(int page, int limit) {
-        return userRepository.getUsers(page, limit);
+        return userRepository.findUsers(page, limit);
     }
 
     @Override
-    public User get(Long id) {
-        return userRepository.get(id);
+    public User findById(Long id) {
+        return userRepository.findById(id);
+    }
+
+    @Override
+    public void signUp(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepository.save(user);
     }
 
     @Override
     public List<Order> getUserOrders(Long id, int page, int limit) {
-        return orderRepository.getUserOrders(id, page, limit);
+        return orderRepository.retrieveUserOrders(id, page, limit);
     }
 
     @Override
     public Order createUserOrder(Long userId, Order order) {
-        Certificate certificate = certificateRepository.get(order.getCertificateId());
+        Certificate certificate = certificateRepository.findById(order.getCertificateId());
         order.setPrice(certificate.getPrice());
         order.setUserId(userId);
-        return orderRepository.createUserOrder(order);
+        return orderRepository.save(order);
     }
 }

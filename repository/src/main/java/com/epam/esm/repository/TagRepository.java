@@ -14,7 +14,7 @@ public interface TagRepository {
      * @param limit number of entities in the response
      * @return list of <code>Tags</code>
      */
-    List<Tag> getTags(int page, int limit);
+    List<Tag> retrieveTags(int page, int limit);
 
     /**
      * Retrieve certain <code>Tag</code> for appropriate id.
@@ -22,7 +22,7 @@ public interface TagRepository {
      * @param id specific tag's identifier
      * @return certain <code>Tag</code>
      */
-    Tag get(Long id);
+    Tag findById(Long id);
 
     /**
      * Retrieves certificate connections with matching tags for appropriate <code>Certificate</code>
@@ -30,7 +30,7 @@ public interface TagRepository {
      * @param certificateId specific certificate's identifier
      * @return list of tags for the appropriate <code>Certificate</code>
      */
-    List<Tag> getCertificateTags(Long certificateId);
+    List<Tag> retrieveCertificateTags(Long certificateId);
 
     /**
      * Create new <code>Tag</code> and return it
@@ -38,14 +38,14 @@ public interface TagRepository {
      * @param tag the object that contain properties for new <code>Tag</code>
      * @return created <code>Tag</code>
      */
-    Tag create(Tag tag);
+    Tag save(Tag tag);
 
     /**
      * Create new tags by tag's names if any tags are not exist
      *
      * @param tags list of tags
      */
-    List<Tag> createNonExistent(List<Tag> tags);
+    List<Tag> saveNonExistent(List<Tag> tags);
 
     /**
      * Delete certain <code>Tag</code>
