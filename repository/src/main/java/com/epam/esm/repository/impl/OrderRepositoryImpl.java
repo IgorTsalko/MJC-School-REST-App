@@ -1,6 +1,6 @@
 package com.epam.esm.repository.impl;
 
-import com.epam.esm.common.ErrorDefinition;
+import com.epam.esm.common.exception.ErrorDefinition;
 import com.epam.esm.common.entity.Order;
 import com.epam.esm.common.exception.EntityNotFoundException;
 import com.epam.esm.repository.OrderRepository;

@@ -4,6 +4,8 @@ import com.epam.esm.common.entity.Tag;
 import com.epam.esm.server.mapper.TagMapper;
 import com.epam.esm.server.entity.TagRequest;
 import com.epam.esm.server.entity.TagResponse;
+import com.epam.esm.server.security.AdministratorAllowed;
+import com.epam.esm.server.security.UserAllowed;
 import com.epam.esm.service.TagService;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.Link;
@@ -41,6 +43,7 @@ public class TagController {
      * @param limit number of entities in the response
      * @return list of <code>Tags</code>
      */
+    @UserAllowed
     @GetMapping
     public CollectionModel<TagResponse> getTags(
             @RequestParam(required = false, defaultValue = "0") @PositiveOrZero int page,
@@ -71,6 +74,7 @@ public class TagController {
      * @param id specific tag's identifier
      * @return certain <code>Tag</code>
      */
+    @UserAllowed
     @GetMapping("/{id}")
     public ResponseEntity<TagResponse> getById(@PathVariable @Positive Long id) {
         TagResponse tagResponse = TagMapper.convertToResponse(tagService.findById(id));
@@ -84,6 +88,7 @@ public class TagController {
      * @param tagRequest the object that contain properties for new <code>Tag</code>
      * @return created <code>Tag</code>
      */
+    @AdministratorAllowed
     @PostMapping
     public ResponseEntity<TagResponse> create(@RequestBody @Valid TagRequest tagRequest) {
         Tag tag = tagService.create(TagMapper.convertToEntity(tagRequest));
@@ -98,6 +103,7 @@ public class TagController {
      * @param id specific tag's identifier
      * @return successful status code
      */
+    @AdministratorAllowed
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> delete(@PathVariable @Positive Long id) {
         tagService.delete(id);
@@ -110,6 +116,7 @@ public class TagController {
      *
      * @return found <code>Tag</code>
      */
+    @UserAllowed
     @GetMapping("/mostUsedTagForUserWithHighestCostOfAllOrders")
     public ResponseEntity<TagResponse> findMostUsedTagForUserWithHighestCostOfAllOrders() {
         Tag tag = tagService.findMostUsedTagForUserWithHighestCostOfAllOrders();

@@ -1,5 +1,5 @@
 plugins {
-    id "org.springframework.boot" version "${springBootPlaginVersion}"
+    id "org.springframework.boot" version "${springBootVersion}"
     id "io.spring.dependency-management" version "${springDependencyManagementVersion}"
 }
 
@@ -7,10 +7,10 @@ dependencies {
     implementation project(':common')
     implementation project(':service')
 
-    implementation "org.springframework.boot:spring-boot-starter-web:${starterVersion}"
-    implementation "org.springframework.boot:spring-boot-starter-security:${starterVersion}"
-    implementation "org.springframework.boot:spring-boot-starter-validation:${starterVersion}"
-    implementation "org.springframework.boot:spring-boot-starter-hateoas:${starterVersion}"
+    implementation "org.springframework.boot:spring-boot-starter-web:${springBootVersion}"
+    implementation "org.springframework.boot:spring-boot-starter-security:${springBootVersion}"
+    implementation "org.springframework.boot:spring-boot-starter-validation:${springBootVersion}"
+    implementation "org.springframework.boot:spring-boot-starter-hateoas:${springBootVersion}"
     implementation "org.springframework:spring-tx:${springVersion}"
     implementation "javax.persistence:javax.persistence-api:${persistenceApiVersion}"
 }

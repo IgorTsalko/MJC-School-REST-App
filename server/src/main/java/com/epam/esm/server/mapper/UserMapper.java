@@ -32,7 +32,7 @@ public class UserMapper {
                 .setFirstName(userRequest.getFirstName())
                 .setLastName(userRequest.getLastName())
                 .setEmail(userRequest.getEmail())
-                .setLogin(userRequest.getEmail())
+                .setLogin(userRequest.getLogin())
                 .setPassword(userRequest.getPassword());
     }
 }

@@ -13,13 +13,13 @@ public class UserRequest {
     @Size(min = 2, max = 50)
     private String lastName;
     @NotNull
-    @Size(min = 2, max = 50)
+    @Size(min = 5, max = 50)
     private String email;
     @NotNull
-    @Size(min = 2, max = 50)
+    @Size(min = 5, max = 50)
     private String login;
     @NotNull
-    @Size(min = 2, max = 50)
+    @Size(min = 6, max = 50)
     private String password;
 
     public String getFirstName() {

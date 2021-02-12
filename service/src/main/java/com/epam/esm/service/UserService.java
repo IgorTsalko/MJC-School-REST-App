@@ -8,47 +8,40 @@ import java.util.List;
 public interface UserService {
 
     /**
-     * Retrieve <code>Users</code> for appropriate parameters in an amount
+     * Retrieve list of {@link User} for appropriate parameters in an amount
      * equal to the <code>limit</code> for page number <code>page</code>.
      *
      * @param page number of page
      * @param limit number of entities in the response
-     * @return list of <code>Users</code>
+     * @return list of {@link User}
      */
     List<User> getUsers(int page, int limit);
 
     /**
-     * Retrieve <code>User</code> by certain id
+     * Retrieve {@link User} by certain id
      *
      * @param id specific user's identifier
-     * @return certain <code>User</code>
+     * @return certain {@link User}
      */
     User findById(Long id);
 
     /**
-     * Sign up new <code>User</code>
-     *
-     * @param user the object that contain properties for new <code>User</code>
-     */
-    void signUp(User user);
-
-    /**
-     * Retrieve list of <code>Orders</code> for certain <code>User</code> in an amount equal to
+     * Retrieve list of {@link Order} for certain user in an amount equal to
      * the <code>limit</code> for page number <code>page</code>
      *
      * @param id specific user's identifier
      * @param page number of page
      * @param limit number of entities in the response
-     * @return list of <code>Orders</code> for certain <code>User</code>
+     * @return list of {@link Order} for certain user
      */
     List<Order> getUserOrders(Long id, int page, int limit);
 
     /**
-     * Persist new <code>Order</code> for certain <code>User</code>
+     * Persist new {@link Order} for certain user
      *
      * @param order the object that contains data about new
-     *              <code>Order</code> for certain <code>User</code>
-     * @return created <code>Order</code>
+     *              {@link Order} for certain user
+     * @return created {@link Order}
      */
     Order createUserOrder(Long id, Order order);
 }

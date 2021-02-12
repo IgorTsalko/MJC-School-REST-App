@@ -5,6 +5,7 @@ import com.epam.esm.common.entity.CertificateSearchParams;
 import com.epam.esm.server.entity.*;
 import com.epam.esm.server.mapper.CertificateMapper;
 import com.epam.esm.server.mapper.SearchParamsMapper;
+import com.epam.esm.server.security.AdministratorAllowed;
 import com.epam.esm.service.CertificateService;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.Link;
@@ -102,6 +103,7 @@ public class CertificateController {
      * @param request the object that contain properties for new <code>Certificate</code>
      * @return created <code>Certificate</code>
      */
+    @AdministratorAllowed
     @PostMapping
     public ResponseEntity<CertificateResponse> create(@RequestBody @Valid CertificateCreateRequest request) {
         Certificate certificate = certificateService.create(CertificateMapper.convertToEntity(request));
@@ -122,6 +124,7 @@ public class CertificateController {
      * @param request the object that contain properties for updating or creating <code>Certificate</code>
      * @return updated or created <code>Certificate</code>
      */
+    @AdministratorAllowed
     @PutMapping("/{id}")
     public ResponseEntity<CertificateResponse> replace(
             @PathVariable @Positive Long id, @RequestBody @Valid CertificateCreateRequest request) {
@@ -142,6 +145,7 @@ public class CertificateController {
      * @param request the object that contain properties for updating <code>Certificate</code>
      * @return updated <code>Certificate</code>
      */
+    @AdministratorAllowed
     @PatchMapping("/{id}")
     public ResponseEntity<CertificateResponse> update(
             @PathVariable @Positive Long id, @RequestBody @Valid CertificateUpdateRequest request) {
@@ -161,6 +165,7 @@ public class CertificateController {
      * @param id specific certificate's identifier
      * @return successful status code <code>NO_CONTENT 204</code>
      */
+    @AdministratorAllowed
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> delete(@PathVariable @Positive Long id) {
         certificateService.delete(id);
