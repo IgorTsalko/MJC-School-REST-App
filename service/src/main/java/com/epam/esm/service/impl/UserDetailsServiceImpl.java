@@ -1,7 +1,7 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.common.entity.User;
-import com.epam.esm.common.exception.WrongCredentialException;
+import com.epam.esm.common.exception.BadCredentialsException;
 import com.epam.esm.repository.UserRepository;
 import com.epam.esm.service.util.UserDetailsFactory;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,7 +23,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         User user = userRepository.findByLogin(login);
 
         if (user == null) {
-            throw new WrongCredentialException();
+            throw new BadCredentialsException();
         }
 
         return UserDetailsFactory.create(user);

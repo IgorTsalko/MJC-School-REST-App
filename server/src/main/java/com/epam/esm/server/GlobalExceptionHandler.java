@@ -86,7 +86,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         if (auth == null) {
             exceptionResponse
-                    .setErrorCode(40102)
+                    .setErrorCode(40103)
                     .setDetails(List.of(messageSource.getMessage(AUTHORIZATION_REQUIRED, null, locale)));
             httpStatus = HttpStatus.UNAUTHORIZED;
         } else {

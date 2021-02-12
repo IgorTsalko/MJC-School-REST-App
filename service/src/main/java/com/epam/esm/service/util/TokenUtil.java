@@ -49,7 +49,7 @@ public class TokenUtil {
     public Authentication getAuthentication(String token) {
         String login = extractLogin(token);
         UserDetails userDetails = userDetailsService.loadUserByUsername(login);
-        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 
     public String extractLogin(String token) {
