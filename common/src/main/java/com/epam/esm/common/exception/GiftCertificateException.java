@@ -1,28 +1,30 @@
 package com.epam.esm.common.exception;
 
-import com.epam.esm.common.ErrorDefinition;
-
 public class GiftCertificateException extends RuntimeException {
 
     private ErrorDefinition errorDefinition;
-    private Long entityId;
+    private Object data;
 
-    public GiftCertificateException(ErrorDefinition errorDefinition, Long id) {
+    public GiftCertificateException(ErrorDefinition errorDefinition) {
         this.errorDefinition = errorDefinition;
-        this.entityId = id;
     }
 
-    public GiftCertificateException(ErrorDefinition errorDefinition, Long id, Throwable cause) {
+    public GiftCertificateException(ErrorDefinition errorDefinition, Object data) {
+        this.errorDefinition = errorDefinition;
+        this.data = data;
+    }
+
+    public GiftCertificateException(ErrorDefinition errorDefinition, Object data, Throwable cause) {
         super(cause);
         this.errorDefinition = errorDefinition;
-        this.entityId = id;
+        this.data = data;
     }
 
     public ErrorDefinition getErrorDefinition() {
         return errorDefinition;
     }
 
-    public Long getEntityId() {
-        return entityId;
+    public Object getData() {
+        return data;
     }
 }

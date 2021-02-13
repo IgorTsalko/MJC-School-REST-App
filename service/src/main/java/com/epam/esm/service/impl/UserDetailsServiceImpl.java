@@ -1,15 +1,15 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.common.entity.User;
+import com.epam.esm.common.exception.BadCredentialsException;
 import com.epam.esm.repository.UserRepository;
+import com.epam.esm.service.util.UserDetailsFactory;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final UserRepository userRepository;
@@ -23,13 +23,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         User user = userRepository.findByLogin(login);
 
         if (user == null) {
-            throw new UsernameNotFoundException("User with login: " + login + " not found"); //todo
+            throw new BadCredentialsException();
         }
 
-        return org.springframework.security.core.userdetails.User
-                .withUsername(user.getLogin())
-                .password(user.getPassword())
-                .roles(user.getRole().getTitle())
-                .build();
+        return UserDetailsFactory.create(user);
     }
 }

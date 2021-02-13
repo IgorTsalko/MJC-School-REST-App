@@ -47,16 +47,16 @@ public interface CertificateService {
     Certificate replace(Long id, Certificate certificate);
 
     /**
-     * Update certain fields of a certain <code>Certificate</code> and return it
+     * Update certain fields of a certain {@link Certificate} and return it
      *
      * @param id specific certificate's identifier
-     * @param certificate the object that contain properties for updating <code>Certificate</code>
-     * @return updated <code>Certificate</code>
+     * @param certificate the object that contain properties for updating {@link Certificate}
+     * @return updated {@link Certificate}
      */
     Certificate update(Long id, Certificate certificate);
 
     /**
-     * Delete <code>Certificate</code> by certain id
+     * Delete {@link Certificate} by certain id
      *
      * @param id specific certificate's identifier
      */

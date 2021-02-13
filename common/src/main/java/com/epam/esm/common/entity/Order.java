@@ -1,6 +1,6 @@
 package com.epam.esm.common.entity;
 
-import com.epam.esm.common.AuditablePersist;
+import com.epam.esm.common.audit.AuditablePersist;
 
 import javax.persistence.*;
 import java.math.BigDecimal;

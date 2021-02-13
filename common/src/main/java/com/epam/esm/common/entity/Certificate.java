@@ -1,7 +1,7 @@
 package com.epam.esm.common.entity;
 
-import com.epam.esm.common.AuditListener;
-import com.epam.esm.common.AuditableUpdate;
+import com.epam.esm.common.audit.AuditListener;
+import com.epam.esm.common.audit.AuditableUpdate;
 
 import javax.persistence.*;
 import java.math.BigDecimal;

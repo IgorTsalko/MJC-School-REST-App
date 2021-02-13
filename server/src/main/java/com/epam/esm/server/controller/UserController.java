@@ -6,6 +6,8 @@ import com.epam.esm.server.entity.OrderResponse;
 import com.epam.esm.server.entity.UserResponse;
 import com.epam.esm.server.mapper.OrderMapper;
 import com.epam.esm.server.mapper.UserMapper;
+import com.epam.esm.server.security.AdministratorAllowed;
+import com.epam.esm.server.security.UserAllowed;
 import com.epam.esm.service.UserService;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.Link;
@@ -45,6 +47,7 @@ public class UserController {
      * @param limit number of entities in the response
      * @return list of <code>Users</code>
      */
+    @AdministratorAllowed
     @GetMapping
     public CollectionModel<UserResponse> getUsers(
             @RequestParam(required = false, defaultValue = "0") @PositiveOrZero int page,
@@ -78,6 +81,7 @@ public class UserController {
      * @param id specific user's identifier
      * @return certain <code>User</code>
      */
+    @AdministratorAllowed
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse> getById(@PathVariable @Positive Long id) {
         UserResponse userResponse = UserMapper.convertToResponse(userService.findById(id));
@@ -102,6 +106,7 @@ public class UserController {
      * @param limit number of entities in the response
      * @return list of <code>Orders</code> for certain <code>User</code>
      */
+    @UserAllowed //todo: only own orders
     @GetMapping("/{id}/orders")
     public CollectionModel<OrderResponse> getUserOrders(
             @PathVariable @Positive Long id,
@@ -137,6 +142,7 @@ public class UserController {
      *              <code>Order</code> for certain <code>User</code>
      * @return created <code>Order</code>
      */
+    @UserAllowed
     @PostMapping("/{userId}/orders")
     public ResponseEntity<OrderResponse> createUserOrder(
             @PathVariable @Positive Long userId, @RequestBody @Valid OrderRequest orderRequest) {

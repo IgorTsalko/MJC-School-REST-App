@@ -1,4 +1,4 @@
-package com.epam.esm.common;
+package com.epam.esm.common.audit;
 
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;

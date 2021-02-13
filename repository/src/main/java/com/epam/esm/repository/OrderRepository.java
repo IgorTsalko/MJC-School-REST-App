@@ -1,46 +1,47 @@
 package com.epam.esm.repository;
 
 import com.epam.esm.common.entity.Order;
+import com.epam.esm.common.entity.User;
 
 import java.util.List;
 
 public interface OrderRepository {
 
     /**
-     * Retrieve list of <code>Orders</code> for appropriate id in an amount equal to
+     * Retrieve list of {@link Order} for appropriate id in an amount equal to
      * the <code>limit</code> for page number <code>page</code>
      *
      * @param page number of page
      * @param limit number of entities in the response
-     * @return list of <code>Orders</code>
+     * @return list of {@link Order}
      */
     List<Order> retrieveOrders(int page, int limit);
 
     /**
-     * Retrieve <code>Order</code> by certain id
+     * Retrieve {@link Order} by certain id
      *
      * @param id specific order's identifier
-     * @return certain <code>Order</code>
+     * @return certain {@link Order}
      */
     Order findById(Long id);
 
     /**
-     * Retrieve list of <code>Orders</code> for certain <code>User</code> in an amount equal to
+     * Retrieve list of {@link Order} for certain {@link User} in an amount equal to
      * the <code>limit</code> for page number <code>page</code>
      *
      * @param userId specific user's identifier
      * @param page number of page
      * @param limit number of entities in the response
-     * @return list of <code>Orders</code> for certain <code>User</code>
+     * @return list of {@link Order} for certain {@link User}
      */
     List<Order> retrieveUserOrders(Long userId, int page, int limit);
 
     /**
-     * Persist new <code>Order</code> for certain <code>User</code>
+     * Persist new {@link Order} for certain {@link User}
      *
      * @param order the object that contains data about new
-     *              <code>Order</code> for certain <code>User</code>
-     * @return created <code>Order</code>
+     *              {@link Order} for certain {@link User}
+     * @return created {@link Order}
      */
     Order save(Order order);
 }

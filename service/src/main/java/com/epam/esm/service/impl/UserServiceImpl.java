@@ -7,7 +7,6 @@ import com.epam.esm.repository.CertificateRepository;
 import com.epam.esm.repository.OrderRepository;
 import com.epam.esm.repository.UserRepository;
 import com.epam.esm.service.UserService;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,16 +19,13 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final OrderRepository orderRepository;
     private final CertificateRepository certificateRepository;
-    private final PasswordEncoder passwordEncoder;
 
     public UserServiceImpl(UserRepository userRepository,
                            OrderRepository orderRepository,
-                           CertificateRepository certificateRepository,
-                           PasswordEncoder passwordEncoder) {
+                           CertificateRepository certificateRepository) {
         this.userRepository = userRepository;
         this.orderRepository = orderRepository;
         this.certificateRepository = certificateRepository;
-        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -40,12 +36,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findById(Long id) {
         return userRepository.findById(id);
-    }
-
-    @Override
-    public void signUp(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
     }
 
     @Override

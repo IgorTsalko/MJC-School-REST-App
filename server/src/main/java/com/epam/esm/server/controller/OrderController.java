@@ -2,6 +2,7 @@ package com.epam.esm.server.controller;
 
 import com.epam.esm.server.entity.OrderResponse;
 import com.epam.esm.server.mapper.OrderMapper;
+import com.epam.esm.server.security.AdministratorAllowed;
 import com.epam.esm.service.OrderService;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.Link;
@@ -39,6 +40,7 @@ public class OrderController {
      * @param limit number of entities in the response
      * @return list of <code>Orders</code>
      */
+    @AdministratorAllowed
     @GetMapping
     public CollectionModel<OrderResponse> getOrders(
             @RequestParam(required = false, defaultValue = "0") @PositiveOrZero int page,
@@ -72,6 +74,7 @@ public class OrderController {
      * @param id specific order's identifier
      * @return certain <code>Order</code>
      */
+    @AdministratorAllowed
     @GetMapping("/{id}")
     public ResponseEntity<OrderResponse> get(@PathVariable @Positive Long id) {
         OrderResponse orderResponse = OrderMapper.convertToResponse(orderService.findById(id));

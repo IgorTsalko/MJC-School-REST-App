@@ -1,9 +1,12 @@
-package com.epam.esm.common;
+package com.epam.esm.common.exception;
 
 import org.springframework.http.HttpStatus;
 
 public enum ErrorDefinition {
 
+    TOKEN_INVALID(40001, "token.invalid", HttpStatus.BAD_REQUEST),
+    TOKEN_EXPIRED(40101, "token.expired", HttpStatus.UNAUTHORIZED),
+    WRONG_CREDENTIAL(40102, "bad-credentials", HttpStatus.UNAUTHORIZED),
     CERTIFICATE_NOT_FOUND(40401, "certificate.not-found", HttpStatus.NOT_FOUND),
     TAG_NOT_FOUND(40402, "tag.not-found", HttpStatus.NOT_FOUND),
     USER_NOT_FOUND(40403, "user.not-found", HttpStatus.NOT_FOUND),

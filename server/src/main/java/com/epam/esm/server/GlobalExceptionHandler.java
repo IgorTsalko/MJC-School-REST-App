@@ -1,6 +1,6 @@
 package com.epam.esm.server;
 
-import com.epam.esm.common.ErrorDefinition;
+import com.epam.esm.common.exception.ErrorDefinition;
 import com.epam.esm.common.exception.GiftCertificateException;
 import com.epam.esm.server.entity.ExceptionResponse;
 import org.springframework.beans.TypeMismatchException;
@@ -13,6 +13,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.BindException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -28,10 +30,12 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @ControllerAdvice
-public class GlobalControllerExceptionHandler extends ResponseEntityExceptionHandler {
+public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     private final static String DATABASE_CONFLICT = "database-conflict";
     private final static String BAD_REQUEST = "bad-request";
+    private final static String ACCESS_DENIED = "access-denied";
+    private final static String AUTHORIZATION_REQUIRED = "authorization-required";
     private final static String DATABASE_EXCEPTION = "database-exception";
     private final static String REQUEST_INCORRECT_VALUE = "request.incorrect-value";
     private final static String REQUEST_INCORRECT_PARAM = "request.incorrect-param";
@@ -41,7 +45,7 @@ public class GlobalControllerExceptionHandler extends ResponseEntityExceptionHan
 
     private final MessageSource messageSource;
 
-    public GlobalControllerExceptionHandler(MessageSource messageSource) {
+    public GlobalExceptionHandler(MessageSource messageSource) {
         this.messageSource = messageSource;
     }
 
@@ -61,7 +65,7 @@ public class GlobalControllerExceptionHandler extends ResponseEntityExceptionHan
                 .setErrorCode(errorDefinition.getErrorCode())
                 .setDetails(List.of(messageSource.getMessage(
                         errorDefinition.getErrorMessageTemplate(),
-                        new Object[]{ex.getEntityId()},
+                        new Object[] {ex.getData()},
                         locale))
                 );
         return new ResponseEntity<>(exceptionResponse, errorDefinition.getHttpStatus());
@@ -75,10 +79,30 @@ public class GlobalControllerExceptionHandler extends ResponseEntityExceptionHan
         return new ResponseEntity<>(exceptionResponse, HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler(AccessDeniedException.class)
+    protected ResponseEntity<Object> handleDataAccess(AccessDeniedException ex, Locale locale, Authentication auth) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse();
+        HttpStatus httpStatus;
+
+        if (auth == null) {
+            exceptionResponse
+                    .setErrorCode(40103)
+                    .setDetails(List.of(messageSource.getMessage(AUTHORIZATION_REQUIRED, null, locale)));
+            httpStatus = HttpStatus.UNAUTHORIZED;
+        } else {
+            exceptionResponse
+                    .setErrorCode(40301)
+                    .setDetails(List.of(messageSource.getMessage(ACCESS_DENIED, null, locale)));
+            httpStatus = HttpStatus.FORBIDDEN;
+        }
+
+        return new ResponseEntity<>(exceptionResponse, httpStatus);
+    }
+
     @ExceptionHandler(DataAccessException.class)
     protected ResponseEntity<Object> handleDataAccess(DataAccessException ex, Locale locale) {
         ExceptionResponse exceptionResponse = new ExceptionResponse()
-                .setErrorCode(40001)
+                .setErrorCode(40002)
                 .setDetails(List.of(messageSource.getMessage(DATABASE_EXCEPTION, null, locale)));
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
@@ -86,7 +110,7 @@ public class GlobalControllerExceptionHandler extends ResponseEntityExceptionHan
     @ExceptionHandler(InvalidDataAccessResourceUsageException.class)
     protected ResponseEntity<Object> handleDataAccess(InvalidDataAccessResourceUsageException ex, Locale locale) {
         ExceptionResponse exceptionResponse = new ExceptionResponse()
-                .setErrorCode(40002)
+                .setErrorCode(40003)
                 .setDetails(List.of(messageSource.getMessage(BAD_REQUEST, null, locale)));
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
@@ -100,7 +124,7 @@ public class GlobalControllerExceptionHandler extends ResponseEntityExceptionHan
                 .collect(Collectors.toList());
 
         ExceptionResponse exceptionResponse = new ExceptionResponse()
-                .setErrorCode(40003)
+                .setErrorCode(40004)
                 .setDetails(details);
 
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
@@ -114,7 +138,7 @@ public class GlobalControllerExceptionHandler extends ResponseEntityExceptionHan
                 .collect(Collectors.toList());
 
         ExceptionResponse exceptionResponse = new ExceptionResponse()
-                .setErrorCode(40004)
+                .setErrorCode(40005)
                 .setDetails(details);
 
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
@@ -124,7 +148,7 @@ public class GlobalControllerExceptionHandler extends ResponseEntityExceptionHan
     protected ResponseEntity<Object> handleTypeMismatch(
             TypeMismatchException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         ExceptionResponse exceptionResponse = new ExceptionResponse()
-                .setErrorCode(40005)
+                .setErrorCode(40006)
                 .setDetails(List.of(messageSource.getMessage(
                         REQUEST_INCORRECT_VALUE,
                         new Object[]{ex.getValue()},
@@ -144,7 +168,7 @@ public class GlobalControllerExceptionHandler extends ResponseEntityExceptionHan
                 .collect(Collectors.toList());
 
         ExceptionResponse exceptionResponse = new ExceptionResponse()
-                .setErrorCode(40006)
+                .setErrorCode(40007)
                 .setDetails(details);
 
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
@@ -154,7 +178,7 @@ public class GlobalControllerExceptionHandler extends ResponseEntityExceptionHan
     protected ResponseEntity<Object> handleHttpMessageNotReadable(
             HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         ExceptionResponse exceptionResponse = new ExceptionResponse()
-                .setErrorCode(40007)
+                .setErrorCode(40008)
                 .setDetails(List.of(messageSource.getMessage(
                         REQUEST_INCORRECT_BODY,
                         null,
@@ -167,7 +191,7 @@ public class GlobalControllerExceptionHandler extends ResponseEntityExceptionHan
     protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(
             HttpRequestMethodNotSupportedException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         ExceptionResponse exceptionResponse = new ExceptionResponse()
-                .setErrorCode(40008)
+                .setErrorCode(40009)
                 .setDetails(List.of(messageSource.getMessage(
                         METHOD_NOT_SUPPORTED,
                         null,

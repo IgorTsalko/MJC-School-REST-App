@@ -1,10 +1,11 @@
 package com.epam.esm.repository.impl;
 
-import com.epam.esm.common.ErrorDefinition;
+import com.epam.esm.common.exception.ErrorDefinition;
 import com.epam.esm.common.entity.User;
 import com.epam.esm.common.exception.EntityNotFoundException;
 import com.epam.esm.repository.UserRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -15,8 +16,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     private static final String JPQL_SELECT_ALL = "from User u order by u.id";
     private static final String JPQL_SELECT_BY_ID = "select distinct u from User u left join fetch u.orders where u.id=:id";
-    private static final String JPQL_SELECT_BY_LOGIN
-            = "select distinct u from User u left join fetch u.orders where u.login=:login";
+    private static final String JPQL_SELECT_BY_LOGIN = "from User u where u.login=:login";
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -39,12 +39,13 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    @Transactional
     public User findByLogin(String login) {
         return entityManager.createQuery(JPQL_SELECT_BY_LOGIN, User.class)
                 .setParameter("login", login)
                 .getResultStream()
                 .findAny()
-                .orElse(null); //todo: null or exception?
+                .orElse(null);
     }
 
     @Override
