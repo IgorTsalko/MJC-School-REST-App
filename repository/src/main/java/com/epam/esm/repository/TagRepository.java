@@ -1,6 +1,6 @@
 package com.epam.esm.repository;
 
-import com.epam.esm.common.entity.Certificate;
+import com.epam.esm.common.entity.GiftCertificate;
 import com.epam.esm.common.entity.Tag;
 
 import java.util.List;
@@ -15,10 +15,10 @@ public interface TagRepository {
      * @param limit number of entities in the response
      * @return list of {@link Tag}
      */
-    List<Tag> retrieveTags(int page, int limit);
+    List<Tag> getTags(int page, int limit);
 
     /**
-     * Retrieve certain {@link Tag} for appropriate id.
+     * Find {@link Tag} by <code>id</code> and return it
      *
      * @param id specific tag's identifier
      * @return certain {@link Tag}
@@ -26,30 +26,30 @@ public interface TagRepository {
     Tag findById(Long id);
 
     /**
-     * Retrieves certificate connections with matching tags for appropriate {@link Certificate}
+     * Retrieve certificate connections with matching tags for appropriate {@link GiftCertificate}
      *
      * @param certificateId specific certificate's identifier
-     * @return list of tags for the appropriate {@link Certificate}
+     * @return list of tags for the appropriate {@link GiftCertificate}
      */
-    List<Tag> retrieveCertificateTags(Long certificateId);
+    List<Tag> getCertificateTags(Long certificateId);
 
     /**
-     * Create new <code>Tag</code> and return it
+     * Persist new {@link Tag} and return it
      *
-     * @param tag the object that contain properties for new {@link Tag}
+     * @param tag the object that contain properties for new <code>Tag</code>
      * @return created {@link Tag}
      */
-    Tag save(Tag tag);
+    Tag create(Tag tag);
 
     /**
      * Create new tags by tag's names if any tags are not exist
      *
      * @param tags list of {@link Tag}
      */
-    List<Tag> saveNonExistent(List<Tag> tags);
+    List<Tag> createNonExistent(List<Tag> tags);
 
     /**
-     * Delete certain {@link Tag}
+     * Delete {@link Tag} by <code>id</code>
      *
      * @param id specific tag's identifier
      */

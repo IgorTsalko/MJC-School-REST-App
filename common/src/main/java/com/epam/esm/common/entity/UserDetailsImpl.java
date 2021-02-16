@@ -10,16 +10,23 @@ import java.util.Objects;
 
 public class UserDetailsImpl implements UserDetails {
 
+    private final Long id;
     private final String login;
     private final String password;
     private final Collection<? extends GrantedAuthority> authorities;
 
-    public UserDetailsImpl(String login,
+    public UserDetailsImpl(Long id,
+                           String login,
                            String password,
                            String role) {
+        this.id = id;
         this.login = login;
         this.password = password;
         this.authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
+    }
+
+    public Long getId() {
+        return id;
     }
 
     @Override
@@ -62,20 +69,22 @@ public class UserDetailsImpl implements UserDetails {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         UserDetailsImpl that = (UserDetailsImpl) o;
-        return Objects.equals(login, that.login)
+        return Objects.equals(id, that.id)
+                && Objects.equals(login, that.login)
                 && Objects.equals(password, that.password)
                 && Objects.equals(authorities, that.authorities);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(login, password, authorities);
+        return Objects.hash(id, login, password, authorities);
     }
 
     @Override
     public String toString() {
         return this.getClass().getSimpleName() + "{" +
-                "login='" + login + '\'' +
+                "id=" + id +
+                ", login='" + login + '\'' +
                 ", password='" + password + '\'' +
                 ", authorities=" + authorities +
                 '}';

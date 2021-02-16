@@ -20,7 +20,7 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public List<Tag> getTags(int page, int limit) {
-        return tagRepository.retrieveTags(page, limit);
+        return tagRepository.getTags(page, limit);
     }
 
     @Override
@@ -30,7 +30,7 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public Tag create(Tag tag) {
-        return tagRepository.save(tag);
+        return tagRepository.create(tag);
     }
 
     @Override

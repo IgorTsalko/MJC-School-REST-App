@@ -7,43 +7,43 @@ import java.util.List;
 public interface TagService {
 
     /**
-     * Retrieve all <code>Tags</code> in an amount equal to the
+     * Retrieve list of {@link Tag} in an amount equal to the
      * <code>limit</code> for page number <code>page</code>.
      *
      * @param page number of page
      * @param limit number of entities in the response
-     * @return list of <code>Tags</code>
+     * @return list of {@link Tag}
      */
     List<Tag> getTags(int page, int limit);
 
     /**
-     * Retrieve certain <code>Tag</code> for appropriate id.
+     * Find {@link Tag} by <code>id</code> and return it
      *
      * @param id specific tag's identifier
-     * @return certain <code>Tag</code>
+     * @return certain {@link Tag}
      */
     Tag findById(Long id);
 
     /**
-     * Create new <code>Tag</code> and return it
+     * Persist new {@link Tag} and return it
      *
      * @param tag the object that contain properties for new <code>Tag</code>
-     * @return created <code>Tag</code>
+     * @return created {@link Tag}
      */
     Tag create(Tag tag);
 
     /**
-     * Delete certain <code>Tag</code>
+     * Delete {@link Tag} by <code>id</code>
      *
      * @param id specific tag's identifier
      */
     void delete(Long id);
 
     /**
-     * Find the most widely used <code>Tag</code> of a user with the highest
+     * Find the most widely used {@link Tag} of a user with the highest
      * cost of all orders
      *
-     * @return found <code>Tag</code>
+     * @return found {@link Tag}
      */
     Tag findMostUsedTagForUserWithHighestCostOfAllOrders();
 }

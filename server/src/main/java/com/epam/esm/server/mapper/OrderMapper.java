@@ -13,7 +13,7 @@ public class OrderMapper {
         return new OrderResponse()
                 .setOrderId(order.getOrderId())
                 .setUserId(order.getUserId())
-                .setCertificateId(order.getCertificateId())
+                .setGiftCertificateId(order.getGiftCertificateId())
                 .setPrice(order.getPrice())
                 .setCreateDate(order.getCreateDate());
     }
@@ -23,6 +23,6 @@ public class OrderMapper {
     }
 
     public static Order convertToEntity(OrderRequest orderRequest) {
-        return new Order().setCertificateId(orderRequest.getCertificateId());
+        return new Order().setGiftCertificateId(orderRequest.getGiftCertificateId());
     }
 }

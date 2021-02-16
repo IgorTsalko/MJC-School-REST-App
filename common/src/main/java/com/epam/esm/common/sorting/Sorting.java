@@ -2,16 +2,16 @@ package com.epam.esm.common.sorting;
 
 import java.util.Objects;
 
-public class CertificateSorting {
+public class Sorting {
 
-    private CertificateColumn column;
+    private Column column;
     private SortOrder sortOrder;
 
-    public CertificateColumn getColumn() {
+    public Column getColumn() {
         return column;
     }
 
-    public CertificateSorting setColumn(CertificateColumn column) {
+    public Sorting setColumn(GiftCertificateColumn column) {
         this.column = column;
         return this;
     }
@@ -20,7 +20,7 @@ public class CertificateSorting {
         return sortOrder;
     }
 
-    public CertificateSorting setSortOrder(SortOrder sortOrder) {
+    public Sorting setSortOrder(SortOrder sortOrder) {
         this.sortOrder = sortOrder;
         return this;
     }
@@ -29,7 +29,7 @@ public class CertificateSorting {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        CertificateSorting that = (CertificateSorting) o;
+        Sorting that = (Sorting) o;
         return column == that.column && sortOrder == that.sortOrder;
     }
 

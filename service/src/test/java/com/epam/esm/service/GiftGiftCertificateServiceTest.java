@@ -4,12 +4,12 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.*;
 
-import com.epam.esm.common.entity.Certificate;
-import com.epam.esm.common.entity.CertificateSearchParams;
+import com.epam.esm.common.entity.GiftCertificate;
+import com.epam.esm.common.entity.GiftCertificateParams;
 import com.epam.esm.common.entity.Tag;
-import com.epam.esm.repository.impl.CertificateRepositoryImpl;
+import com.epam.esm.repository.impl.GiftCertificateRepositoryImpl;
 import com.epam.esm.repository.impl.TagRepositoryImpl;
-import com.epam.esm.service.impl.CertificateServiceImpl;
+import com.epam.esm.service.impl.GiftCertificateServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -22,122 +22,122 @@ import java.util.List;
 import java.util.Map;
 
 @ExtendWith(MockitoExtension.class)
-public class CertificateServiceTest {
+public class GiftGiftCertificateServiceTest {
 
     @InjectMocks
-    CertificateServiceImpl certificateService;
+    GiftCertificateServiceImpl certificateService;
     @Mock
-    CertificateRepositoryImpl certificateRepository;
+    GiftCertificateRepositoryImpl certificateRepository;
     @Mock
     TagRepositoryImpl tagRepository;
 
     @Test
-    public void getAllCertificates(@Mock CertificateSearchParams paramsMock) {
-        List<Certificate> expCerts = getMockCertificates();
+    public void getAllCertificates(@Mock GiftCertificateParams paramsMock) {
+        List<GiftCertificate> expCerts = getMockCertificates();
         Map<Long, List<Tag>> expTags = getMockCertificatesTags();
         expCerts.forEach(c -> c.setTags(expTags.get(c.getId())));
 
-        List<Certificate> certs = getMockCertificates();
+        List<GiftCertificate> certs = getMockCertificates();
         Map<Long, List<Tag>> tags = getMockCertificatesTags();
         certs.forEach(c -> c.setTags(tags.get(c.getId())));
-        when(certificateRepository.retrieveCertificates(paramsMock, 1, 20)).thenReturn(certs);
-        List<Certificate> actualCerts = certificateService.getCertificates(paramsMock, 1, 20);
+        when(certificateRepository.getGiftCertificates(paramsMock, 1, 20)).thenReturn(certs);
+        List<GiftCertificate> actualCerts = certificateService.getGiftCertificates(paramsMock, 1, 20);
 
         assertEquals(expCerts, actualCerts);
-        verify(certificateRepository, only()).retrieveCertificates(paramsMock, 1, 20);
+        verify(certificateRepository, only()).getGiftCertificates(paramsMock, 1, 20);
     }
 
     @Test
     public void getCertificateById() {
-        Certificate expCert = new Certificate().setId(2L).setTitle("Spa");
+        GiftCertificate expCert = new GiftCertificate().setId(2L).setTitle("Spa");
         List<Tag> tags = getMockTags();
         expCert.setTags(tags);
-        Certificate cert = new Certificate().setId(2L).setTitle("Spa");
+        GiftCertificate cert = new GiftCertificate().setId(2L).setTitle("Spa");
 
-        when(tagRepository.retrieveCertificateTags(anyLong())).thenReturn(tags);
+        when(tagRepository.getCertificateTags(anyLong())).thenReturn(tags);
         when(certificateRepository.findById(anyLong())).thenReturn(cert);
-        Certificate actualCert = certificateService.findById(anyLong());
+        GiftCertificate actualCert = certificateService.findById(anyLong());
 
         assertEquals(expCert, actualCert);
-        verify(tagRepository, only()).retrieveCertificateTags(anyLong());
+        verify(tagRepository, only()).getCertificateTags(anyLong());
         verify(certificateRepository, only()).findById(anyLong());
     }
 
     @Test
-    public void createNewCertificateWithoutTags(@Mock Certificate certMock) {
-        Certificate expCert = new Certificate().setId(2L).setTitle("Spa");
+    public void createNewCertificateWithoutTags(@Mock GiftCertificate certMock) {
+        GiftCertificate expCert = new GiftCertificate().setId(2L).setTitle("Spa");
         List<Tag> expTags = getMockTagsWithoutId();
         expCert.setTags(expTags);
 
-        when(certificateRepository.save(certMock)).thenReturn(expCert);
-        Certificate actualCert = certificateService.create(certMock);
+        when(certificateRepository.create(certMock)).thenReturn(expCert);
+        GiftCertificate actualCert = certificateService.create(certMock);
 
         assertEquals(expCert, actualCert);
-        verify(certificateRepository).save(certMock);
+        verify(certificateRepository).create(certMock);
         verifyNoMoreInteractions(certificateRepository, tagRepository);
     }
 
     @Test
-    public void updateCertificateWithTags(@Mock Certificate certMock) {
-        Certificate expCert = getMockCertificate();
+    public void updateCertificateWithTags(@Mock GiftCertificate certMock) {
+        GiftCertificate expCert = getMockCertificate();
         List<Tag> expTags = getMockTags();
         expCert.setTags(expTags);
 
-        Certificate cert = getMockCertificate();
+        GiftCertificate cert = getMockCertificate();
         List<Tag> tags = getMockTagsWithoutId();
         cert.setTags(tags);
 
-        when(tagRepository.saveNonExistent(anyList())).thenReturn(expTags);
-        when(tagRepository.retrieveCertificateTags(anyLong())).thenReturn(expTags);
+        when(tagRepository.createNonExistent(anyList())).thenReturn(expTags);
+        when(tagRepository.getCertificateTags(anyLong())).thenReturn(expTags);
         when(certificateRepository.update(1L, certMock)).thenReturn(cert);
-        Certificate actualCert = certificateService.update(1L, certMock);
+        GiftCertificate actualCert = certificateService.update(1L, certMock);
 
         assertEquals(expCert, actualCert);
 
-        verify(tagRepository).saveNonExistent(anyList());
-        verify(tagRepository).retrieveCertificateTags(anyLong());
+        verify(tagRepository).createNonExistent(anyList());
+        verify(tagRepository).getCertificateTags(anyLong());
         verify(certificateRepository).update(1L, certMock);
         verifyNoMoreInteractions(certificateRepository, tagRepository);
     }
 
     @Test
-    public void updateCertificateWithEmptyTags(@Mock Certificate certMock) {
-        Certificate expCert = getMockCertificate();
+    public void updateCertificateWithEmptyTags(@Mock GiftCertificate certMock) {
+        GiftCertificate expCert = getMockCertificate();
         List<Tag> expTags = getMockTags();
         expCert.setTags(expTags);
 
-        Certificate cert = getMockCertificate();
+        GiftCertificate cert = getMockCertificate();
         List<Tag> tags = new ArrayList<>();
         cert.setTags(tags);
 
-        when(tagRepository.retrieveCertificateTags(anyLong())).thenReturn(expTags);
+        when(tagRepository.getCertificateTags(anyLong())).thenReturn(expTags);
         when(certificateRepository.update(1L, certMock)).thenReturn(cert);
-        Certificate actualCert = certificateService.update(1L, certMock);
+        GiftCertificate actualCert = certificateService.update(1L, certMock);
 
         assertEquals(expCert, actualCert);
 
-        verify(tagRepository).retrieveCertificateTags(anyLong());
+        verify(tagRepository).getCertificateTags(anyLong());
         verify(certificateRepository).update(1L, certMock);
         verifyNoMoreInteractions(certificateRepository);
     }
 
     @Test
-    public void updateCertificateWithNullTags(@Mock Certificate certMock) {
-        Certificate expCert = getMockCertificate();
+    public void updateCertificateWithNullTags(@Mock GiftCertificate certMock) {
+        GiftCertificate expCert = getMockCertificate();
         List<Tag> expTags = getMockTags();
         expCert.setTags(expTags);
 
-        Certificate cert = getMockCertificate();
+        GiftCertificate cert = getMockCertificate();
         List<Tag> tags = getMockTags();
 
-        when(tagRepository.retrieveCertificateTags(anyLong())).thenReturn(tags);
-        when(certificateRepository.update(eq(1L), any(Certificate.class))).thenReturn(cert);
-        Certificate actualCert = certificateService.update(1L, cert);
+        when(tagRepository.getCertificateTags(anyLong())).thenReturn(tags);
+        when(certificateRepository.update(eq(1L), any(GiftCertificate.class))).thenReturn(cert);
+        GiftCertificate actualCert = certificateService.update(1L, cert);
 
         assertEquals(expCert, actualCert);
 
-        verify(tagRepository, only()).retrieveCertificateTags(anyLong());
-        verify(certificateRepository, only()).update(eq(1L), any(Certificate.class));
+        verify(tagRepository, only()).getCertificateTags(anyLong());
+        verify(certificateRepository, only()).update(eq(1L), any(GiftCertificate.class));
     }
 
     @Test
@@ -146,11 +146,11 @@ public class CertificateServiceTest {
         verify(certificateRepository, only()).delete(anyLong());
     }
 
-    private List<Certificate> getMockCertificates() {
+    private List<GiftCertificate> getMockCertificates() {
         return List.of(
-                new Certificate().setId(1L).setTitle("Trip around the world"),
-                new Certificate().setId(2L).setTitle("Spa"),
-                new Certificate().setId(5L).setTitle("Sailing")
+                new GiftCertificate().setId(1L).setTitle("Trip around the world"),
+                new GiftCertificate().setId(2L).setTitle("Spa"),
+                new GiftCertificate().setId(5L).setTitle("Sailing")
         );
     }
 
@@ -175,8 +175,8 @@ public class CertificateServiceTest {
         );
     }
 
-    private Certificate getMockCertificate() {
-        return new Certificate()
+    private GiftCertificate getMockCertificate() {
+        return new GiftCertificate()
                 .setId(1L)
                 .setTitle("newUpdatedName")
                 .setPrice(BigDecimal.valueOf(120.0))

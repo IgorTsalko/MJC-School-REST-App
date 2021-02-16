@@ -15,13 +15,13 @@ public class TagRepositoryImpl implements TagRepository {
 
     private static final String JPQL_SELECT_ALL = "from Tag t order by t.id";
     private static final String JPQL_SELECT_BY_NAME = "from Tag where title in (:titles)";
-    private static final String JPQL_SELECT_CERTIFICATE_TAGS = "select c.tags from Certificate c where c.id=:id";
+    private static final String JPQL_SELECT_CERTIFICATE_TAGS = "select c.tags from GiftCertificate c where c.id=:id";
 
     private static final String SQL_FIND_MOST_USED_TAG_FOR_USER_WITH_HIGHEST_COST_OF_ALL_ORDERS =
             "select t.id, t.title " +
                     "from \"user\" u " +
                     "         join \"order\" o on u.id = o.user_id " +
-                    "         join gift_certificate gc on gc.id = o.certificate_id " +
+                    "         join gift_certificate gc on gc.id = o.gift_certificate_id " +
                     "         left join gift_certificate_tag gct on gc.id = gct.gift_certificate_id " +
                     "         left join tag t on t.id = gct.tag_id " +
                     "where u.id = (select user_id from \"order\" group by user_id order by sum(price) desc limit 1) " +
@@ -33,7 +33,7 @@ public class TagRepositoryImpl implements TagRepository {
     private EntityManager entityManager;
 
     @Override
-    public List<Tag> retrieveTags(int page, int limit) {
+    public List<Tag> getTags(int page, int limit) {
         return entityManager.createQuery(JPQL_SELECT_ALL, Tag.class)
                 .setFirstResult((page - 1) * limit)
                 .setMaxResults(limit)
@@ -51,14 +51,14 @@ public class TagRepositoryImpl implements TagRepository {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Tag> retrieveCertificateTags(Long certificateId) {
+    public List<Tag> getCertificateTags(Long certificateId) {
         return entityManager.createQuery(JPQL_SELECT_CERTIFICATE_TAGS)
                 .setParameter("id", certificateId)
                 .getResultList();
     }
 
     @Override
-    public Tag save(Tag tag) {
+    public Tag create(Tag tag) {
         entityManager.persist(tag);
         return tag;
     }
@@ -71,7 +71,7 @@ public class TagRepositoryImpl implements TagRepository {
     }
 
     @Override
-    public List<Tag> saveNonExistent(List<Tag> tags) {
+    public List<Tag> createNonExistent(List<Tag> tags) {
         List<Tag> existingTags = findByName(tags);
         List<Tag> nonexistentTags = tags.stream()
                 .filter(exist -> existingTags

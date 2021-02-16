@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.BindException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -35,6 +36,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     private final static String DATABASE_CONFLICT = "database-conflict";
     private final static String BAD_REQUEST = "bad-request";
     private final static String ACCESS_DENIED = "access-denied";
+    private final static String BAD_CREDENTIALS = "bad-credentials";
     private final static String AUTHORIZATION_REQUIRED = "authorization-required";
     private final static String DATABASE_EXCEPTION = "database-exception";
     private final static String REQUEST_INCORRECT_VALUE = "request.incorrect-value";
@@ -77,6 +79,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 .setErrorCode(40901)
                 .setDetails(List.of(messageSource.getMessage(DATABASE_CONFLICT, null, locale)));
         return new ResponseEntity<>(exceptionResponse, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    protected ResponseEntity<Object> handleDataAccess(AuthenticationException ex, Locale locale) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse()
+                .setErrorCode(40102)
+                .setDetails(List.of(messageSource.getMessage(BAD_CREDENTIALS, null, locale)));
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(AccessDeniedException.class)

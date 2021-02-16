@@ -1,19 +1,21 @@
 package com.epam.esm.server.entity;
 
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.util.Objects;
 
 public class OrderRequest {
 
+    @NotNull
     @Positive
-    private Long certificateId;
+    private Long giftCertificateId;
 
-    public Long getCertificateId() {
-        return certificateId;
+    public Long getGiftCertificateId() {
+        return giftCertificateId;
     }
 
-    public void setCertificateId(Long certificateId) {
-        this.certificateId = certificateId;
+    public void setGiftCertificateId(Long giftCertificateId) {
+        this.giftCertificateId = giftCertificateId;
     }
 
     @Override
@@ -21,18 +23,18 @@ public class OrderRequest {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         OrderRequest that = (OrderRequest) o;
-        return Objects.equals(certificateId, that.certificateId);
+        return Objects.equals(giftCertificateId, that.giftCertificateId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(certificateId);
+        return Objects.hash(giftCertificateId);
     }
 
     @Override
     public String toString() {
         return this.getClass().getSimpleName() + "{" +
-                "certificateId=" + certificateId +
+                "giftCertificateId=" + giftCertificateId +
                 '}';
     }
 }

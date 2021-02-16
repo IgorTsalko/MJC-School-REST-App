@@ -1,13 +1,15 @@
 package com.epam.esm.server.controller;
 
 import com.epam.esm.common.entity.Order;
+import com.epam.esm.common.entity.User;
 import com.epam.esm.server.entity.OrderRequest;
 import com.epam.esm.server.entity.OrderResponse;
 import com.epam.esm.server.entity.UserResponse;
 import com.epam.esm.server.mapper.OrderMapper;
 import com.epam.esm.server.mapper.UserMapper;
 import com.epam.esm.server.security.AdministratorAllowed;
-import com.epam.esm.server.security.UserAllowed;
+import com.epam.esm.server.security.UserAllowedOnlyOwn;
+import com.epam.esm.service.OrderService;
 import com.epam.esm.service.UserService;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.Link;
@@ -29,23 +31,26 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/v1/users")
 @Validated
 public class UserController {
 
     private final UserService userService;
+    private final OrderService orderService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService,
+                          OrderService orderService) {
         this.userService = userService;
+        this.orderService = orderService;
     }
 
     /**
-     * Retrieve <code>Users</code> for appropriate parameters in an amount
+     * Retrieve list of {@link User} for appropriate parameters in an amount
      * equal to the <code>limit</code> for page number <code>page</code>.
      *
      * @param page number of page
      * @param limit number of entities in the response
-     * @return list of <code>Users</code>
+     * @return list of {@link User} represented as list of {@link UserResponse}
      */
     @AdministratorAllowed
     @GetMapping
@@ -56,9 +61,9 @@ public class UserController {
         List<UserResponse> users = userService.getUsers(pageNumber, limit)
                 .stream().map(UserMapper::convertToResponseWithoutOrders).collect(Collectors.toList());
         users.forEach(u -> {
-            u.add(linkTo(methodOn(UserController.class).getById(u.getId())).withSelfRel());
+            u.add(linkTo(methodOn(UserController.class).findById(u.getId())).withSelfRel());
             u.add(linkTo(methodOn(UserController.class)
-                    .getUserOrders(u.getId(), 1, 20)).withRel("allOrders").expand());
+                    .findOrdersByUserId(u.getId(), 1, 20)).withRel("userOrders").expand());
         });
 
         List<Link> links = new ArrayList<>();
@@ -76,49 +81,70 @@ public class UserController {
     }
 
     /**
-     * Retrieve <code>User</code> by certain id
+     * Find {@link User} by <code>id</code> and return it represented as {@link UserResponse}
      *
      * @param id specific user's identifier
-     * @return certain <code>User</code>
+     * @return certain {@link User} represented as {@link UserResponse}
      */
-    @AdministratorAllowed
+    @UserAllowedOnlyOwn
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponse> getById(@PathVariable @Positive Long id) {
+    public ResponseEntity<UserResponse> findById(@PathVariable @Positive Long id) {
         UserResponse userResponse = UserMapper.convertToResponse(userService.findById(id));
-        userResponse.add(linkTo(methodOn(UserController.class).getById(id)).withSelfRel());
+        userResponse.add(linkTo(methodOn(UserController.class).findById(id)).withSelfRel());
         userResponse.add(linkTo(methodOn(UserController.class)
-                .getUserOrders(id, 1, 20)).withRel("allOrders").expand());
+                .findOrdersByUserId(id, 1, 20)).withRel("userOrders").expand());
         userResponse.getOrders()
                 .forEach(o -> {
-                    o.add(linkTo(methodOn(OrderController.class).get(o.getOrderId())).withSelfRel());
-                    o.add(linkTo(methodOn(UserController.class).getById(o.getUserId())).withRel("user"));
-                    o.add(linkTo(methodOn(CertificateController.class).getById(o.getCertificateId())).withRel("certificate"));
+                    o.add(linkTo(methodOn(OrderController.class).findById(o.getOrderId())).withSelfRel());
+                    o.add(linkTo(methodOn(UserController.class).findById(o.getUserId())).withRel("user"));
+                    o.add(linkTo(methodOn(GiftCertificateController.class)
+                            .findById(o.getGiftCertificateId())).withRel("giftCertificate"));
                 });
         return ResponseEntity.ok(userResponse);
     }
 
     /**
-     * Retrieve list of <code>Orders</code> for certain <code>User</code> in an amount equal to
+     * Persist new {@link Order} for certain {@link User}
+     *
+     * @param orderRequest the object that contains data about new
+     *              {@link Order} for certain {@link User}
+     * @return created {@link Order} represented as {@link OrderResponse}
+     */
+    @UserAllowedOnlyOwn
+    @PostMapping("/{id}/orders")
+    public ResponseEntity<OrderResponse> createOrderForUser(
+            @PathVariable @Positive Long id, @RequestBody @Valid OrderRequest orderRequest) {
+        Order order = orderService.create(id, OrderMapper.convertToEntity(orderRequest));
+        OrderResponse orderResponse = OrderMapper.convertToResponse(order);
+        orderResponse.add(linkTo(methodOn(UserController.class).createOrderForUser(id, orderRequest)).withSelfRel());
+        orderResponse.add(linkTo(methodOn(GiftCertificateController.class)
+                .findById(orderResponse.getGiftCertificateId())).withRel("giftCertificate"));
+        return new ResponseEntity<>(orderResponse, HttpStatus.CREATED);
+    }
+
+    /**
+     * Find list of {@link Order} for certain {@link User} in an amount equal to
      * the <code>limit</code> for page number <code>page</code>
      *
      * @param id specific user's identifier
      * @param page number of page
      * @param limit number of entities in the response
-     * @return list of <code>Orders</code> for certain <code>User</code>
+     * @return list of {@link Order} for certain {@link User} represented
+     * as list of {@link OrderResponse}
      */
-    @UserAllowed //todo: only own orders
+    @UserAllowedOnlyOwn
     @GetMapping("/{id}/orders")
-    public CollectionModel<OrderResponse> getUserOrders(
+    public CollectionModel<OrderResponse> findOrdersByUserId(
             @PathVariable @Positive Long id,
             @RequestParam(required = false, defaultValue = "0") @PositiveOrZero int page,
             @RequestParam(required = false, defaultValue = "${page.limit-default}") @Min(1) @Max(50) int limit) {
         int pageNumber = page == 0 ? 1 : page;
-        List<OrderResponse> userOrders = userService.getUserOrders(id, pageNumber, limit)
+        List<OrderResponse> userOrders = orderService.findOrdersByUserId(id, pageNumber, limit)
                 .stream().map(OrderMapper::convertToResponse).collect(Collectors.toList());
         userOrders.forEach(o -> {
-            o.add(linkTo(methodOn(OrderController.class).get(o.getOrderId())).withSelfRel());
-            o.add(linkTo(methodOn(UserController.class).getById(o.getUserId())).withRel("user"));
-            o.add(linkTo(methodOn(CertificateController.class).getById(o.getCertificateId())).withRel("certificate"));
+            o.add(linkTo(methodOn(OrderController.class).findById(o.getOrderId())).withSelfRel());
+            o.add(linkTo(methodOn(UserController.class).findById(o.getUserId())).withRel("user"));
+            o.add(linkTo(methodOn(GiftCertificateController.class).findById(o.getGiftCertificateId())).withRel("giftCertificate"));
         });
 
         List<Link> links = new ArrayList<>();
@@ -133,24 +159,5 @@ public class UserController {
         }
 
         return CollectionModel.of(userOrders, links);
-    }
-
-    /**
-     * Persist new <code>Order</code> for certain <code>User</code>
-     *
-     * @param orderRequest the object that contains data about new
-     *              <code>Order</code> for certain <code>User</code>
-     * @return created <code>Order</code>
-     */
-    @UserAllowed
-    @PostMapping("/{userId}/orders")
-    public ResponseEntity<OrderResponse> createUserOrder(
-            @PathVariable @Positive Long userId, @RequestBody @Valid OrderRequest orderRequest) {
-        Order order = userService.createUserOrder(userId, OrderMapper.convertToEntity(orderRequest));
-        OrderResponse orderResponse = OrderMapper.convertToResponse(order);
-        orderResponse.add(linkTo(methodOn(UserController.class).createUserOrder(userId, orderRequest)).withSelfRel());
-        orderResponse.add(linkTo(methodOn(CertificateController.class)
-                .getById(orderResponse.getCertificateId())).withRel("certificate"));
-        return new ResponseEntity<>(orderResponse, HttpStatus.CREATED);
     }
 }

@@ -1,20 +1,20 @@
 package com.epam.esm.server.mapper;
 
-import com.epam.esm.common.entity.CertificateSearchParams;
-import com.epam.esm.common.sorting.CertificateColumn;
-import com.epam.esm.common.sorting.CertificateSorting;
+import com.epam.esm.common.entity.GiftCertificateParams;
+import com.epam.esm.common.sorting.GiftCertificateColumn;
+import com.epam.esm.common.sorting.Sorting;
 import com.epam.esm.common.sorting.SortOrder;
-import com.epam.esm.server.entity.CertificateSearchParamsRequest;
+import com.epam.esm.server.entity.GiftCertificateParamsRequest;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class SearchParamsMapper {
+public class GiftCertificateParamsMapper {
 
-    public static CertificateSearchParams convertToEntity(CertificateSearchParamsRequest searchParamsRequest) {
-        CertificateSearchParams searchParams = new CertificateSearchParams()
+    public static GiftCertificateParams convertToEntity(GiftCertificateParamsRequest searchParamsRequest) {
+        GiftCertificateParams searchParams = new GiftCertificateParams()
                 .setTitle(searchParamsRequest.getTitle())
                 .setDescription(searchParamsRequest.getDescription());
 
@@ -25,14 +25,14 @@ public class SearchParamsMapper {
         }
 
         if (searchParamsRequest.getSorting() != null) {
-            List<CertificateSorting> sorting = new ArrayList<>();
+            List<Sorting> sorting = new ArrayList<>();
             List<String> sorts = List.of(searchParamsRequest.getSorting().split(","));
             for (String sort : sorts) {
-                CertificateSorting certificateSorting = new CertificateSorting();
+                Sorting certificateSorting = new Sorting();
                 List<String> certSort = Arrays.stream(sort.split(":"))
                         .map(String::trim)
                         .collect(Collectors.toList());
-                certificateSorting.setColumn(CertificateColumn.valueOf(certSort.get(0).toUpperCase()));
+                certificateSorting.setColumn(GiftCertificateColumn.valueOf(certSort.get(0).toUpperCase()));
                 if (certSort.size() == 2) {
                     certificateSorting.setSortOrder(SortOrder.valueOf(certSort.get(1).toUpperCase()));
                 } else {
@@ -40,7 +40,7 @@ public class SearchParamsMapper {
                 }
                 sorting.add(certificateSorting);
             }
-            searchParams.setSorting(sorting);
+            searchParams.setSorts(sorting);
         }
 
         return searchParams;

@@ -17,8 +17,8 @@ public class Order implements AuditablePersist {
     private Long orderId;
     @Column(name = "user_id")
     private Long userId;
-    @Column(name = "certificate_id")
-    private Long certificateId;
+    @Column(name = "gift_certificate_id")
+    private Long giftCertificateId;
     private BigDecimal price;
     @Column(name = "create_date", updatable = false)
     private LocalDateTime createDate;
@@ -41,12 +41,12 @@ public class Order implements AuditablePersist {
         return this;
     }
 
-    public Long getCertificateId() {
-        return certificateId;
+    public Long getGiftCertificateId() {
+        return giftCertificateId;
     }
 
-    public Order setCertificateId(Long certificateId) {
-        this.certificateId = certificateId;
+    public Order setGiftCertificateId(Long certificateId) {
+        this.giftCertificateId = certificateId;
         return this;
     }
 
@@ -75,14 +75,14 @@ public class Order implements AuditablePersist {
         Order order = (Order) o;
         return Objects.equals(orderId, order.orderId)
                 && Objects.equals(userId, order.userId)
-                && Objects.equals(certificateId, order.certificateId)
+                && Objects.equals(giftCertificateId, order.giftCertificateId)
                 && Objects.equals(price, order.price)
                 && Objects.equals(createDate, order.createDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(orderId, userId, certificateId, price, createDate);
+        return Objects.hash(orderId, userId, giftCertificateId, price, createDate);
     }
 
     @Override
@@ -90,7 +90,7 @@ public class Order implements AuditablePersist {
         return this.getClass().getSimpleName() + "{" +
                 "orderId=" + orderId +
                 ", userId=" + userId +
-                ", certificateId=" + certificateId +
+                ", giftCertificateId=" + giftCertificateId +
                 ", price=" + price +
                 ", createDate=" + createDate +
                 '}';

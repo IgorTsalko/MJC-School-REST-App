@@ -1,5 +1,6 @@
 package com.epam.esm.server.controller;
 
+import com.epam.esm.common.entity.Order;
 import com.epam.esm.server.entity.OrderResponse;
 import com.epam.esm.server.mapper.OrderMapper;
 import com.epam.esm.server.security.AdministratorAllowed;
@@ -22,7 +23,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
-@RequestMapping("/orders")
+@RequestMapping("/v1/orders")
 @Validated
 public class OrderController {
 
@@ -33,12 +34,12 @@ public class OrderController {
     }
 
     /**
-     * Retrieve list of <code>Orders</code> for appropriate id in an amount equal to
+     * Retrieve list of {@link Order} for appropriate id in an amount equal to
      * the <code>limit</code> for page number <code>page</code>
      *
      * @param page number of page
      * @param limit number of entities in the response
-     * @return list of <code>Orders</code>
+     * @return list of {@link Order} represented as list of {@link OrderResponse}
      */
     @AdministratorAllowed
     @GetMapping
@@ -49,9 +50,9 @@ public class OrderController {
         List<OrderResponse> orders = orderService.getOrders(pageNumber, limit)
                 .stream().map(OrderMapper::convertToResponse).collect(Collectors.toList());
         orders.forEach(o -> {
-            o.add(linkTo(methodOn(OrderController.class).get(o.getOrderId())).withSelfRel());
-            o.add(linkTo(methodOn(UserController.class).getById(o.getUserId())).withRel("user"));
-            o.add(linkTo(methodOn(CertificateController.class).getById(o.getCertificateId())).withRel("certificate"));
+            o.add(linkTo(methodOn(OrderController.class).findById(o.getOrderId())).withSelfRel());
+            o.add(linkTo(methodOn(UserController.class).findById(o.getUserId())).withRel("user"));
+            o.add(linkTo(methodOn(GiftCertificateController.class).findById(o.getGiftCertificateId())).withRel("giftCertificate"));
         });
 
         List<Link> links = new ArrayList<>();
@@ -69,20 +70,20 @@ public class OrderController {
     }
 
     /**
-     * Retrieve <code>Order</code> by certain id
+     * Find {@link Order} by <code>id</code>
      *
      * @param id specific order's identifier
-     * @return certain <code>Order</code>
+     * @return certain {@link Order} represented as {@link OrderResponse}
      */
     @AdministratorAllowed
     @GetMapping("/{id}")
-    public ResponseEntity<OrderResponse> get(@PathVariable @Positive Long id) {
+    public ResponseEntity<OrderResponse> findById(@PathVariable @Positive Long id) {
         OrderResponse orderResponse = OrderMapper.convertToResponse(orderService.findById(id));
-        orderResponse.add(linkTo(methodOn(OrderController.class).get(id)).withSelfRel());
+        orderResponse.add(linkTo(methodOn(OrderController.class).findById(id)).withSelfRel());
         orderResponse.add(linkTo(methodOn(UserController.class)
-                .getById(orderResponse.getUserId())).withRel("user"));
-        orderResponse.add(linkTo(methodOn(CertificateController.class)
-                .getById(orderResponse.getCertificateId())).withRel("certificate"));
+                .findById(orderResponse.getUserId())).withRel("user"));
+        orderResponse.add(linkTo(methodOn(GiftCertificateController.class)
+                .findById(orderResponse.getGiftCertificateId())).withRel("giftCertificate"));
         return ResponseEntity.ok(orderResponse);
     }
 }
