@@ -7,7 +7,6 @@ import com.epam.esm.server.entity.UserRequest;
 import com.epam.esm.server.mapper.CredentialsMapper;
 import com.epam.esm.server.mapper.UserMapper;
 import com.epam.esm.service.AuthService;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,10 +32,9 @@ public class AuthController {
      * @return authorization {@link Token}
      */
     @PostMapping("/sign-in")
-    public ResponseEntity<Object> signIn(@RequestBody @Valid CredentialsRequest credentialsRequest) {
+    public ResponseEntity<Token> signIn(@RequestBody @Valid CredentialsRequest credentialsRequest) {
         Token token = authService.signIn(CredentialsMapper.convertToEntity(credentialsRequest));
-        return ResponseEntity.noContent()
-                .header(HttpHeaders.AUTHORIZATION, token.getValue()).build();
+        return ResponseEntity.ok(token);
     }
 
     /**

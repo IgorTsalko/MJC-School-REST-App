@@ -1,5 +1,6 @@
-package com.epam.esm.service;
+package com.epam.esm.server.security;
 
+import com.epam.esm.service.TokenHandler;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;

@@ -1,6 +1,5 @@
 package com.epam.esm.server.security;
 
-import com.epam.esm.service.AuthenticationHandler;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

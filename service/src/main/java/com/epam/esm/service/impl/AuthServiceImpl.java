@@ -6,7 +6,9 @@ import com.epam.esm.common.entity.User;
 import com.epam.esm.repository.UserRepository;
 import com.epam.esm.service.AuthService;
 import com.epam.esm.service.TokenHandler;
-import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,13 +17,15 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class AuthServiceImpl implements AuthService {
 
+    private final AuthenticationManager authManager;
     private final UserRepository userRepository;
     private final TokenHandler tokenHandler;
     private final PasswordEncoder passwordEncoder;
 
-    public AuthServiceImpl(UserRepository userRepository,
+    public AuthServiceImpl(AuthenticationManager authManager, UserRepository userRepository,
                            TokenHandler tokenHandler,
                            PasswordEncoder passwordEncoder) {
+        this.authManager = authManager;
         this.userRepository = userRepository;
         this.tokenHandler = tokenHandler;
         this.passwordEncoder = passwordEncoder;
@@ -29,13 +33,9 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public Token signIn(Credentials credentials) {
-        User user = userRepository.findByLogin(credentials.getLogin());
-
-        if (user == null || !passwordEncoder.matches(credentials.getPassword(), user.getPassword())) {
-            throw new BadCredentialsException("Bad credentials: " + credentials);
-        }
-
-        return tokenHandler.generateAccessToken(user);
+        Authentication authentication = authManager.authenticate(
+                new UsernamePasswordAuthenticationToken(credentials.getLogin(), credentials.getPassword()));
+        return tokenHandler.generateAccessToken(authentication.getName());
     }
 
     @Override

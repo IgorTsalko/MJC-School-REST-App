@@ -10,8 +10,7 @@ import com.epam.esm.common.sorting.SortOrder;
 import com.epam.esm.common.entity.Tag;
 import com.epam.esm.common.exception.EntityNotFoundException;
 import com.epam.esm.repository.config.RepositoryConfigTest;
-import com.epam.esm.repository.impl.GiftCertificateRepositoryImpl;
-import com.epam.esm.repository.impl.TagRepositoryImpl;
+import com.epam.esm.repository.impl.GiftCertificateRepositoryOldImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -37,7 +36,7 @@ public class GiftGiftCertificateRepositoryTest {
     static LocalDateTime t = LocalDateTime.parse("2021-01-13T18:27:45.610874");
 
     @Autowired
-    GiftCertificateRepositoryImpl certificateRepository;
+    GiftCertificateRepositoryOldImpl certificateRepository;
     @Autowired
     TagRepositoryImpl tagRepository;
 

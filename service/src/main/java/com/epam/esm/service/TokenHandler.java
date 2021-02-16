@@ -1,7 +1,6 @@
 package com.epam.esm.service;
 
 import com.epam.esm.common.entity.Token;
-import com.epam.esm.common.entity.User;
 import com.epam.esm.common.exception.TokenExpiredException;
 import com.epam.esm.common.exception.TokenInvalidException;
 import io.jsonwebtoken.*;
@@ -26,11 +25,11 @@ public class TokenHandler {
         secret = Base64.getEncoder().encodeToString(secret.getBytes());
     }
 
-    public Token generateAccessToken(User user) {
+    public Token generateAccessToken(String login) {
         Date now = new Date();
         return new Token(
                 Jwts.builder()
-                        .setClaims(Jwts.claims().setSubject(user.getLogin()))
+                        .setClaims(Jwts.claims().setSubject(login))
                         .setIssuedAt(now)
                         .setExpiration(new Date(now.getTime() + validityTime * 1000))
                         .signWith(SignatureAlgorithm.HS256, secret)

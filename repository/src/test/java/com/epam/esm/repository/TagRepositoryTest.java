@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.epam.esm.common.entity.Tag;
 import com.epam.esm.common.exception.EntityNotFoundException;
 import com.epam.esm.repository.config.RepositoryConfigTest;
-import com.epam.esm.repository.impl.TagRepositoryImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;

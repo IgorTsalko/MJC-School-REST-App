@@ -2,7 +2,7 @@ package com.epam.esm.service.impl;
 
 import com.epam.esm.common.entity.GiftCertificate;
 import com.epam.esm.common.entity.Order;
-import com.epam.esm.repository.GiftCertificateRepository;
+import com.epam.esm.repository.GiftCertificateRepositoryOld;
 import com.epam.esm.repository.OrderRepository;
 import com.epam.esm.service.OrderService;
 import org.springframework.stereotype.Service;
@@ -15,12 +15,12 @@ import java.util.List;
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
-    private final GiftCertificateRepository giftCertificateRepository;
+    private final GiftCertificateRepositoryOld giftCertificateRepositoryOld;
 
     public OrderServiceImpl(OrderRepository orderRepository,
-                            GiftCertificateRepository giftCertificateRepository) {
+                            GiftCertificateRepositoryOld giftCertificateRepositoryOld) {
         this.orderRepository = orderRepository;
-        this.giftCertificateRepository = giftCertificateRepository;
+        this.giftCertificateRepositoryOld = giftCertificateRepositoryOld;
     }
 
     @Override
@@ -35,7 +35,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order create(Long userId, Order order) {
-        GiftCertificate giftCertificate = giftCertificateRepository.findById(order.getGiftCertificateId());
+        GiftCertificate giftCertificate = giftCertificateRepositoryOld.findById(order.getGiftCertificateId());
         order.setPrice(giftCertificate.getPrice());
         order.setUserId(userId);
         return orderRepository.create(order);

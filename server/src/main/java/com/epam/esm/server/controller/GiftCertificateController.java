@@ -18,7 +18,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -53,12 +52,11 @@ public class GiftCertificateController {
     @GetMapping
     public CollectionModel<GiftCertificateResponse> getGiftCertificates(
             @Valid GiftCertificateParamsRequest paramsRequest,
-            @RequestParam(required = false, defaultValue = "0") @PositiveOrZero int page,
+            @RequestParam(required = false, defaultValue = "1") @Positive int page,
             @RequestParam(required = false, defaultValue = "${page.limit-default}") @Min(1) @Max(50) int limit) {
-        int pageNumber = page == 0 ? 1 : page;
         GiftCertificateParams params = GiftCertificateParamsMapper.convertToEntity(paramsRequest);
 
-        List<GiftCertificateResponse> certificates = giftCertificateService.getGiftCertificates(params, pageNumber, limit)
+        List<GiftCertificateResponse> certificates = giftCertificateService.getGiftCertificates(params, page, limit)
                 .stream().map(GiftCertificateMapper::convertToResponse)
                 .collect(Collectors.toList());
         certificates.forEach(c -> {
@@ -72,7 +70,7 @@ public class GiftCertificateController {
         links.add(linkTo(methodOn(GiftCertificateController.class)
                 .getGiftCertificates(paramsRequest, 1, limit)).withRel("first"));
 
-        if (page > 0 && certificates.size() == limit) {
+        if (certificates.size() == limit) {
             links.add(linkTo(methodOn(GiftCertificateController.class)
                     .getGiftCertificates(paramsRequest, page + 1, limit)).withRel("next"));
         }

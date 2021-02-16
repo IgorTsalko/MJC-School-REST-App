@@ -1,7 +1,6 @@
 package com.epam.esm.repository.config;
 
-import com.epam.esm.repository.impl.GiftCertificateRepositoryImpl;
-import com.epam.esm.repository.impl.TagRepositoryImpl;
+import com.epam.esm.repository.impl.GiftCertificateRepositoryOldImpl;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -44,8 +43,8 @@ public class RepositoryConfigTest {
     }
 
     @Bean
-    public GiftCertificateRepositoryImpl certificateRepository() {
-        return new GiftCertificateRepositoryImpl();
+    public GiftCertificateRepositoryOldImpl certificateRepository() {
+        return new GiftCertificateRepositoryOldImpl();
     }
 
     @Bean
