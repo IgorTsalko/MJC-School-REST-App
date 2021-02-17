@@ -1,6 +1,6 @@
 package com.epam.esm.common.sorting;
 
-public enum CertificateColumn {
+public enum GiftCertificateColumn implements Column {
 
     ID("id"),
     TITLE("title"),
@@ -11,10 +11,11 @@ public enum CertificateColumn {
 
     private final String columnTitle;
 
-    CertificateColumn(String columnTitle) {
+    GiftCertificateColumn(String columnTitle) {
         this.columnTitle = columnTitle;
     }
 
+    @Override
     public String getColumnTitle() {
         return columnTitle;
     }

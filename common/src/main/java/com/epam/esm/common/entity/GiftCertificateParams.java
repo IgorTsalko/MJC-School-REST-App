@@ -1,22 +1,22 @@
 package com.epam.esm.common.entity;
 
-import com.epam.esm.common.sorting.CertificateSorting;
+import com.epam.esm.common.sorting.Sorting;
 
 import java.util.List;
 import java.util.Objects;
 
-public class CertificateSearchParams {
+public class GiftCertificateParams {
 
     private String title;
     private String description;
     private List<String> tagTitles;
-    private List<CertificateSorting> sorting;
+    private List<Sorting> sorts;
 
     public String getTitle() {
         return title;
     }
 
-    public CertificateSearchParams setTitle(String title) {
+    public GiftCertificateParams setTitle(String title) {
         this.title = title;
         return this;
     }
@@ -25,7 +25,7 @@ public class CertificateSearchParams {
         return description;
     }
 
-    public CertificateSearchParams setDescription(String description) {
+    public GiftCertificateParams setDescription(String description) {
         this.description = description;
         return this;
     }
@@ -34,17 +34,17 @@ public class CertificateSearchParams {
         return tagTitles;
     }
 
-    public CertificateSearchParams setTagTitles(List<String> tagTitles) {
+    public GiftCertificateParams setTagTitles(List<String> tagTitles) {
         this.tagTitles = tagTitles;
         return this;
     }
 
-    public List<CertificateSorting> getSorting() {
-        return sorting;
+    public List<Sorting> getSorts() {
+        return sorts;
     }
 
-    public CertificateSearchParams setSorting(List<CertificateSorting> sorting) {
-        this.sorting = sorting;
+    public GiftCertificateParams setSorts(List<Sorting> sorts) {
+        this.sorts = sorts;
         return this;
     }
 
@@ -52,16 +52,16 @@ public class CertificateSearchParams {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        CertificateSearchParams that = (CertificateSearchParams) o;
+        GiftCertificateParams that = (GiftCertificateParams) o;
         return Objects.equals(title, that.title)
                 && Objects.equals(description, that.description)
                 && Objects.equals(tagTitles, that.tagTitles)
-                && Objects.equals(sorting, that.sorting);
+                && Objects.equals(sorts, that.sorts);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(title, description, tagTitles, sorting);
+        return Objects.hash(title, description, tagTitles, sorts);
     }
 
     @Override
@@ -70,7 +70,7 @@ public class CertificateSearchParams {
                 "title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", tags=" + tagTitles +
-                ", sorting=" + sorting +
+                ", sorts=" + sorts +
                 '}';
     }
 }

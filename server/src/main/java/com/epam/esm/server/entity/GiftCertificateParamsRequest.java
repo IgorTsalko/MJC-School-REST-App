@@ -4,7 +4,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.Objects;
 
-public class CertificateSearchParamsRequest {
+public class GiftCertificateParamsRequest {
 
     @Size(min = 1, max = 255)
     private String title;
@@ -51,7 +51,7 @@ public class CertificateSearchParamsRequest {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        CertificateSearchParamsRequest that = (CertificateSearchParamsRequest) o;
+        GiftCertificateParamsRequest that = (GiftCertificateParamsRequest) o;
         return Objects.equals(title, that.title)
                 && Objects.equals(description, that.description)
                 && Objects.equals(tags, that.tags)

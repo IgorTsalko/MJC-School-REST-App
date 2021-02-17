@@ -7,17 +7,17 @@ import java.util.List;
 public interface UserRepository {
 
     /**
-     * Retrieve {@link User} for appropriate parameters in an amount
+     * Retrieve list of {@link User} for appropriate parameters in an amount
      * equal to the <code>limit</code> for page number <code>page</code>.
      *
      * @param page number of page
      * @param limit number of entities in the response
      * @return list of {@link User}
      */
-    List<User> findUsers(int page, int limit);
+    List<User> getUsers(int page, int limit);
 
     /**
-     * Retrieve {@link User} by certain id
+     * Find {@link User} by <code>id</code> and return it
      *
      * @param id specific user's identifier
      * @return certain {@link User}
@@ -33,9 +33,9 @@ public interface UserRepository {
     User findByLogin(String login);
 
     /**
-     * Sign up new {@link User}
+     * Persist a new {@link User}
      *
      * @param user the object that contain properties for new {@link User}
      */
-    void save(User user);
+    void create(User user);
 }

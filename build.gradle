@@ -19,6 +19,7 @@ subprojects {
         javaxValidationVersion              = '2.0.1.Final'
         persistenceApiVersion               = '2.2'
         h2_dbVersion                        = '1.4.200'
+        jjwtVersion                        = '0.9.1'
     }
 
     test {

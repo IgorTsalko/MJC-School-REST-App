@@ -12,7 +12,7 @@ import java.util.Objects;
 @EntityListeners(AuditListener.class)
 @Entity
 @Table(name = "gift_certificate")
-public class Certificate implements AuditableUpdate {
+public class GiftCertificate implements AuditableUpdate {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,7 +36,7 @@ public class Certificate implements AuditableUpdate {
         return id;
     }
 
-    public Certificate setId(Long id) {
+    public GiftCertificate setId(Long id) {
         this.id = id;
         return this;
     }
@@ -45,7 +45,7 @@ public class Certificate implements AuditableUpdate {
         return title;
     }
 
-    public Certificate setTitle(String name) {
+    public GiftCertificate setTitle(String name) {
         this.title = name;
         return this;
     }
@@ -54,7 +54,7 @@ public class Certificate implements AuditableUpdate {
         return description;
     }
 
-    public Certificate setDescription(String description) {
+    public GiftCertificate setDescription(String description) {
         this.description = description;
         return this;
     }
@@ -63,7 +63,7 @@ public class Certificate implements AuditableUpdate {
         return price;
     }
 
-    public Certificate setPrice(BigDecimal price) {
+    public GiftCertificate setPrice(BigDecimal price) {
         this.price = price;
         return this;
     }
@@ -72,7 +72,7 @@ public class Certificate implements AuditableUpdate {
         return duration;
     }
 
-    public Certificate setDuration(Integer duration) {
+    public GiftCertificate setDuration(Integer duration) {
         this.duration = duration;
         return this;
     }
@@ -99,7 +99,7 @@ public class Certificate implements AuditableUpdate {
         return tags;
     }
 
-    public Certificate setTags(List<Tag> tags) {
+    public GiftCertificate setTags(List<Tag> tags) {
         this.tags = tags;
         return this;
     }
@@ -108,7 +108,7 @@ public class Certificate implements AuditableUpdate {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Certificate that = (Certificate) o;
+        GiftCertificate that = (GiftCertificate) o;
         return Objects.equals(id, that.id)
                 && Objects.equals(title, that.title)
                 && Objects.equals(description, that.description)

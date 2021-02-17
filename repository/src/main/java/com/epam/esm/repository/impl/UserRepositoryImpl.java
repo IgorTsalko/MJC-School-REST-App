@@ -22,7 +22,7 @@ public class UserRepositoryImpl implements UserRepository {
     private EntityManager entityManager;
 
     @Override
-    public List<User> findUsers(int page, int limit) {
+    public List<User> getUsers(int page, int limit) {
         return entityManager.createQuery(JPQL_SELECT_ALL, User.class)
                 .setFirstResult((page - 1) * limit)
                 .setMaxResults(limit)
@@ -49,7 +49,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void save(User user) {
+    public void create(User user) {
         entityManager.persist(user);
     }
 }

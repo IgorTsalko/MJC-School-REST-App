@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.BindException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -35,6 +36,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     private final static String DATABASE_CONFLICT = "database-conflict";
     private final static String BAD_REQUEST = "bad-request";
     private final static String ACCESS_DENIED = "access-denied";
+    private final static String BAD_CREDENTIALS = "bad-credentials";
     private final static String AUTHORIZATION_REQUIRED = "authorization-required";
     private final static String DATABASE_EXCEPTION = "database-exception";
     private final static String REQUEST_INCORRECT_VALUE = "request.incorrect-value";
@@ -49,14 +51,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         this.messageSource = messageSource;
     }
 
-    @ExceptionHandler(Throwable.class)
-    protected ResponseEntity<Object> handleThrowable(Throwable throwable, Locale locale) {
-        ExceptionResponse exceptionResponse = new ExceptionResponse()
-                .setErrorCode(50001)
-                .setDetails(List.of(messageSource.getMessage(SERVER_ERROR, null, locale)));
-
-        return new ResponseEntity<>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+//    @ExceptionHandler(Throwable.class)
+//    protected ResponseEntity<Object> handleThrowable(Throwable throwable, Locale locale) {
+//        ExceptionResponse exceptionResponse = new ExceptionResponse()
+//                .setErrorCode(50001)
+//                .setDetails(List.of(messageSource.getMessage(SERVER_ERROR, null, locale)));
+//
+//        return new ResponseEntity<>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+//    }
 
     @ExceptionHandler(GiftCertificateException.class)
     protected ResponseEntity<Object> handleGiftCertificateException(GiftCertificateException ex, Locale locale) {
@@ -79,6 +81,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(exceptionResponse, HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler(AuthenticationException.class)
+    protected ResponseEntity<Object> handleDataAccess(AuthenticationException ex, Locale locale) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse()
+                .setErrorCode(40102)
+                .setDetails(List.of(messageSource.getMessage(BAD_CREDENTIALS, null, locale)));
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.UNAUTHORIZED);
+    }
+
     @ExceptionHandler(AccessDeniedException.class)
     protected ResponseEntity<Object> handleDataAccess(AccessDeniedException ex, Locale locale, Authentication auth) {
         ExceptionResponse exceptionResponse = new ExceptionResponse();
@@ -99,13 +109,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(exceptionResponse, httpStatus);
     }
 
-    @ExceptionHandler(DataAccessException.class)
-    protected ResponseEntity<Object> handleDataAccess(DataAccessException ex, Locale locale) {
-        ExceptionResponse exceptionResponse = new ExceptionResponse()
-                .setErrorCode(40002)
-                .setDetails(List.of(messageSource.getMessage(DATABASE_EXCEPTION, null, locale)));
-        return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
-    }
+//    @ExceptionHandler(DataAccessException.class)
+//    protected ResponseEntity<Object> handleDataAccess(DataAccessException ex, Locale locale) {
+//        ExceptionResponse exceptionResponse = new ExceptionResponse()
+//                .setErrorCode(40002)
+//                .setDetails(List.of(messageSource.getMessage(DATABASE_EXCEPTION, null, locale)));
+//        return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+//    }
 
     @ExceptionHandler(InvalidDataAccessResourceUsageException.class)
     protected ResponseEntity<Object> handleDataAccess(InvalidDataAccessResourceUsageException ex, Locale locale) {

@@ -7,11 +7,11 @@ dependencies {
     implementation project(":common")
     implementation project(":repository")
 
-    implementation "org.springframework:spring-tx:${springBootVersion}"
     implementation "org.springframework.boot:spring-boot-starter:${springBootVersion}"
     implementation "org.springframework.boot:spring-boot-starter-security:${springBootVersion}"
+    implementation "org.springframework.boot:spring-boot-starter-data-jpa:${springBootVersion}"
     implementation "org.springframework:spring-tx:${springVersion}"
-    implementation "io.jsonwebtoken:jjwt:0.9.1"
+    implementation "io.jsonwebtoken:jjwt:${jjwtVersion}"
 
     testImplementation project(':repository')
     testImplementation("org.springframework.boot:spring-boot-starter-test:${springBootVersion}") {

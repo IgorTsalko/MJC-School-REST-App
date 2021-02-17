@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import com.epam.esm.common.entity.Tag;
-import com.epam.esm.repository.impl.TagRepositoryImpl;
 import com.epam.esm.service.impl.TagServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,11 +27,11 @@ public class TagServiceTest {
                 new Tag().setId(1L).setTitle("incredible"),
                 new Tag().setId(2L).setTitle("travel")
         );
-        when(tagRepository.retrieveTags(1, 20)).thenReturn(expTags);
+        when(tagRepository.getTags(1, 20)).thenReturn(expTags);
         List<Tag> actualTags = tagService.getTags(1, 20);
 
         assertEquals(expTags, actualTags);
-        verify(tagRepository, only()).retrieveTags(1, 20);
+        verify(tagRepository, only()).getTags(1, 20);
     }
 
     @Test
@@ -49,12 +48,12 @@ public class TagServiceTest {
     @Test
     public void createNewTag(@Mock Tag tag) {
         Tag expTag = new Tag().setId(1L).setTitle("incredible");
-        when(tagRepository.save(tag)).thenReturn(expTag);
+        when(tagRepository.create(tag)).thenReturn(expTag);
 
         Tag actualTag = tagService.create(tag);
 
         assertEquals(expTag, actualTag);
-        verify(tagRepository, only()).save(tag);
+        verify(tagRepository, only()).create(tag);
     }
 
     @Test

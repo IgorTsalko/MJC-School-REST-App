@@ -2,6 +2,8 @@ package com.epam.esm.server.security.config;
 
 import com.epam.esm.server.security.BadCredentialsFilter;
 import com.epam.esm.server.security.TokenFilter;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -19,6 +21,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         this.tokenFilter = tokenFilter;
     }
 
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
@@ -26,7 +34,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .addFilterBefore(tokenFilter, BasicAuthenticationFilter.class)
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
+                .csrf().disable()
+                .formLogin().disable()
                 .httpBasic().disable()
-                .csrf().disable();
+                .logout().disable();
     }
 }

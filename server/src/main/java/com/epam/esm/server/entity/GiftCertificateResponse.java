@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
-public class CertificateResponse extends RepresentationModel<CertificateResponse> {
+public class GiftCertificateResponse extends RepresentationModel<GiftCertificateResponse> {
 
     private Long id;
     private String title;
@@ -27,7 +27,7 @@ public class CertificateResponse extends RepresentationModel<CertificateResponse
         return id;
     }
 
-    public CertificateResponse setId(Long id) {
+    public GiftCertificateResponse setId(Long id) {
         this.id = id;
         return this;
     }
@@ -36,7 +36,7 @@ public class CertificateResponse extends RepresentationModel<CertificateResponse
         return title;
     }
 
-    public CertificateResponse setTitle(String title) {
+    public GiftCertificateResponse setTitle(String title) {
         this.title = title;
         return this;
     }
@@ -45,7 +45,7 @@ public class CertificateResponse extends RepresentationModel<CertificateResponse
         return description;
     }
 
-    public CertificateResponse setDescription(String description) {
+    public GiftCertificateResponse setDescription(String description) {
         this.description = description;
         return this;
     }
@@ -54,7 +54,7 @@ public class CertificateResponse extends RepresentationModel<CertificateResponse
         return price;
     }
 
-    public CertificateResponse setPrice(BigDecimal price) {
+    public GiftCertificateResponse setPrice(BigDecimal price) {
         this.price = price;
         return this;
     }
@@ -63,7 +63,7 @@ public class CertificateResponse extends RepresentationModel<CertificateResponse
         return duration;
     }
 
-    public CertificateResponse setDuration(Integer duration) {
+    public GiftCertificateResponse setDuration(Integer duration) {
         this.duration = duration;
         return this;
     }
@@ -72,7 +72,7 @@ public class CertificateResponse extends RepresentationModel<CertificateResponse
         return createDate;
     }
 
-    public CertificateResponse setCreateDate(LocalDateTime createDate) {
+    public GiftCertificateResponse setCreateDate(LocalDateTime createDate) {
         this.createDate = createDate;
         return this;
     }
@@ -81,7 +81,7 @@ public class CertificateResponse extends RepresentationModel<CertificateResponse
         return lastUpdateDate;
     }
 
-    public CertificateResponse setLastUpdateDate(LocalDateTime lastUpdateDate) {
+    public GiftCertificateResponse setLastUpdateDate(LocalDateTime lastUpdateDate) {
         this.lastUpdateDate = lastUpdateDate;
         return this;
     }
@@ -90,7 +90,7 @@ public class CertificateResponse extends RepresentationModel<CertificateResponse
         return tags;
     }
 
-    public CertificateResponse setTags(List<TagResponse> tags) {
+    public GiftCertificateResponse setTags(List<TagResponse> tags) {
         this.tags = tags;
         return this;
     }
@@ -99,7 +99,7 @@ public class CertificateResponse extends RepresentationModel<CertificateResponse
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        CertificateResponse that = (CertificateResponse) o;
+        GiftCertificateResponse that = (GiftCertificateResponse) o;
         return Objects.equals(id, that.id)
                 && Objects.equals(title, that.title)
                 && Objects.equals(description, that.description)

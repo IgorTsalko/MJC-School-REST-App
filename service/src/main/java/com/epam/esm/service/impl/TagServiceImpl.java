@@ -1,8 +1,11 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.common.entity.Tag;
+import com.epam.esm.common.exception.EntityNotFoundException;
+import com.epam.esm.common.exception.ErrorDefinition;
 import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.TagService;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,12 +23,16 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public List<Tag> getTags(int page, int limit) {
-        return tagRepository.retrieveTags(page, limit);
+        return tagRepository
+                .findAll(PageRequest.of(page - 1, limit))
+                .getContent();
     }
 
     @Override
     public Tag findById(Long id) {
-        return tagRepository.findById(id);
+        return tagRepository
+                .findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorDefinition.TAG_NOT_FOUND, id));
     }
 
     @Override
@@ -35,7 +42,10 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public void delete(Long id) {
-        tagRepository.delete(id);
+        if (!tagRepository.existsById(id)) {
+            throw new EntityNotFoundException(ErrorDefinition.TAG_NOT_FOUND, id);
+        }
+        tagRepository.deleteById(id);
     }
 
     @Override

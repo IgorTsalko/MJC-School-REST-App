@@ -1,4 +1,4 @@
-package com.epam.esm.service.util;
+package com.epam.esm.service;
 
 import com.epam.esm.common.entity.UserDetailsImpl;
 import com.epam.esm.common.entity.User;
@@ -8,6 +8,7 @@ public final class UserDetailsFactory {
 
     public static UserDetails create(User user) {
         return new UserDetailsImpl(
+                user.getId(),
                 user.getLogin(),
                 user.getPassword(),
                 user.getRole().getTitle()

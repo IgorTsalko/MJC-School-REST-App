@@ -1,6 +1,6 @@
 package com.epam.esm.server.security;
 
-import com.epam.esm.service.util.TokenUtil;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -15,25 +15,24 @@ import java.io.IOException;
 @Component
 public class TokenFilter extends OncePerRequestFilter {
 
-    private final static String AUTHORIZATION_HEADER = "Authorization";
+    private static final String BEARER = "Bearer";
 
-    private final TokenUtil tokenUtil;
+    private final AuthenticationHandler authenticationHandler;
 
-    public TokenFilter(TokenUtil tokenUtil) {
-        this.tokenUtil = tokenUtil;
+    public TokenFilter(AuthenticationHandler authenticationHandler) {
+        this.authenticationHandler = authenticationHandler;
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-        String token = request.getHeader(AUTHORIZATION_HEADER);
+        String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-        if (token != null && tokenUtil.validateToken(token)) {
-            Authentication auth = tokenUtil.getAuthentication(token);
-            if (auth != null) {
-                SecurityContextHolder.getContext().setAuthentication(auth);
-            }
+        if (authHeader != null && authHeader.startsWith(BEARER)) {
+            String token = authHeader.replace(BEARER, "").trim();
+            Authentication authentication = authenticationHandler.getAuthentication(token);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
         }
 
         filterChain.doFilter(request, response);

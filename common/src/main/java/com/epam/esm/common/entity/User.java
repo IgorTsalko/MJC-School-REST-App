@@ -20,7 +20,7 @@ public class User {
     private String password;
 
     @ManyToOne
-    @JoinColumn(name = "role")
+    @JoinColumn(name = "role", insertable = false, updatable = false)
     private Role role;
 
     @OneToMany(cascade = CascadeType.ALL)
