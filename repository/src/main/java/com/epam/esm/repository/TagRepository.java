@@ -4,24 +4,20 @@ import com.epam.esm.common.entity.Tag;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public interface TagRepository extends JpaRepository<Tag, Long> {
 
     Optional<Tag> findByTitle(String title);
 
+    List<Tag> findAllByTitleIn(Iterable<String> titles);
+
     default List<Tag> saveIfNotExist(List<Tag> tags) {
-        List<Tag> createdAndRetrievedTags = new ArrayList<>();
-        tags.forEach(t -> {
-            Tag tag = findByTitle(t.getTitle()).orElse(null);
-            if (tag == null) {
-                tag = save(t);
-            }
-            createdAndRetrievedTags.add(tag);
-        });
-        return createdAndRetrievedTags;
+        return tags.stream()
+                .map(tag -> findByTitle(tag.getTitle()).orElseGet(() -> save(tag)))
+                .collect(Collectors.toList());
     }
 
     @Query(nativeQuery = true,

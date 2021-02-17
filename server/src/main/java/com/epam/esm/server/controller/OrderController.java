@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -44,29 +43,35 @@ public class OrderController {
     @AdministratorAllowed
     @GetMapping
     public CollectionModel<OrderResponse> getOrders(
-            @RequestParam(required = false, defaultValue = "0") @PositiveOrZero int page,
+            @RequestParam(required = false, defaultValue = "1") @Positive int page,
             @RequestParam(required = false, defaultValue = "${page.limit-default}") @Min(1) @Max(50) int limit) {
-        int pageNumber = page == 0 ? 1 : page;
-        List<OrderResponse> orders = orderService.getOrders(pageNumber, limit)
-                .stream().map(OrderMapper::convertToResponse).collect(Collectors.toList());
-        orders.forEach(o -> {
-            o.add(linkTo(methodOn(OrderController.class).findById(o.getOrderId())).withSelfRel());
-            o.add(linkTo(methodOn(UserController.class).findById(o.getUserId())).withRel("user"));
-            o.add(linkTo(methodOn(GiftCertificateController.class).findById(o.getGiftCertificateId())).withRel("giftCertificate"));
-        });
+        List<OrderResponse> orders = orderService.getOrders(page, limit)
+                .stream()
+                .map(OrderMapper::convertToResponse)
+                .collect(Collectors.toList());
 
+        orders.forEach(o -> o.add(
+                linkTo(methodOn(OrderController.class).findById(o.getOrderId())).withSelfRel(),
+                linkTo(methodOn(UserController.class).findById(o.getUserId())).withRel("user"),
+                linkTo(methodOn(GiftCertificateController.class).findById(o.getGiftCertificateId())).withRel("giftCertificate")
+        ));
+
+        return CollectionModel.of(orders, generateOrderLinks(orders.size(), page, limit));
+    }
+
+    private List<Link> generateOrderLinks(int resultSize, int page, int limit) {
         List<Link> links = new ArrayList<>();
         links.add(linkTo(methodOn(OrderController.class).getOrders(page, limit)).withSelfRel());
         links.add(linkTo(methodOn(OrderController.class).getOrders(1, limit)).withRel("first"));
 
-        if (page > 0 && orders.size() == limit) {
+        if (resultSize == limit) {
             links.add(linkTo(methodOn(OrderController.class).getOrders(page + 1, limit)).withRel("next"));
         }
         if (page > 1) {
             links.add(linkTo(methodOn(OrderController.class).getOrders(page - 1, limit)).withRel("previous"));
         }
 
-        return CollectionModel.of(orders, links);
+        return links;
     }
 
     /**

@@ -7,7 +7,6 @@ import static org.mockito.Mockito.*;
 import com.epam.esm.common.entity.GiftCertificate;
 import com.epam.esm.common.entity.GiftCertificateParams;
 import com.epam.esm.common.entity.Tag;
-import com.epam.esm.repository.impl.GiftCertificateRepositoryOldImpl;
 import com.epam.esm.service.impl.GiftCertificateServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

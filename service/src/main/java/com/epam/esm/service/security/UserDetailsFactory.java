@@ -1,4 +1,4 @@
-package com.epam.esm.service;
+package com.epam.esm.service.security;
 
 import com.epam.esm.common.entity.UserDetailsImpl;
 import com.epam.esm.common.entity.User;

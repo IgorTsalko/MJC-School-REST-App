@@ -48,22 +48,28 @@ public class TagController {
             @RequestParam(required = false, defaultValue = "1") @Positive int page,
             @RequestParam(required = false, defaultValue = "${page.limit-default}") @Min(1) @Max(50) int limit) {
         List<TagResponse> tags = tagService.getTags(page, limit)
-                .stream().map(TagMapper::convertToResponse)
+                .stream()
+                .map(TagMapper::convertToResponse)
                 .collect(Collectors.toList());
+
         tags.forEach(t -> t.add(linkTo(methodOn(TagController.class).findById(t.getId())).withSelfRel()));
 
+        return CollectionModel.of(tags, generateTagLinks(tags.size(), page, limit));
+    }
+
+    private List<Link> generateTagLinks(int resultSize, int page, int limit) {
         List<Link> links = new ArrayList<>();
         links.add(linkTo(methodOn(TagController.class).getTags(page, limit)).withSelfRel());
         links.add(linkTo(methodOn(TagController.class).getTags(1, limit)).withRel("first"));
 
-        if (tags.size() == limit) {
+        if (resultSize == limit) {
             links.add(linkTo(methodOn(TagController.class).getTags(page + 1, limit)).withRel("next"));
         }
         if (page > 1) {
             links.add(linkTo(methodOn(TagController.class).getTags(page - 1, limit)).withRel("previous"));
         }
 
-        return CollectionModel.of(tags, links);
+        return links;
     }
 
     /**

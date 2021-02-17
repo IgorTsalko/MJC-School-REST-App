@@ -51,14 +51,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         this.messageSource = messageSource;
     }
 
-//    @ExceptionHandler(Throwable.class)
-//    protected ResponseEntity<Object> handleThrowable(Throwable throwable, Locale locale) {
-//        ExceptionResponse exceptionResponse = new ExceptionResponse()
-//                .setErrorCode(50001)
-//                .setDetails(List.of(messageSource.getMessage(SERVER_ERROR, null, locale)));
-//
-//        return new ResponseEntity<>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
-//    }
+    @ExceptionHandler(Throwable.class)
+    protected ResponseEntity<Object> handleThrowable(Throwable throwable, Locale locale) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse()
+                .setErrorCode(50001)
+                .setDetails(List.of(messageSource.getMessage(SERVER_ERROR, null, locale)));
+
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
     @ExceptionHandler(GiftCertificateException.class)
     protected ResponseEntity<Object> handleGiftCertificateException(GiftCertificateException ex, Locale locale) {
@@ -109,13 +109,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(exceptionResponse, httpStatus);
     }
 
-//    @ExceptionHandler(DataAccessException.class)
-//    protected ResponseEntity<Object> handleDataAccess(DataAccessException ex, Locale locale) {
-//        ExceptionResponse exceptionResponse = new ExceptionResponse()
-//                .setErrorCode(40002)
-//                .setDetails(List.of(messageSource.getMessage(DATABASE_EXCEPTION, null, locale)));
-//        return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
-//    }
+    @ExceptionHandler(DataAccessException.class)
+    protected ResponseEntity<Object> handleDataAccess(DataAccessException ex, Locale locale) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse()
+                .setErrorCode(40002)
+                .setDetails(List.of(messageSource.getMessage(DATABASE_EXCEPTION, null, locale)));
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+    }
 
     @ExceptionHandler(InvalidDataAccessResourceUsageException.class)
     protected ResponseEntity<Object> handleDataAccess(InvalidDataAccessResourceUsageException ex, Locale locale) {

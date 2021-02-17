@@ -6,6 +6,7 @@ import com.epam.esm.common.exception.ErrorDefinition;
 import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.TagService;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +25,7 @@ public class TagServiceImpl implements TagService {
     @Override
     public List<Tag> getTags(int page, int limit) {
         return tagRepository
-                .findAll(PageRequest.of(page - 1, limit))
+                .findAll(PageRequest.of(page - 1, limit, Sort.by("id")))
                 .getContent();
     }
 
