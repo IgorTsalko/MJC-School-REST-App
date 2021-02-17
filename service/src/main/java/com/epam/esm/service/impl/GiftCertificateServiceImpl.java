@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@Transactional
 public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     private final GiftCertificateRepository giftCertificateRepository;
@@ -36,6 +35,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<GiftCertificate> getGiftCertificates(GiftCertificateParams params, int page, int limit) {
         GiftCertificateSpecification specification = new GiftCertificateSpecification(params);
         if (params.getTagTitles() != null) {
@@ -70,6 +70,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public GiftCertificate findById(Long id) {
         GiftCertificate giftCertificate = giftCertificateRepository
                 .findById(id)
@@ -79,6 +80,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     @Override
+    @Transactional
     public GiftCertificate create(GiftCertificate giftCertificate) {
         List<Tag> tags = giftCertificate.getTags();
         if (!CollectionUtils.isEmpty(tags)) {
@@ -89,6 +91,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     @Override
+    @Transactional
     public GiftCertificate replace(Long id, GiftCertificate giftCertificate) {
         GiftCertificate dataBaseGiftCertificate = giftCertificateRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorDefinition.GIFT_CERTIFICATE_NOT_FOUND, id));
@@ -105,6 +108,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     @Override
+    @Transactional
     public GiftCertificate update(Long id, GiftCertificate giftCertificate) {
         GiftCertificate dataBaseGiftCertificate = giftCertificateRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorDefinition.GIFT_CERTIFICATE_NOT_FOUND, id));
@@ -138,6 +142,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     @Override
+    @Transactional
     public void delete(Long id) {
         if (!giftCertificateRepository.existsById(id)) {
             throw new EntityNotFoundException(ErrorDefinition.GIFT_CERTIFICATE_NOT_FOUND, id);

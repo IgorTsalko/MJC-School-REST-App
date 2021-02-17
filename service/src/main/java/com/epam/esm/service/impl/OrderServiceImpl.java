@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-@Transactional
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
@@ -32,6 +31,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Order> getOrders(int page, int limit) {
         return orderRepository
                 .findAll(PageRequest.of(page - 1, limit, Sort.by("orderId")))
@@ -39,6 +39,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Order findById(Long id) {
         return orderRepository
                 .findById(id)
@@ -46,6 +47,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public Order create(Long userId, Order order) {
         GiftCertificate giftCertificate = giftCertificateRepository
                 .findById(order.getGiftCertificateId())
@@ -59,6 +61,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Order> findOrdersByUserId(Long userId, int page, int limit) {
         if (!userRepository.existsById(userId)) {
             throw new EntityNotFoundException(ErrorDefinition.USER_NOT_FOUND, userId);
