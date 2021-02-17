@@ -5,7 +5,7 @@ import com.epam.esm.common.entity.Token;
 import com.epam.esm.common.entity.User;
 import com.epam.esm.repository.UserRepository;
 import com.epam.esm.service.AuthService;
-import com.epam.esm.service.TokenHandler;
+import com.epam.esm.service.security.TokenHandler;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -41,6 +41,6 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public void signUp(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.create(user);
+        userRepository.save(user);
     }
 }

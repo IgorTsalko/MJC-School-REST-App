@@ -55,29 +55,35 @@ public class UserController {
     @AdministratorAllowed
     @GetMapping
     public CollectionModel<UserResponse> getUsers(
-            @RequestParam(required = false, defaultValue = "0") @PositiveOrZero int page,
+            @RequestParam(required = false, defaultValue = "1") @Positive int page,
             @RequestParam(required = false, defaultValue = "${page.limit-default}") @Min(1) @Max(50) int limit) {
-        int pageNumber = page == 0 ? 1 : page;
-        List<UserResponse> users = userService.getUsers(pageNumber, limit)
-                .stream().map(UserMapper::convertToResponseWithoutOrders).collect(Collectors.toList());
-        users.forEach(u -> {
-            u.add(linkTo(methodOn(UserController.class).findById(u.getId())).withSelfRel());
-            u.add(linkTo(methodOn(UserController.class)
-                    .findOrdersByUserId(u.getId(), 1, 20)).withRel("userOrders").expand());
-        });
+        List<UserResponse> users = userService.getUsers(page, limit)
+                .stream()
+                .map(UserMapper::convertToResponseWithoutOrders)
+                .collect(Collectors.toList());
 
+        users.forEach(u -> u.add(
+                linkTo(methodOn(UserController.class).findById(u.getId())).withSelfRel(),
+                linkTo(methodOn(UserController.class)
+                        .findOrdersByUserId(u.getId(), 1, 20)).withRel("userOrders").expand()
+        ));
+
+        return CollectionModel.of(users, generateUserLinks(users.size(), page, limit));
+    }
+
+    private List<Link> generateUserLinks(int resultSize, int page, int limit) {
         List<Link> links = new ArrayList<>();
         links.add(linkTo(methodOn(UserController.class).getUsers(page, limit)).withSelfRel().expand());
         links.add(linkTo(methodOn(UserController.class).getUsers(1, limit)).withRel("first"));
 
-        if (page > 0 && users.size() == limit) {
+        if (resultSize == limit) {
             links.add(linkTo(methodOn(UserController.class).getUsers(page + 1, limit)).withRel("next"));
         }
         if (page > 1) {
             links.add(linkTo(methodOn(UserController.class).getUsers(page - 1, limit)).withRel("previous"));
         }
 
-        return CollectionModel.of(users, links);
+        return links;
     }
 
     /**
@@ -136,28 +142,35 @@ public class UserController {
     @GetMapping("/{id}/orders")
     public CollectionModel<OrderResponse> findOrdersByUserId(
             @PathVariable @Positive Long id,
-            @RequestParam(required = false, defaultValue = "0") @PositiveOrZero int page,
+            @RequestParam(required = false, defaultValue = "1") @PositiveOrZero int page,
             @RequestParam(required = false, defaultValue = "${page.limit-default}") @Min(1) @Max(50) int limit) {
-        int pageNumber = page == 0 ? 1 : page;
-        List<OrderResponse> userOrders = orderService.findOrdersByUserId(id, pageNumber, limit)
-                .stream().map(OrderMapper::convertToResponse).collect(Collectors.toList());
-        userOrders.forEach(o -> {
-            o.add(linkTo(methodOn(OrderController.class).findById(o.getOrderId())).withSelfRel());
-            o.add(linkTo(methodOn(UserController.class).findById(o.getUserId())).withRel("user"));
-            o.add(linkTo(methodOn(GiftCertificateController.class).findById(o.getGiftCertificateId())).withRel("giftCertificate"));
-        });
 
+        List<OrderResponse> userOrders = orderService.findOrdersByUserId(id, page, limit)
+                .stream()
+                .map(OrderMapper::convertToResponse)
+                .collect(Collectors.toList());
+
+        userOrders.forEach(o -> o.add(
+                linkTo(methodOn(OrderController.class).findById(o.getOrderId())).withSelfRel(),
+                linkTo(methodOn(UserController.class).findById(o.getUserId())).withRel("user"),
+                linkTo(methodOn(GiftCertificateController.class).findById(o.getGiftCertificateId())).withRel("giftCertificate")
+        ));
+
+        return CollectionModel.of(userOrders, generateUserOrdersLinks(userOrders.size(), id, page, limit));
+    }
+
+    private List<Link> generateUserOrdersLinks(int resultSize, Long id, int page, int limit) {
         List<Link> links = new ArrayList<>();
-        links.add(linkTo(methodOn(UserController.class).getUsers(page, limit)).withSelfRel().expand());
-        links.add(linkTo(methodOn(UserController.class).getUsers(1, limit)).withRel("first"));
+        links.add(linkTo(methodOn(UserController.class).findOrdersByUserId(id, page, limit)).withSelfRel().expand());
+        links.add(linkTo(methodOn(UserController.class).findOrdersByUserId(id, page, limit)).withRel("first"));
 
-        if (page > 0 && userOrders.size() == limit) {
-            links.add(linkTo(methodOn(UserController.class).getUsers(page + 1, limit)).withRel("next"));
+        if (resultSize == limit) {
+            links.add(linkTo(methodOn(UserController.class).findOrdersByUserId(id, page + 1, limit)).withRel("next"));
         }
         if (page > 1) {
-            links.add(linkTo(methodOn(UserController.class).getUsers(page - 1, limit)).withRel("previous"));
+            links.add(linkTo(methodOn(UserController.class).findOrdersByUserId(id, page - 1, limit)).withRel("previous"));
         }
 
-        return CollectionModel.of(userOrders, links);
+        return links;
     }
 }

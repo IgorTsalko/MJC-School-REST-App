@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS gift_certificate_tag, gift_certificate, tag;
 
 CREATE TABLE gift_certificate (
 	id LONG AUTO_INCREMENT PRIMARY KEY,
-	name VARCHAR(50) NOT NULL UNIQUE,
+	title VARCHAR(50) NOT NULL UNIQUE,
 	description TEXT,
 	price NUMERIC(10, 1) NOT NULL,
 	duration INTEGER NOT NULL,
@@ -12,7 +12,7 @@ CREATE TABLE gift_certificate (
 
 CREATE TABLE tag (
 	id LONG AUTO_INCREMENT PRIMARY KEY,
-	name VARCHAR(50) NOT NULL UNIQUE
+	title VARCHAR(50) NOT NULL UNIQUE
 );
 
 CREATE TABLE gift_certificate_tag (
@@ -25,7 +25,7 @@ INSERT INTO gift_certificate VALUES
 (1, 'Trip', 'Incredible journey. 25 countries. 4 weeks', 5600.0, 60, '2021-01-13T18:27:45.610874', '2021-01-13T18:27:45.610874'),
 (2, 'Skydiving', null, 250.0, 30, '2021-01-13T18:27:45.610874', '2021-01-13T18:27:45.610874');
 
-INSERT INTO tag(name) VALUES
+INSERT INTO tag(title) VALUES
 ('incredible'),
 ('travel');
 

@@ -3,9 +3,6 @@ package com.epam.esm.server.mapper;
 import com.epam.esm.common.entity.GiftCertificate;
 import com.epam.esm.server.entity.*;
 
-import java.math.BigDecimal;
-import java.util.List;
-
 public class GiftCertificateMapper {
 
     public static GiftCertificateResponse convertToResponse(GiftCertificate giftCertificate) {
@@ -26,39 +23,28 @@ public class GiftCertificateMapper {
     }
 
     public static GiftCertificate convertToEntity(GiftCertificateUpdateRequest giftCertificateUpdateRequest) {
-        return createCertificate(
-                giftCertificateUpdateRequest.getTitle(),
-                giftCertificateUpdateRequest.getDescription(),
-                giftCertificateUpdateRequest.getPrice(),
-                giftCertificateUpdateRequest.getDuration(),
-                giftCertificateUpdateRequest.getTags());
+        GiftCertificate giftCertificate = new GiftCertificate()
+                .setTitle(giftCertificateUpdateRequest.getTitle())
+                .setDescription(giftCertificateUpdateRequest.getDescription())
+                .setPrice(giftCertificateUpdateRequest.getPrice())
+                .setDuration(giftCertificateUpdateRequest.getDuration());
+
+        if (giftCertificateUpdateRequest.getTags() != null) {
+            giftCertificate.setTags(TagMapper.convertToEntity(giftCertificateUpdateRequest.getTags()));
+        }
+
+        return giftCertificate;
     }
 
     public static GiftCertificate convertToEntity(GiftCertificateCreateRequest giftCertificateCreateRequest) {
-        return createCertificate(
-                giftCertificateCreateRequest.getTitle(),
-                giftCertificateCreateRequest.getDescription(),
-                giftCertificateCreateRequest.getPrice(),
-                giftCertificateCreateRequest.getDuration(),
-                giftCertificateCreateRequest.getTags()
-        );
-    }
-
-    private static GiftCertificate createCertificate(
-            String name,
-            String description,
-            BigDecimal price,
-            Integer duration,
-            List<TagRequest> tags) {
-
         GiftCertificate giftCertificate = new GiftCertificate()
-                .setTitle(name)
-                .setDescription(description)
-                .setPrice(price)
-                .setDuration(duration);
+                .setTitle(giftCertificateCreateRequest.getTitle())
+                .setDescription(giftCertificateCreateRequest.getDescription())
+                .setPrice(giftCertificateCreateRequest.getPrice())
+                .setDuration(giftCertificateCreateRequest.getDuration());
 
-        if (tags != null) {
-            giftCertificate.setTags(TagMapper.convertToEntity(tags));
+        if (giftCertificateCreateRequest.getTags() != null) {
+            giftCertificate.setTags(TagMapper.convertToEntity(giftCertificateCreateRequest.getTags()));
         }
 
         return giftCertificate;

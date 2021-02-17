@@ -1,8 +1,6 @@
-package com.epam.esm.service.impl;
+package com.epam.esm.service.security;
 
-import com.epam.esm.common.entity.User;
 import com.epam.esm.repository.UserRepository;
-import com.epam.esm.service.UserDetailsFactory;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -19,12 +17,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
-        User user = userRepository.findByLogin(login);
-
-        if (user == null) {
-            throw new UsernameNotFoundException("Username: " + login + " not found");
-        }
-
-        return UserDetailsFactory.create(user);
+        return UserDetailsFactory.create(
+                userRepository
+                        .findByLogin(login)
+                        .orElseThrow(() -> new UsernameNotFoundException("Username: " + login + " not found"))
+        );
     }
 }

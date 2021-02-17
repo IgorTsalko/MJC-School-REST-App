@@ -57,29 +57,35 @@ public class GiftCertificateController {
         GiftCertificateParams params = GiftCertificateParamsMapper.convertToEntity(paramsRequest);
 
         List<GiftCertificateResponse> certificates = giftCertificateService.getGiftCertificates(params, page, limit)
-                .stream().map(GiftCertificateMapper::convertToResponse)
+                .stream()
+                .map(GiftCertificateMapper::convertToResponse)
                 .collect(Collectors.toList());
+
         certificates.forEach(c -> {
             c.getTags().forEach(t -> t.add(linkTo(methodOn(TagController.class).findById(t.getId())).withSelfRel()));
             c.add(linkTo(methodOn(GiftCertificateController.class).findById(c.getId())).withSelfRel());
         });
 
+        return CollectionModel.of(certificates, generateGiftCertificateLinks(certificates.size(), page, limit));
+    }
+
+    private List<Link> generateGiftCertificateLinks(int resultSize, int page, int limit) {
         List<Link> links = new ArrayList<>();
         links.add(linkTo(methodOn(GiftCertificateController.class)
                 .getGiftCertificates(null, page, limit)).withSelfRel().expand());
         links.add(linkTo(methodOn(GiftCertificateController.class)
-                .getGiftCertificates(paramsRequest, 1, limit)).withRel("first"));
+                .getGiftCertificates(null, 1, limit)).withRel("first"));
 
-        if (certificates.size() == limit) {
+        if (resultSize == limit) {
             links.add(linkTo(methodOn(GiftCertificateController.class)
-                    .getGiftCertificates(paramsRequest, page + 1, limit)).withRel("next"));
+                    .getGiftCertificates(null, page + 1, limit)).withRel("next"));
         }
         if (page > 1) {
             links.add(linkTo(methodOn(GiftCertificateController.class)
-                    .getGiftCertificates(paramsRequest, page - 1, limit)).withRel("previous"));
+                    .getGiftCertificates(null, page - 1, limit)).withRel("previous"));
         }
 
-        return CollectionModel.of(certificates, links);
+        return links;
     }
 
     /**
