@@ -1,11 +1,11 @@
-package com.epam.esm.common.entity;
+package com.epam.esm.common.filtering;
 
 import com.epam.esm.common.sorting.Sorting;
 
 import java.util.List;
 import java.util.Objects;
 
-public class GiftCertificateParams {
+public class GiftCertificateFilteringParams {
 
     private String title;
     private String description;
@@ -16,7 +16,7 @@ public class GiftCertificateParams {
         return title;
     }
 
-    public GiftCertificateParams setTitle(String title) {
+    public GiftCertificateFilteringParams setTitle(String title) {
         this.title = title;
         return this;
     }
@@ -25,7 +25,7 @@ public class GiftCertificateParams {
         return description;
     }
 
-    public GiftCertificateParams setDescription(String description) {
+    public GiftCertificateFilteringParams setDescription(String description) {
         this.description = description;
         return this;
     }
@@ -34,7 +34,7 @@ public class GiftCertificateParams {
         return tagTitles;
     }
 
-    public GiftCertificateParams setTagTitles(List<String> tagTitles) {
+    public GiftCertificateFilteringParams setTagTitles(List<String> tagTitles) {
         this.tagTitles = tagTitles;
         return this;
     }
@@ -43,7 +43,7 @@ public class GiftCertificateParams {
         return sorts;
     }
 
-    public GiftCertificateParams setSorts(List<Sorting> sorts) {
+    public GiftCertificateFilteringParams setSorts(List<Sorting> sorts) {
         this.sorts = sorts;
         return this;
     }
@@ -52,7 +52,7 @@ public class GiftCertificateParams {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        GiftCertificateParams that = (GiftCertificateParams) o;
+        GiftCertificateFilteringParams that = (GiftCertificateFilteringParams) o;
         return Objects.equals(title, that.title)
                 && Objects.equals(description, that.description)
                 && Objects.equals(tagTitles, that.tagTitles)

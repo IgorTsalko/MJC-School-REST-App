@@ -1,7 +1,7 @@
 package com.epam.esm.repository;
 
 import com.epam.esm.common.entity.GiftCertificate;
-import com.epam.esm.common.entity.GiftCertificateParams;
+import com.epam.esm.common.filtering.GiftCertificateFilteringParams;
 import com.epam.esm.common.entity.Tag;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -11,10 +11,10 @@ import java.util.List;
 
 public class GiftCertificateSpecification implements Specification<GiftCertificate> {
 
-    private final GiftCertificateParams params;
+    private final GiftCertificateFilteringParams params;
     private List<Tag> tags;
 
-    public GiftCertificateSpecification(GiftCertificateParams params) {
+    public GiftCertificateSpecification(GiftCertificateFilteringParams params) {
         this.params = params;
     }
 

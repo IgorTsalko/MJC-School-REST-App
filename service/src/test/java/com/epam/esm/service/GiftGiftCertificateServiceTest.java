@@ -4,11 +4,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import com.epam.esm.common.entity.GiftCertificate;
-import com.epam.esm.common.entity.GiftCertificateParams;
+import com.epam.esm.common.filtering.GiftCertificateFilteringParams;
 import com.epam.esm.common.entity.Tag;
 import com.epam.esm.repository.GiftCertificateRepository;
 import com.epam.esm.repository.GiftCertificateSpecification;
-import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.impl.GiftCertificateServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,7 +32,7 @@ public class GiftGiftCertificateServiceTest {
 
     @Test
     public void getGiftCertificatesWithoutParams(@Mock Page<GiftCertificate> page) {
-        GiftCertificateParams paramsMock = new GiftCertificateParams();
+        GiftCertificateFilteringParams paramsMock = new GiftCertificateFilteringParams();
         Sort sorting = Sort.by(Sort.Order.asc("id"));
         List<GiftCertificate> expCerts = getMockCertificates();
         Map<Long, List<Tag>> expTags = getMockCertificatesTags();

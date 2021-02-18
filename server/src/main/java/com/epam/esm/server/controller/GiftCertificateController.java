@@ -1,7 +1,7 @@
 package com.epam.esm.server.controller;
 
 import com.epam.esm.common.entity.GiftCertificate;
-import com.epam.esm.common.entity.GiftCertificateParams;
+import com.epam.esm.common.filtering.GiftCertificateFilteringParams;
 import com.epam.esm.server.entity.*;
 import com.epam.esm.server.mapper.GiftCertificateMapper;
 import com.epam.esm.server.mapper.GiftCertificateParamsMapper;
@@ -11,6 +11,7 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,25 +52,35 @@ public class GiftCertificateController {
      */
     @GetMapping
     public CollectionModel<GiftCertificateResponse> getGiftCertificates(
-            @Valid GiftCertificateParamsRequest paramsRequest,
+            @Valid GiftCertificateFilteringParamsRequest paramsRequest,
             @RequestParam(required = false, defaultValue = "1") @Positive int page,
             @RequestParam(required = false, defaultValue = "${page.limit-default}") @Min(1) @Max(50) int limit) {
-        GiftCertificateParams params = GiftCertificateParamsMapper.convertToEntity(paramsRequest);
+        GiftCertificateFilteringParams params = GiftCertificateParamsMapper.convertToEntity(paramsRequest);
 
-        List<GiftCertificateResponse> certificates = giftCertificateService.getGiftCertificates(params, page, limit)
+        List<GiftCertificateResponse> giftCertificateResponses = giftCertificateService
+                .getGiftCertificates(params, page, limit)
                 .stream()
                 .map(GiftCertificateMapper::convertToResponse)
                 .collect(Collectors.toList());
 
-        certificates.forEach(c -> {
-            c.getTags().forEach(t -> t.add(linkTo(methodOn(TagController.class).findById(t.getId())).withSelfRel()));
-            c.add(linkTo(methodOn(GiftCertificateController.class).findById(c.getId())).withSelfRel());
+        giftCertificateResponses.forEach(cert -> {
+            assignTagSelfLink(cert.getTags());
+            assignGiftCertificateSelfLink(cert);
         });
 
-        return CollectionModel.of(certificates, generateGiftCertificateLinks(certificates.size(), page, limit));
+        return CollectionModel.of(
+                giftCertificateResponses,
+                generateGiftCertificatesLinks(giftCertificateResponses.size(), page, limit)
+        );
     }
 
-    private List<Link> generateGiftCertificateLinks(int resultSize, int page, int limit) {
+    private void assignGiftCertificateSelfLink(GiftCertificateResponse giftCertificateResponse) {
+        giftCertificateResponse.add(
+                linkTo(methodOn(GiftCertificateController.class).findById(giftCertificateResponse.getId())).withSelfRel()
+        );
+    }
+
+    private List<Link> generateGiftCertificatesLinks(int resultSize, int page, int limit) {
         List<Link> links = new ArrayList<>();
         links.add(linkTo(methodOn(GiftCertificateController.class)
                 .getGiftCertificates(null, page, limit)).withSelfRel().expand());
@@ -96,11 +107,19 @@ public class GiftCertificateController {
      */
     @GetMapping("/{id}")
     public GiftCertificateResponse findById(@PathVariable @Positive Long id) {
-        GiftCertificateResponse giftCertificateResponse = GiftCertificateMapper.convertToResponse(giftCertificateService.findById(id));
-        giftCertificateResponse.getTags()
-                .forEach(t -> t.add(linkTo(methodOn(TagController.class).findById(t.getId())).withSelfRel()));
-        giftCertificateResponse.add(linkTo(methodOn(GiftCertificateController.class).findById(id)).withSelfRel());
+        GiftCertificate giftCertificate = giftCertificateService.findById(id);
+        GiftCertificateResponse giftCertificateResponse = GiftCertificateMapper.convertToResponse(giftCertificate);
+
+        assignTagSelfLink(giftCertificateResponse.getTags());
+        assignGiftCertificateSelfLink(giftCertificateResponse);
+
         return giftCertificateResponse;
+    }
+
+    private void assignTagSelfLink(List<TagResponse> tags) {
+        if (!CollectionUtils.isEmpty(tags)) {
+            tags.forEach(t -> t.add(linkTo(methodOn(TagController.class).findById(t.getId())).withSelfRel()));
+        }
     }
 
     /**
@@ -114,11 +133,10 @@ public class GiftCertificateController {
     public ResponseEntity<GiftCertificateResponse> create(@RequestBody @Valid GiftCertificateCreateRequest request) {
         GiftCertificate giftCertificate = giftCertificateService.create(GiftCertificateMapper.convertToEntity(request));
         GiftCertificateResponse giftCertificateResponse = GiftCertificateMapper.convertToResponse(giftCertificate);
-        List<TagResponse> tags = giftCertificateResponse.getTags();
-        if (tags != null) {
-            tags.forEach(t -> t.add(linkTo(methodOn(TagController.class).findById(t.getId())).withSelfRel()));
-        }
-        giftCertificateResponse.add(linkTo(methodOn(GiftCertificateController.class).create(request)).withSelfRel());
+
+        assignTagSelfLink(giftCertificateResponse.getTags());
+        assignGiftCertificateSelfLink(giftCertificateResponse);
+
         return new ResponseEntity<>(giftCertificateResponse, HttpStatus.CREATED);
     }
 
@@ -135,11 +153,10 @@ public class GiftCertificateController {
             @PathVariable @Positive Long id, @RequestBody @Valid GiftCertificateCreateRequest request) {
         GiftCertificate giftCertificate = giftCertificateService.replace(id, GiftCertificateMapper.convertToEntity(request));
         GiftCertificateResponse giftCertificateResponse = GiftCertificateMapper.convertToResponse(giftCertificate);
-        List<TagResponse> tags = giftCertificateResponse.getTags();
-        if (tags != null) {
-            tags.forEach(t -> t.add(linkTo(methodOn(TagController.class).findById(t.getId())).withSelfRel()));
-        }
-        giftCertificateResponse.add(linkTo(methodOn(GiftCertificateController.class).replace(id, request)).withSelfRel());
+
+        assignTagSelfLink(giftCertificateResponse.getTags());
+        assignGiftCertificateSelfLink(giftCertificateResponse);
+
         return ResponseEntity.ok(giftCertificateResponse);
     }
 
@@ -157,11 +174,10 @@ public class GiftCertificateController {
             @PathVariable @Positive Long id, @RequestBody @Valid GiftCertificateUpdateRequest request) {
         GiftCertificate giftCertificate = giftCertificateService.update(id, GiftCertificateMapper.convertToEntity(request));
         GiftCertificateResponse giftCertificateResponse = GiftCertificateMapper.convertToResponse(giftCertificate);
-        List<TagResponse> tags = giftCertificateResponse.getTags();
-        if (tags != null) {
-            tags.forEach(t -> t.add(linkTo(methodOn(TagController.class).findById(t.getId())).withSelfRel()));
-        }
-        giftCertificateResponse.add(linkTo(methodOn(GiftCertificateController.class).update(id, request)).withSelfRel());
+
+        assignTagSelfLink(giftCertificateResponse.getTags());
+        assignGiftCertificateSelfLink(giftCertificateResponse);
+
         return ResponseEntity.ok(giftCertificateResponse);
     }
 

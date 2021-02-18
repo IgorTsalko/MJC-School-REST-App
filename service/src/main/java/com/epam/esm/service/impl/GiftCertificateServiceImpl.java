@@ -1,7 +1,7 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.common.entity.GiftCertificate;
-import com.epam.esm.common.entity.GiftCertificateParams;
+import com.epam.esm.common.filtering.GiftCertificateFilteringParams;
 import com.epam.esm.common.entity.Tag;
 import com.epam.esm.common.exception.EntityNotFoundException;
 import com.epam.esm.common.exception.ErrorDefinition;
@@ -36,7 +36,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<GiftCertificate> getGiftCertificates(GiftCertificateParams params, int page, int limit) {
+    public List<GiftCertificate> getGiftCertificates(GiftCertificateFilteringParams params, int page, int limit) {
         GiftCertificateSpecification specification = new GiftCertificateSpecification(params);
         if (params.getTagTitles() != null) {
             specification.setTags(tagRepository.findAllByTitleIn(params.getTagTitles()));

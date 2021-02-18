@@ -1,10 +1,10 @@
 package com.epam.esm.server.mapper;
 
-import com.epam.esm.common.entity.GiftCertificateParams;
+import com.epam.esm.common.filtering.GiftCertificateFilteringParams;
 import com.epam.esm.common.sorting.GiftCertificateColumn;
 import com.epam.esm.common.sorting.Sorting;
 import com.epam.esm.common.sorting.SortOrder;
-import com.epam.esm.server.entity.GiftCertificateParamsRequest;
+import com.epam.esm.server.entity.GiftCertificateFilteringParamsRequest;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,8 +13,8 @@ import java.util.stream.Collectors;
 
 public class GiftCertificateParamsMapper {
 
-    public static GiftCertificateParams convertToEntity(GiftCertificateParamsRequest searchParamsRequest) {
-        GiftCertificateParams searchParams = new GiftCertificateParams()
+    public static GiftCertificateFilteringParams convertToEntity(GiftCertificateFilteringParamsRequest searchParamsRequest) {
+        GiftCertificateFilteringParams searchParams = new GiftCertificateFilteringParams()
                 .setTitle(searchParamsRequest.getTitle())
                 .setDescription(searchParamsRequest.getDescription());
 

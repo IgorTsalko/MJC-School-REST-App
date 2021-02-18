@@ -52,9 +52,17 @@ public class TagController {
                 .map(TagMapper::convertToResponse)
                 .collect(Collectors.toList());
 
-        tags.forEach(t -> t.add(linkTo(methodOn(TagController.class).findById(t.getId())).withSelfRel()));
+        assignTagSelfLink(tags);
 
         return CollectionModel.of(tags, generateTagLinks(tags.size(), page, limit));
+    }
+
+    private void assignTagSelfLink(TagResponse tagResponse) {
+        tagResponse.add(linkTo(methodOn(TagController.class).findById(tagResponse.getId())).withSelfRel());
+    }
+
+    private void assignTagSelfLink(List<TagResponse> tags) {
+        tags.forEach(this::assignTagSelfLink);
     }
 
     private List<Link> generateTagLinks(int resultSize, int page, int limit) {
@@ -82,7 +90,7 @@ public class TagController {
     @GetMapping("/{id}")
     public ResponseEntity<TagResponse> findById(@PathVariable @Positive Long id) {
         TagResponse tagResponse = TagMapper.convertToResponse(tagService.findById(id));
-        tagResponse.add(linkTo(methodOn(TagController.class).findById(id)).withSelfRel());
+        assignTagSelfLink(tagResponse);
         return ResponseEntity.ok(tagResponse);
     }
 
@@ -97,7 +105,7 @@ public class TagController {
     public ResponseEntity<TagResponse> create(@RequestBody @Valid TagRequest tagRequest) {
         Tag tag = tagService.create(TagMapper.convertToEntity(tagRequest));
         TagResponse tagResponse = TagMapper.convertToResponse(tag);
-        tagResponse.add(linkTo(methodOn(TagController.class).create(tagRequest)).withSelfRel());
+        assignTagSelfLink(tagResponse);
         return ResponseEntity.ok(tagResponse);
     }
 

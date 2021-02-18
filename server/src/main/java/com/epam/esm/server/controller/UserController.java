@@ -62,16 +62,20 @@ public class UserController {
                 .map(UserMapper::convertToResponseWithoutOrders)
                 .collect(Collectors.toList());
 
-        users.forEach(u -> u.add(
-                linkTo(methodOn(UserController.class).findById(u.getId())).withSelfRel(),
-                linkTo(methodOn(UserController.class)
-                        .findOrdersByUserId(u.getId(), 1, 20)).withRel("userOrders").expand()
-        ));
+        users.forEach(this::assignUserLinks);
 
-        return CollectionModel.of(users, generateUserLinks(users.size(), page, limit));
+        return CollectionModel.of(users, generateUsersLinks(users.size(), page, limit));
     }
 
-    private List<Link> generateUserLinks(int resultSize, int page, int limit) {
+    private void assignUserLinks(UserResponse userResponse) {
+        userResponse.add(
+                linkTo(methodOn(UserController.class).findById(userResponse.getId())).withSelfRel(),
+                linkTo(methodOn(UserController.class)
+                        .findOrdersByUserId(userResponse.getId(), 1, 20)).withRel("userOrders").expand()
+        );
+    }
+
+    private List<Link> generateUsersLinks(int resultSize, int page, int limit) {
         List<Link> links = new ArrayList<>();
         links.add(linkTo(methodOn(UserController.class).getUsers(page, limit)).withSelfRel().expand());
         links.add(linkTo(methodOn(UserController.class).getUsers(1, limit)).withRel("first"));
@@ -96,16 +100,8 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse> findById(@PathVariable @Positive Long id) {
         UserResponse userResponse = UserMapper.convertToResponse(userService.findById(id));
-        userResponse.add(linkTo(methodOn(UserController.class).findById(id)).withSelfRel());
-        userResponse.add(linkTo(methodOn(UserController.class)
-                .findOrdersByUserId(id, 1, 20)).withRel("userOrders").expand());
-        userResponse.getOrders()
-                .forEach(o -> {
-                    o.add(linkTo(methodOn(OrderController.class).findById(o.getOrderId())).withSelfRel());
-                    o.add(linkTo(methodOn(UserController.class).findById(o.getUserId())).withRel("user"));
-                    o.add(linkTo(methodOn(GiftCertificateController.class)
-                            .findById(o.getGiftCertificateId())).withRel("giftCertificate"));
-                });
+        assignUserLinks(userResponse);
+        userResponse.getOrders().forEach(this::assignUserOrdersLinks);
         return ResponseEntity.ok(userResponse);
     }
 
@@ -123,8 +119,7 @@ public class UserController {
         Order order = orderService.create(id, OrderMapper.convertToEntity(orderRequest));
         OrderResponse orderResponse = OrderMapper.convertToResponse(order);
         orderResponse.add(linkTo(methodOn(UserController.class).createOrderForUser(id, orderRequest)).withSelfRel());
-        orderResponse.add(linkTo(methodOn(GiftCertificateController.class)
-                .findById(orderResponse.getGiftCertificateId())).withRel("giftCertificate"));
+        assignUserOrdersLinks(orderResponse);
         return new ResponseEntity<>(orderResponse, HttpStatus.CREATED);
     }
 
@@ -150,13 +145,18 @@ public class UserController {
                 .map(OrderMapper::convertToResponse)
                 .collect(Collectors.toList());
 
-        userOrders.forEach(o -> o.add(
-                linkTo(methodOn(OrderController.class).findById(o.getOrderId())).withSelfRel(),
-                linkTo(methodOn(UserController.class).findById(o.getUserId())).withRel("user"),
-                linkTo(methodOn(GiftCertificateController.class).findById(o.getGiftCertificateId())).withRel("giftCertificate")
-        ));
+        userOrders.forEach(this::assignUserOrdersLinks);
 
         return CollectionModel.of(userOrders, generateUserOrdersLinks(userOrders.size(), id, page, limit));
+    }
+
+    private void assignUserOrdersLinks(OrderResponse orderResponse) {
+        orderResponse.add(
+                linkTo(methodOn(OrderController.class).findById(orderResponse.getOrderId())).withSelfRel(),
+                linkTo(methodOn(UserController.class).findById(orderResponse.getUserId())).withRel("user"),
+                linkTo(methodOn(GiftCertificateController.class)
+                        .findById(orderResponse.getGiftCertificateId())).withRel("giftCertificate")
+        );
     }
 
     private List<Link> generateUserOrdersLinks(int resultSize, Long id, int page, int limit) {

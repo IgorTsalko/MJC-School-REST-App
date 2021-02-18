@@ -1,7 +1,7 @@
 package com.epam.esm.service;
 
 import com.epam.esm.common.entity.GiftCertificate;
-import com.epam.esm.common.entity.GiftCertificateParams;
+import com.epam.esm.common.filtering.GiftCertificateFilteringParams;
 
 import java.util.List;
 
@@ -18,7 +18,7 @@ public interface GiftCertificateService {
      * @param limit  number of entities in the response
      * @return list of appropriate {@link GiftCertificate}
      */
-    List<GiftCertificate> getGiftCertificates(GiftCertificateParams params, int page, int limit);
+    List<GiftCertificate> getGiftCertificates(GiftCertificateFilteringParams params, int page, int limit);
 
     /**
      * Find {@link GiftCertificate} by <code>id</code>

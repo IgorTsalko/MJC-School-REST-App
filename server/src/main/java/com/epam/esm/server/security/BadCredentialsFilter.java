@@ -6,6 +6,8 @@ import com.epam.esm.common.exception.TokenInvalidException;
 import com.epam.esm.server.entity.ExceptionResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.MessageSource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -14,13 +16,12 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Locale;
 
 @Component
 public class BadCredentialsFilter extends OncePerRequestFilter {
-
-    private final static String ACCEPT_LANGUAGE = "Accept-Language";
 
     private final ObjectMapper objectMapper;
     private final MessageSource messageSource;
@@ -37,11 +38,11 @@ public class BadCredentialsFilter extends OncePerRequestFilter {
         try {
             filterChain.doFilter(request, response);
         } catch (TokenExpiredException | TokenInvalidException ex) {
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            response.setCharacterEncoding(StandardCharsets.UTF_8.name());
 
             ErrorDefinition errorDefinition = ex.getErrorDefinition();
-            String lang = request.getHeader(ACCEPT_LANGUAGE);
+            String lang = request.getHeader(HttpHeaders.ACCEPT_LANGUAGE);
             Locale locale = lang != null ? new Locale(lang) : Locale.getDefault();
 
             ExceptionResponse exceptionResponse = new ExceptionResponse()

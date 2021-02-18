@@ -1,6 +1,8 @@
 package com.epam.esm.server.entity;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.Objects;
 
@@ -8,18 +10,23 @@ public class UserRequest {
 
     @NotNull
     @Size(min = 2, max = 50)
+    @Pattern(regexp = "^[^?@$%^()/]*$", message = "{invalid-name}")
     private String firstName;
     @NotNull
     @Size(min = 2, max = 50)
+    @Pattern(regexp = "^[^?@$%^()/]*$", message = "{invalid-name}")
     private String lastName;
     @NotNull
     @Size(min = 5, max = 50)
+    @Email
     private String email;
     @NotNull
     @Size(min = 5, max = 50)
+    @Pattern(regexp = "^[^\\s?@$%^()/]*$", message = "{invalid-login}")
     private String login;
     @NotNull
     @Size(min = 6, max = 50)
+    @Pattern(regexp = "^[^\\s]*$", message = "{invalid-password}")
     private String password;
 
     public String getFirstName() {

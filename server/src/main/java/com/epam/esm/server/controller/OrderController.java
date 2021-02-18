@@ -36,7 +36,7 @@ public class OrderController {
      * Retrieve list of {@link Order} for appropriate id in an amount equal to
      * the <code>limit</code> for page number <code>page</code>
      *
-     * @param page number of page
+     * @param page  number of page
      * @param limit number of entities in the response
      * @return list of {@link Order} represented as list of {@link OrderResponse}
      */
@@ -50,16 +50,25 @@ public class OrderController {
                 .map(OrderMapper::convertToResponse)
                 .collect(Collectors.toList());
 
-        orders.forEach(o -> o.add(
-                linkTo(methodOn(OrderController.class).findById(o.getOrderId())).withSelfRel(),
-                linkTo(methodOn(UserController.class).findById(o.getUserId())).withRel("user"),
-                linkTo(methodOn(GiftCertificateController.class).findById(o.getGiftCertificateId())).withRel("giftCertificate")
-        ));
+        assignOrderLinks(orders);
 
-        return CollectionModel.of(orders, generateOrderLinks(orders.size(), page, limit));
+        return CollectionModel.of(orders, generateOrdersLinks(orders.size(), page, limit));
     }
 
-    private List<Link> generateOrderLinks(int resultSize, int page, int limit) {
+    private void assignOrderLinks(OrderResponse orderResponse) {
+        orderResponse.add(
+                linkTo(methodOn(OrderController.class).findById(orderResponse.getOrderId())).withSelfRel(),
+                linkTo(methodOn(UserController.class).findById(orderResponse.getUserId())).withRel("user"),
+                linkTo(methodOn(GiftCertificateController.class)
+                        .findById(orderResponse.getGiftCertificateId())).withRel("giftCertificate")
+        );
+    }
+
+    private void assignOrderLinks(List<OrderResponse> orderResponses) {
+        orderResponses.forEach(this::assignOrderLinks);
+    }
+
+    private List<Link> generateOrdersLinks(int resultSize, int page, int limit) {
         List<Link> links = new ArrayList<>();
         links.add(linkTo(methodOn(OrderController.class).getOrders(page, limit)).withSelfRel());
         links.add(linkTo(methodOn(OrderController.class).getOrders(1, limit)).withRel("first"));
@@ -84,11 +93,7 @@ public class OrderController {
     @GetMapping("/{id}")
     public ResponseEntity<OrderResponse> findById(@PathVariable @Positive Long id) {
         OrderResponse orderResponse = OrderMapper.convertToResponse(orderService.findById(id));
-        orderResponse.add(linkTo(methodOn(OrderController.class).findById(id)).withSelfRel());
-        orderResponse.add(linkTo(methodOn(UserController.class)
-                .findById(orderResponse.getUserId())).withRel("user"));
-        orderResponse.add(linkTo(methodOn(GiftCertificateController.class)
-                .findById(orderResponse.getGiftCertificateId())).withRel("giftCertificate"));
+        assignOrderLinks(orderResponse);
         return ResponseEntity.ok(orderResponse);
     }
 }
