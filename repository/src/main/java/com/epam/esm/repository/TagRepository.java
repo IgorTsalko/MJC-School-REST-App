@@ -1,64 +1,35 @@
 package com.epam.esm.repository;
 
 import com.epam.esm.common.entity.Tag;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
-public interface TagRepository {
+public interface TagRepository extends JpaRepository<Tag, Long> {
 
-    /**
-     * Retrieve all <code>Tags</code> in an amount equal to the
-     * <code>limit</code> for page number <code>page</code>.
-     *
-     * @param page number of page
-     * @param limit number of entities in the response
-     * @return list of <code>Tags</code>
-     */
-    List<Tag> getTags(int page, int limit);
+    Optional<Tag> findByTitle(String title);
 
-    /**
-     * Retrieve certain <code>Tag</code> for appropriate id.
-     *
-     * @param id specific tag's identifier
-     * @return certain <code>Tag</code>
-     */
-    Tag get(Long id);
+    List<Tag> findAllByTitleIn(Iterable<String> titles);
 
-    /**
-     * Retrieves certificate connections with matching tags for appropriate <code>Certificate</code>
-     *
-     * @param certificateId specific certificate's identifier
-     * @return list of tags for the appropriate <code>Certificate</code>
-     */
-    List<Tag> getCertificateTags(Long certificateId);
+    default List<Tag> saveIfNotExist(List<Tag> tags) {
+        return tags.stream()
+                .map(tag -> findByTitle(tag.getTitle()).orElseGet(() -> save(tag)))
+                .collect(Collectors.toList());
+    }
 
-    /**
-     * Create new <code>Tag</code> and return it
-     *
-     * @param tag the object that contain properties for new <code>Tag</code>
-     * @return created <code>Tag</code>
-     */
-    Tag create(Tag tag);
-
-    /**
-     * Create new tags by tag's names if any tags are not exist
-     *
-     * @param tags list of tags
-     */
-    List<Tag> createNonExistent(List<Tag> tags);
-
-    /**
-     * Delete certain <code>Tag</code>
-     *
-     * @param id specific tag's identifier
-     */
-    void delete(Long id);
-
-    /**
-     * Find the most widely used <code>Tag</code> of a user with the highest
-     * cost of all orders
-     *
-     * @return found <code>Tag</code>
-     */
+    @Query(nativeQuery = true,
+            value = "select t.id, t.title " +
+                    "from \"user\" u " +
+                    "         join \"order\" o on u.id = o.user_id " +
+                    "         join gift_certificate gc on gc.id = o.gift_certificate_id " +
+                    "         left join gift_certificate_tag gct on gc.id = gct.gift_certificate_id " +
+                    "         left join tag t on t.id = gct.tag_id " +
+                    "where u.id = (select user_id from \"order\" group by user_id order by sum(price) desc limit 1) " +
+                    "group by t.id " +
+                    "order by count(*) desc " +
+                    "limit 1")
     Tag findMostUsedTagForUserWithHighestCostOfAllOrders();
 }

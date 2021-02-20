@@ -11,7 +11,7 @@ public class OrderResponse extends RepresentationModel<OrderResponse> {
 
     private Long orderId;
     private Long userId;
-    private Long certificateId;
+    private Long giftCertificateId;
     private BigDecimal price;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createDate;
@@ -34,12 +34,12 @@ public class OrderResponse extends RepresentationModel<OrderResponse> {
         return this;
     }
 
-    public Long getCertificateId() {
-        return certificateId;
+    public Long getGiftCertificateId() {
+        return giftCertificateId;
     }
 
-    public OrderResponse setCertificateId(Long certificateId) {
-        this.certificateId = certificateId;
+    public OrderResponse setGiftCertificateId(Long giftCertificateId) {
+        this.giftCertificateId = giftCertificateId;
         return this;
     }
 
@@ -68,14 +68,14 @@ public class OrderResponse extends RepresentationModel<OrderResponse> {
         OrderResponse that = (OrderResponse) o;
         return Objects.equals(orderId, that.orderId)
                 && Objects.equals(userId, that.userId)
-                && Objects.equals(certificateId, that.certificateId)
+                && Objects.equals(giftCertificateId, that.giftCertificateId)
                 && Objects.equals(price, that.price)
                 && Objects.equals(createDate, that.createDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(orderId, userId, certificateId, price, createDate);
+        return Objects.hash(orderId, userId, giftCertificateId, price, createDate);
     }
 
     @Override
@@ -83,7 +83,7 @@ public class OrderResponse extends RepresentationModel<OrderResponse> {
         return this.getClass().getSimpleName() + "{" +
                 "orderId=" + orderId +
                 ", userId=" + userId +
-                ", certificateId=" + certificateId +
+                ", giftCertificateId=" + giftCertificateId +
                 ", price=" + price +
                 ", createDate=" + createDate +
                 '}';

@@ -1,26 +1,11 @@
 package com.epam.esm.repository;
 
 import com.epam.esm.common.entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
+import java.util.Optional;
 
-public interface UserRepository {
+public interface UserRepository extends JpaRepository<User, Long> {
 
-    /**
-     * Retrieve <code>Users</code> for appropriate parameters in an amount
-     * equal to the <code>limit</code> for page number <code>page</code>.
-     *
-     * @param page number of page
-     * @param limit number of entities in the response
-     * @return list of <code>Users</code>
-     */
-    List<User> getUsers(int page, int limit);
-
-    /**
-     * Retrieve <code>User</code> by certain id
-     *
-     * @param id specific user's identifier
-     * @return certain <code>User</code>
-     */
-    User get(Long id);
+    Optional<User> findByLogin(String login);
 }
