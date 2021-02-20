@@ -8,6 +8,7 @@ import com.epam.esm.common.filtering.GiftCertificateFilteringParams;
 import com.epam.esm.common.entity.Tag;
 import com.epam.esm.repository.GiftCertificateRepository;
 import com.epam.esm.repository.GiftCertificateSpecification;
+import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.impl.GiftCertificateServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,17 +19,20 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
-public class GiftGiftCertificateServiceTest {
+public class GiftCertificateServiceTest {
 
     @InjectMocks
-    GiftCertificateServiceImpl certificateService;
+    GiftCertificateServiceImpl giftCertificateService;
     @Mock
     GiftCertificateRepository giftCertificateRepository;
+    @Mock
+    TagRepository tagRepository;
 
     @Test
     public void getGiftCertificatesWithoutParams(@Mock Page<GiftCertificate> page) {
@@ -43,7 +47,7 @@ public class GiftGiftCertificateServiceTest {
                 .thenReturn(page);
         when(page.getContent()).thenReturn(expCerts);
 
-        List<GiftCertificate> actualCerts = certificateService.getGiftCertificates(paramsMock, 1, 20);
+        List<GiftCertificate> actualCerts = giftCertificateService.getGiftCertificates(paramsMock, 1, 20);
 
         assertEquals(expCerts, actualCerts);
         verify(giftCertificateRepository, only())
@@ -52,12 +56,10 @@ public class GiftGiftCertificateServiceTest {
 
     @Test
     public void getCertificateById() {
-        GiftCertificate expCert = new GiftCertificate().setId(2L).setTitle("Spa");
-        List<Tag> tags = getMockTags();
-        expCert.setTags(tags);
+        GiftCertificate expCert = new GiftCertificate().setId(2L).setTitle("Spa").setTags(getMockTags());
 
         when(giftCertificateRepository.findById(anyLong())).thenReturn(Optional.of(expCert));
-        GiftCertificate actualCert = certificateService.findById(anyLong());
+        GiftCertificate actualCert = giftCertificateService.findById(anyLong());
 
         assertEquals(expCert, actualCert);
         verify(giftCertificateRepository, only()).findById(anyLong());
@@ -68,17 +70,58 @@ public class GiftGiftCertificateServiceTest {
         GiftCertificate expCert = new GiftCertificate().setId(2L).setTitle("Spa");
 
         when(giftCertificateRepository.save(certMock)).thenReturn(expCert);
-        GiftCertificate actualCert = certificateService.create(certMock);
+        GiftCertificate actualCert = giftCertificateService.create(certMock);
 
         assertEquals(expCert, actualCert);
         verify(giftCertificateRepository, only()).save(certMock);
     }
 
     @Test
+    public void createNewCertificateWithTags() {
+        GiftCertificate expCert = new GiftCertificate().setId(2L).setTitle("Spa").setTags(getMockTags());
+        GiftCertificate cert = new GiftCertificate().setId(2L).setTitle("Spa").setTags(getMockTagsWithoutId());
+
+        when(tagRepository.saveIfNotExist(anyList())).thenReturn(getMockTags());
+        when(giftCertificateRepository.save(cert)).thenReturn(expCert);
+        GiftCertificate actualCert = giftCertificateService.create(cert);
+
+        assertEquals(expCert, actualCert);
+        verify(tagRepository, only()).saveIfNotExist(anyList());
+        verify(giftCertificateRepository, only()).save(cert);
+    }
+
+    @Test
+    public void replaceExistingGiftCertificateWithTags() {
+        LocalDateTime time = LocalDateTime.now();
+
+        GiftCertificate expCert = new GiftCertificate().setId(2L).setTitle("Spa");
+        expCert.setCreateDate(time);
+        expCert.setTags(getMockTags());
+
+        GiftCertificate dbCert = new GiftCertificate().setId(2L).setTitle("Spa");
+        dbCert.setCreateDate(time);
+
+        GiftCertificate cert = new GiftCertificate().setTitle("Spa");
+        cert.setTags(getMockTagsWithoutId());
+
+        when(giftCertificateRepository.findById(anyLong())).thenReturn(Optional.of(dbCert));
+        when(tagRepository.saveIfNotExist(anyList())).thenReturn(getMockTags());
+        when(giftCertificateRepository.save(cert)).thenReturn(cert);
+
+        GiftCertificate actualCert = giftCertificateService.replace(2L, cert);
+        assertEquals(expCert, actualCert);
+
+        verify(giftCertificateRepository).findById(anyLong());
+        verify(tagRepository).saveIfNotExist(anyList());
+        verify(giftCertificateRepository).save(cert);
+        verifyNoMoreInteractions(giftCertificateRepository, tagRepository);
+    }
+
+    @Test
     public void deleteCertificate() {
         when(giftCertificateRepository.existsById(anyLong())).thenReturn(true);
 
-        certificateService.delete(anyLong());
+        giftCertificateService.delete(anyLong());
         verify(giftCertificateRepository).existsById(anyLong());
         verify(giftCertificateRepository).deleteById(anyLong());
         verifyNoMoreInteractions(giftCertificateRepository);
@@ -103,6 +146,13 @@ public class GiftGiftCertificateServiceTest {
         return List.of(
                 new Tag().setId(1L).setTitle("incredible"),
                 new Tag().setId(2L).setTitle("pleasure")
+        );
+    }
+
+    private List<Tag> getMockTagsWithoutId() {
+        return List.of(
+                new Tag().setTitle("incredible"),
+                new Tag().setTitle("pleasure")
         );
     }
 }

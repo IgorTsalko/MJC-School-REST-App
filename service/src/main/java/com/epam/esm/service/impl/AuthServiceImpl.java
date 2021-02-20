@@ -22,7 +22,8 @@ public class AuthServiceImpl implements AuthService {
     private final TokenHandler tokenHandler;
     private final PasswordEncoder passwordEncoder;
 
-    public AuthServiceImpl(AuthenticationManager authManager, UserRepository userRepository,
+    public AuthServiceImpl(AuthenticationManager authManager,
+                           UserRepository userRepository,
                            TokenHandler tokenHandler,
                            PasswordEncoder passwordEncoder) {
         this.authManager = authManager;
@@ -35,7 +36,7 @@ public class AuthServiceImpl implements AuthService {
     public Token signIn(Credentials credentials) {
         Authentication authentication = authManager.authenticate(
                 new UsernamePasswordAuthenticationToken(credentials.getLogin(), credentials.getPassword()));
-        return tokenHandler.generateAccessToken(authentication.getName());
+        return tokenHandler.generateAccessToken(authentication);
     }
 
     @Override

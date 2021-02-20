@@ -9,9 +9,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
-@EntityListeners(AuditListener.class)
 @Entity
 @Table(name = "gift_certificate")
+@EntityListeners(AuditListener.class)
 public class GiftCertificate implements AuditableUpdate {
 
     @Id

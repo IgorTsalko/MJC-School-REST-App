@@ -1,11 +1,9 @@
 package com.epam.esm.common.entity;
 
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 
 public class UserDetailsImpl implements UserDetails {
@@ -18,11 +16,11 @@ public class UserDetailsImpl implements UserDetails {
     public UserDetailsImpl(Long id,
                            String login,
                            String password,
-                           String role) {
+                           Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.login = login;
         this.password = password;
-        this.authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
+        this.authorities = authorities;
     }
 
     public Long getId() {

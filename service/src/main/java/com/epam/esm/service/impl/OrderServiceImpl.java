@@ -55,8 +55,8 @@ public class OrderServiceImpl implements OrderService {
                         new EntityNotFoundException(ErrorDefinition.GIFT_CERTIFICATE_NOT_FOUND, order.getGiftCertificateId())
                 );
 
-        order.setPrice(giftCertificate.getPrice());
         order.setUserId(userId);
+        order.setPrice(giftCertificate.getPrice());
         return orderRepository.save(order);
     }
 

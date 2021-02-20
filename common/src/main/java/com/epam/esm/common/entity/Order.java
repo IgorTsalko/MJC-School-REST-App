@@ -1,5 +1,6 @@
 package com.epam.esm.common.entity;
 
+import com.epam.esm.common.audit.AuditListener;
 import com.epam.esm.common.audit.AuditablePersist;
 
 import javax.persistence.*;
@@ -9,6 +10,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "\"order\"")
+@EntityListeners(AuditListener.class)
 public class Order implements AuditablePersist {
 
     @Id
