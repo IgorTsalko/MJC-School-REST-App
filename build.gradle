@@ -2,7 +2,7 @@ subprojects {
     apply plugin: 'java'
 
     group = 'com.epam.esm'
-    version = '3.0'
+    version = '4.0'
     sourceCompatibility = '11'
     targetCompatibility = '11'
 
